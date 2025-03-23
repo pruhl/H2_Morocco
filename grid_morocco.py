@@ -5,8 +5,8 @@ from shapely.geometry import Polygon
 gdf_morocco_boundary = gpd.read_file(r"C:\Users\psclr\Documents\02 Master\Masterprojekt\QGIS\Daten\morocco_Morocco_Country_Boundary.shp")
 gdf_morocco_boundary_utm29N = gdf_morocco_boundary.to_crs("EPSG:32629")
 
-gdf_morocco_boundary.plot()
-gdf_morocco_boundary_utm29N.plot()
+# gdf_morocco_boundary.plot()
+# gdf_morocco_boundary_utm29N.plot()
 
 
 def grid_cration(polygon, cell_size):
@@ -37,4 +37,4 @@ gdf_morocco_gird = grid_cration(polygon=gdf_morocco_boundary_utm29N, cell_size=g
 
 gdf_morocco_gird.plot()
 
-gdf_morocco_gird.to_file("gitter_morocco.shp", driver='ESRI Shapefile')
+gdf_morocco_gird.to_file("grid_morocco.shp", driver='ESRI Shapefile')
