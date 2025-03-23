@@ -23,5 +23,9 @@ dict_weights = {'avg_pv_yeald': 0.017,
                 'fundings': 0.1224}
 
 #Empty Grid
-gdf_grid_morocco = gpd.read_file(r"C:\Users\psclr\Documents\02 Master\Masterprojekt\gitter_morocco.shp")
+gdf_grid_morocco = gpd.read_file(r"C:\Users\psclr\Documents\02 Master\Masterprojekt\gitter_morocco_clear.shp")
 gdf_grid_morocco_centroid = gdf_grid_morocco.centroid
+
+#Calculations
+
+#PV
