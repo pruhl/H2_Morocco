@@ -26,6 +26,36 @@ dict_weights = {'avg_pv_yeald': 0.017,
 gdf_grid_morocco = gpd.read_file(r"C:\Users\psclr\Documents\02 Master\Masterprojekt\gitter_morocco_clear.shp")
 gdf_grid_morocco_centroid = gdf_grid_morocco.centroid
 
-#Calculations
+#Data
+    #Power grid
+gdf_grid_africa = gpd.read_file(r"C:\Users\psclr\Documents\02 Master\Masterprojekt\QGIS\Daten\power_grid\africagrid20170906final.geojson")
+gdf_grid_morocco = gdf_grid_africa[gdf_grid_africa['country'] == 'Morocco']
+gdf_grid_morocco_utm29n = gdf_grid_morocco.to_crs("EPSG:32629")
+    #Groundwater
+gdf_groundwater_morocco = gpd.read_file(r"C:\Users\psclr\Documents\02 Master\Masterprojekt\QGIS\Daten\Morocco\Morocco_HG.shp")
+gdf_groundwater_morocco_utm29n = gdf_groundwater_morocco.to_crs("EPSG:32629")
+gdf_groundwater_western_sahara = gpd.read_file(r"C:\Users\psclr\Documents\02 Master\Masterprojekt\QGIS\Daten\Morocco\WSahara\WesternSahara_HG.shp")
+gdf_groundwater_western_sahara_utm29n = gdf_groundwater_western_sahara.to_crs("EPSG:32629")
+gdf_groundwater_western_sahara_utm29n = gdf_groundwater_western_sahara_utm29n.rename(columns = 
+                                                                                     {'WSGLG': 'MorGLG', 'WSHGComb': 'MorHGComb'})
+gdf_groundwater_morocco_concat = pd.concat([gdf_groundwater_morocco_utm29n, gdf_groundwater_western_sahara_utm29n], 
+                                           ignore_index=True)
+gdf_groundwater_morocco_high = pd.concat([gdf_groundwater_morocco_concat[gdf_groundwater_morocco_concat['MorHGComb'] == 'CSIF-M/H'], 
+                                         gdf_groundwater_morocco_concat[gdf_groundwater_morocco_concat['MorHGComb'] == 'CSFK-H/VH']], 
+                                         ignore_index=True)
+    #RE-Potentials
+gdf_pv_morocco = gpd.read_file(r"C:\Users\psclr\Documents\02 Master\Masterprojekt\QGIS\Daten\Morocco_GISdata_LTAy_YearlyMonthlyTotals_GlobalSolarAtlas-v2_GEOTIFF\PV_yeald_clear.shp")
+gdf_pv_morocco_utm29n = gdf_pv_morocco.to_crs("EPSG:32629")
+# gdf_wind_morocco = gpd.read_file(r"C:\Users\psclr\Documents\02 Master\Masterprojekt\QGIS\Daten\Vector_wind.shp")
+# gdf_wind_morocco_utm29n = gdf_wind_morocco.to_crs("EPSG:32629")
+    #H2-Potentials
+    #Seawater Desalination Plants
+    #Surface Water
+    #Pipelines
+    #Export Ports
+    #Accessibility
+    #Land Use
+    #Population Density
+    #Conflict Areas
+    #Fundings
 
-#PV
