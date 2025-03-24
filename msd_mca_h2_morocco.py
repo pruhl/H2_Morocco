@@ -23,7 +23,7 @@ dict_weights = {'avg_pv_yeald': 0.017,
                 'fundings': 0.1224}
 
 #Empty Grid
-gdf_grid_morocco = gpd.read_file(r"C:\Users\psclr\Documents\02 Master\Masterprojekt\gitter_morocco_clear.shp")
+gdf_grid_morocco = gpd.read_file(r"C:\Users\psclr\Documents\02 Master\Masterprojekt\Python\grid_morocco_clear.shp")
 gdf_grid_morocco_centroid = gdf_grid_morocco.centroid
 
 #Data
@@ -46,16 +46,26 @@ gdf_groundwater_morocco_high = pd.concat([gdf_groundwater_morocco_concat[gdf_gro
     #RE-Potentials
 gdf_pv_morocco = gpd.read_file(r"C:\Users\psclr\Documents\02 Master\Masterprojekt\QGIS\Daten\Morocco_GISdata_LTAy_YearlyMonthlyTotals_GlobalSolarAtlas-v2_GEOTIFF\PV_yeald_clear.shp")
 gdf_pv_morocco_utm29n = gdf_pv_morocco.to_crs("EPSG:32629")
-# gdf_wind_morocco = gpd.read_file(r"C:\Users\psclr\Documents\02 Master\Masterprojekt\QGIS\Daten\Vector_wind.shp")
-# gdf_wind_morocco_utm29n = gdf_wind_morocco.to_crs("EPSG:32629")
-    #H2-Potentials
-    #Seawater Desalination Plants
-    #Surface Water
-    #Pipelines
-    #Export Ports
-    #Accessibility
-    #Land Use
-    #Population Density
-    #Conflict Areas
-    #Fundings
+gdf_wind_morocco = gpd.read_file(r"C:\Users\psclr\Documents\02 Master\Masterprojekt\QGIS\Daten\Wind_Energiedichte\wind_power_clear_150m.shp")
+gdf_wind_morocco_utm29n = gdf_wind_morocco.to_crs("EPSG:32629")
+    #RE-Projects
 
+    #H2-Projects
+
+    #Seawater Desalination Plants
+
+    #Surface Water
+
+    #Pipelines
+
+    #Export Ports
+
+    #Accessibility
+
+    #Landuse
+
+    #Population Density
+
+    #Conflict Areas
+
+    #Fundings
