@@ -3,7 +3,7 @@ import pandas as pd
 import geopandas as gpd
 
 #Weights
-dict_weights = {'avg_pv_yeald': 0.017, 
+dict_weights = {'avg_pv_yeald': 0.018, 
                 'avg_windpower': 0.024, 
                 're_projects': 0.0547,
                 'h2_projects': 0.0894,
