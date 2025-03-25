@@ -28,26 +28,62 @@ gdf_grid_morocco_centroid = gdf_grid_morocco.centroid
 
 #Data
     #Power grid
-gdf_grid_africa = gpd.read_file(r"C:\Users\psclr\Documents\02 Master\Masterprojekt\QGIS\Daten\power_grid\africagrid20170906final.geojson")
-gdf_grid_morocco = gdf_grid_africa[gdf_grid_africa['country'] == 'Morocco']
-gdf_grid_morocco_utm29n = gdf_grid_morocco.to_crs("EPSG:32629")
+gdf_power_grid_africa = gpd.read_file(r"C:\Users\psclr\Documents\02 Master\Masterprojekt\QGIS\Daten\power_grid\africagrid20170906final.geojson")
+gdf_power_grid_morocco = gdf_power_grid_africa[gdf_power_grid_africa['country'] == 'Morocco']
+gdf_power_grid_morocco_utm29n = gdf_power_grid_morocco.to_crs("EPSG:32629")
     #Groundwater
-gdf_groundwater_morocco = gpd.read_file(r"C:\Users\psclr\Documents\02 Master\Masterprojekt\QGIS\Daten\Morocco\Morocco_HG.shp")
-gdf_groundwater_morocco_utm29n = gdf_groundwater_morocco.to_crs("EPSG:32629")
-gdf_groundwater_western_sahara = gpd.read_file(r"C:\Users\psclr\Documents\02 Master\Masterprojekt\QGIS\Daten\Morocco\WSahara\WesternSahara_HG.shp")
-gdf_groundwater_western_sahara_utm29n = gdf_groundwater_western_sahara.to_crs("EPSG:32629")
-gdf_groundwater_western_sahara_utm29n = gdf_groundwater_western_sahara_utm29n.rename(columns = 
-                                                                                     {'WSGLG': 'MorGLG', 'WSHGComb': 'MorHGComb'})
-gdf_groundwater_morocco_concat = pd.concat([gdf_groundwater_morocco_utm29n, gdf_groundwater_western_sahara_utm29n], 
-                                           ignore_index=True)
-gdf_groundwater_morocco_high = pd.concat([gdf_groundwater_morocco_concat[gdf_groundwater_morocco_concat['MorHGComb'] == 'CSIF-M/H'], 
-                                         gdf_groundwater_morocco_concat[gdf_groundwater_morocco_concat['MorHGComb'] == 'CSFK-H/VH']], 
-                                         ignore_index=True)
+# gdf_groundwater_morocco = gpd.read_file(r"C:\Users\psclr\Documents\02 Master\Masterprojekt\QGIS\Daten\Morocco\Morocco_HG.shp")
+# gdf_groundwater_morocco_utm29n = gdf_groundwater_morocco.to_crs("EPSG:32629")
+# gdf_groundwater_western_sahara = gpd.read_file(r"C:\Users\psclr\Documents\02 Master\Masterprojekt\QGIS\Daten\Morocco\WSahara\WesternSahara_HG.shp")
+# gdf_groundwater_western_sahara_utm29n = gdf_groundwater_western_sahara.to_crs("EPSG:32629")
+# gdf_groundwater_western_sahara_utm29n = gdf_groundwater_western_sahara_utm29n.rename(columns = 
+#                                                                                      {'WSGLG': 'MorGLG', 'WSHGComb': 'MorHGComb'})
+# gdf_groundwater_morocco_concat = pd.concat([gdf_groundwater_morocco_utm29n, gdf_groundwater_western_sahara_utm29n], 
+#                                            ignore_index=True)
+# gdf_groundwater_morocco_high = pd.concat([gdf_groundwater_morocco_concat[gdf_groundwater_morocco_concat['MorHGComb'] == 'CSIF-M/H'], 
+#                                          gdf_groundwater_morocco_concat[gdf_groundwater_morocco_concat['MorHGComb'] == 'CSFK-H/VH']], 
+#                                          ignore_index=True)
     #RE-Potentials
-gdf_pv_morocco = gpd.read_file(r"C:\Users\psclr\Documents\02 Master\Masterprojekt\QGIS\Daten\Morocco_GISdata_LTAy_YearlyMonthlyTotals_GlobalSolarAtlas-v2_GEOTIFF\PV_yeald_clear.shp")
-gdf_pv_morocco_utm29n = gdf_pv_morocco.to_crs("EPSG:32629")
-gdf_wind_morocco = gpd.read_file(r"C:\Users\psclr\Documents\02 Master\Masterprojekt\QGIS\Daten\Wind_Energiedichte\wind_power_clear_150m.shp")
-gdf_wind_morocco_utm29n = gdf_wind_morocco.to_crs("EPSG:32629")
+# gdf_pv_morocco = gpd.read_file(r"C:\Users\psclr\Documents\02 Master\Masterprojekt\QGIS\Daten\Morocco_GISdata_LTAy_YearlyMonthlyTotals_GlobalSolarAtlas-v2_GEOTIFF\PV_yeald_clear.shp")
+# gdf_pv_morocco_utm29n = gdf_pv_morocco.to_crs("EPSG:32629")
+# gdf_wind_morocco = gpd.read_file(r"C:\Users\psclr\Documents\02 Master\Masterprojekt\QGIS\Daten\Wind_Energiedichte\wind_power_clear_150m.shp")
+# gdf_wind_morocco_utm29n = gdf_wind_morocco.to_crs("EPSG:32629")
+    #RE-Projects
+
+    #H2-Projects
+
+    #Seawater Desalination Plants
+
+    #Surface Water
+
+    #Pipelines
+
+    #Export Ports
+
+    #Accessibility
+
+    #Landuse
+
+    #Population Density
+
+    #Conflict Areas
+
+    #Fundings
+
+#Calculations
+    #Power grid
+array_distance_power_grid = np.array([])
+for i in range(len(gdf_grid_morocco_centroid)):
+    gdf_distance_power_grid = gdf_power_grid_morocco_utm29n['geometry'].distance(gdf_grid_morocco_centroid.iloc[i])
+    distance_power_grid_min = gdf_distance_power_grid.min()
+    
+    array_distance_power_grid = np.append(array_distance_power_grid, distance_power_grid_min)
+    scaled = (array_distance_power_grid / array_distance_power_grid.max()) * 100
+    
+    #Groundwater
+
+    #RE-Potentials
+
     #RE-Projects
 
     #H2-Projects
