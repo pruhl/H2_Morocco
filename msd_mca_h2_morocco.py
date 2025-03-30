@@ -11,7 +11,7 @@ dict_weights = {'avg_pv_yeald': 0.0557,
                 'industrial_zone_share': 0.16,
                 'rural_zone_share': 0.0496,
                 'water avalibility': 0.3399,
-                'non_conflict_areas': 0.1663}
+                'non conflict areas': 0.1663}
 
 #Empty Grid
 gdf_grid_morocco = gpd.read_file(r"C:\Users\psclr\Documents\02 Master\Masterprojekt\Python\grid_morocco_clear.shp")
@@ -20,11 +20,9 @@ gdf_grid_morocco_centroid = gdf_grid_morocco.centroid
 #Data
     #Energy Availibility
         #PV
-gdf_pv_morocco = gpd.read_file(r"C:\Users\psclr\Documents\02 Master\Masterprojekt\QGIS\Daten\Morocco_GISdata_LTAy_YearlyMonthlyTotals_GlobalSolarAtlas-v2_GEOTIFF\PV_yeald_clear.shp")
-gdf_pv_morocco_utm29n = gdf_pv_morocco.to_crs("EPSG:32629")
+gdf_pv_morocco_utm29n = gpd.read_file(r"C:\Users\psclr\Documents\02 Master\Masterprojekt\QGIS\Daten\Morocco_GISdata_LTAy_YearlyMonthlyTotals_GlobalSolarAtlas-v2_GEOTIFF\PV_yeald_clear.shp").to_crs("EPSG:32629")
         #Wind
-gdf_wind_morocco = gpd.read_file(r"C:\Users\psclr\Documents\02 Master\Masterprojekt\QGIS\Daten\Wind_Energiedichte\wind_power_clear_150m.shp")
-gdf_wind_morocco_utm29n = gdf_wind_morocco.to_crs("EPSG:32629")
+gdf_wind_morocco_utm29n = gpd.read_file(r"C:\Users\psclr\Documents\02 Master\Masterprojekt\QGIS\Daten\Wind_Energiedichte\wind_power_clear_150m_gross.shp").to_crs("EPSG:32629")
     #Water Availability
         #Groundwater
 gdf_groundwater_morocco_utm29n = gpd.read_file(r"C:\Users\psclr\Documents\02 Master\Masterprojekt\QGIS\Daten\Morocco\Morocco_HG.shp").to_crs("EPSG:32629")
@@ -49,22 +47,33 @@ gdf_landuse_utm29n = gpd.read_file(r'C:\Users\psclr\Documents\02 Master\Masterpr
 
 #Calculations
     #Energy Availibility
-        #PV
+        #PV/Wind
 array_pv_yeald = np.array([])
+array_wind_power = np.array([])
 for i in range(len(gdf_grid_morocco)):
     cell_morocco = gdf_grid_morocco['geometry'].iloc[i]
-    cell_intersection = gdf_pv_morocco_utm29n.intersects(cell_morocco)
-    list_index_intersection = cell_intersection[cell_intersection == True].index.tolist()
-    if len(list_index_intersection) == 0:
+    cell_intersection_pv = gdf_pv_morocco_utm29n.intersects(cell_morocco)
+    cell_intersection_wind = gdf_wind_morocco_utm29n.intersects(cell_morocco)
+    list_index_intersection_pv = cell_intersection_pv[cell_intersection_pv == True].index.tolist()
+    list_index_intersection_wind = cell_intersection_wind[cell_intersection_wind == True].index.tolist()
+    
+    if len(list_index_intersection_pv) == 0:
         pv_yeald = 0
     else:
-        pv_yeald = gdf_pv_morocco_utm29n['pv_yeald'].iloc[list_index_intersection].sum()/len(list_index_intersection)
+        pv_yeald = gdf_pv_morocco_utm29n['pv_yeald'].iloc[list_index_intersection_pv].sum()/len(list_index_intersection_pv)
+    
+    if len(list_index_intersection_wind) == 0:
+        wind_power = 0
+    else:
+        wind_power = gdf_wind_morocco_utm29n['wind_power'].iloc[list_index_intersection_wind].sum()/len(list_index_intersection_wind)
     
     array_pv_yeald = np.append(array_pv_yeald, pv_yeald)
+    array_wind_power = np.append(array_wind_power, wind_power)
 
 array_evaluation_pv = (array_pv_yeald / 
                      array_pv_yeald.max()) * 100
-        #Wind        
+array_evaluation_wind = (array_wind_power / 
+                     array_wind_power.max()) * 100
     #Water Availability
         #Groundwater
 gdf_union_high_water_area = gdf_groundwater_morocco_high.union_all()
@@ -91,12 +100,15 @@ gdf_intersection_industrie = (gdf_grid_morocco.intersection(gdf_industrie_morocc
 
     #Conflict Areas
 
+#No Go Zones
+
 #Sum
-array_sum = gdf_evaluation_groundwater + array_evaluation_pv + gdf_intersection_industrie
+array_sum = array_evaluation_pv + array_evaluation_wind + gdf_evaluation_groundwater + gdf_intersection_industrie 
 gdf_grid_morocco['pv_yeald'] = array_evaluation_pv
+gdf_grid_morocco['windpower'] = array_evaluation_wind
 gdf_grid_morocco['groundwater'] = gdf_evaluation_groundwater
 gdf_grid_morocco['indust'] = gdf_intersection_industrie
 gdf_grid_morocco['sum'] = array_sum
 
 
-gdf_grid_morocco.to_file('grid_morocco_h2_pot_test.shp', driver='ESRI Shapefile')
+# gdf_grid_morocco.to_file('grid_morocco_h2_pot_test_2.shp', driver='ESRI Shapefile')
