@@ -13,4 +13,4 @@ gdf_intersection_industrie = (gdf_grid_morocco.intersection(gdf_industrie_morocc
 
 gdf_grid_morocco['indust'] = gdf_intersection_industrie
 
-gdf_grid_morocco.to_file('industrial_share.shp', driver='ESRI Shapefile')
+# gdf_grid_morocco.to_file('industrial_share.shp', driver='ESRI Shapefile')
