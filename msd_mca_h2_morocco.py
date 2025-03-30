@@ -68,6 +68,8 @@ gdf_pv_morocco_utm29n = gdf_pv_morocco.to_crs("EPSG:32629")
 
     #Conflict Areas
 
+    #Industrie 
+
     #Fundings
 
 #Calculations
