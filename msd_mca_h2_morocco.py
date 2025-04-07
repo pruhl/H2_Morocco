@@ -171,9 +171,16 @@ non_conflict = gdf_grid_morocco.intersects(gdf_morocco)
 non_conflict.loc[non_conflict == True] = 100
 non_conflict.loc[non_conflict == False] = 0
 
-non_conflict.astype(float)
 #No Go Zones
+gdf_nogo_zones = gdf_landuse_utm29n[gdf_landuse_utm29n['fclass'].isin(['military', 'nature_reserve', 'recreation_ground'])]
 
+array_nogo = np.array([])
+for i in range(len(gdf_grid_morocco)):
+    cell = gdf_grid_morocco['geometry'].iloc[i]
+    cell_intersection = gdf_nogo_zones.intersects(cell)
+    list_index_intersection = cell_intersection[cell_intersection == True].index.tolist()
+
+    array_nogo = np.append(array_nogo, 0 if any(list_index_intersection) else 1)
 #Sum
 array_sum = (array_evaluation_pv * dict_weights['avg_pv_yeald'] + 
              array_evaluation_wind * dict_weights['avg_windpower'] + 
@@ -181,7 +188,7 @@ array_sum = (array_evaluation_pv * dict_weights['avg_pv_yeald'] +
              gdf_intersection_industrie * dict_weights['industrial_zone_share'] + 
              df_accessibility_sum.astype(float) * dict_weights['accessibility'] + 
              array_agriculture * dict_weights['agricultural_land_share'] + 
-             non_conflict * dict_weights['non conflict areas']+
+             non_conflict.astype(float) * dict_weights['non conflict areas']+
              array_urban * dict_weights['urban_zone_share']+
              array_rural * dict_weights['rural_zone_share'])
 
@@ -191,11 +198,10 @@ gdf_grid_morocco['water avalibility'] = gdf_evaluation_groundwater
 gdf_grid_morocco['industrial_zone_share'] = gdf_intersection_industrie
 gdf_grid_morocco['accessibility'] = df_accessibility_sum.astype(float)
 gdf_grid_morocco['agricultural_land_share'] = array_agriculture
-gdf_grid_morocco['non conflict areas'] = non_conflict
+gdf_grid_morocco['non conflict areas'] = non_conflict.astype(float)
 gdf_grid_morocco['urban_zone_share'] = array_urban
 gdf_grid_morocco['rural_zone_share'] = array_rural
-gdf_grid_morocco['sum'] = array_sum
+gdf_grid_morocco['nogo_zones'] = array_nogo
+gdf_grid_morocco['sum'] = array_sum * array_nogo
 
-# gdf_grid_morocco = gdf_grid_morocco*dict_weights.values()
-
-gdf_grid_morocco.to_file('grid_morocco_h2_pot_test_4.shp', driver='ESRI Shapefile')
+gdf_grid_morocco.to_file('grid_morocco_h2_pot_test_5.shp', driver='ESRI Shapefile')
