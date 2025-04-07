@@ -39,7 +39,15 @@ gdf_groundwater_morocco_high = pd.concat([gdf_groundwater_morocco_concat[gdf_gro
         #Surface Water
 
     #Accessibility
+gdf_grid_morocco = gpd.read_file(r'C:\Users\psclr\Documents\02 Master\Masterprojekt\Python\grid_morocco_clear.shp')
 
+gdf_railways_utm29n = gpd.read_file(r'C:\Users\psclr\Documents\02 Master\Masterprojekt\QGIS\Daten\Landuse\gis_osm_railways_free_1.shp').to_crs("EPSG:32629")
+gdf_railways_utm29n['fclass'] = 'railway'
+gdf_roads_utm29n = gpd.read_file(r'C:\Users\psclr\Documents\02 Master\Masterprojekt\QGIS\Daten\Landuse\gis_osm_roads_free_1.shp').to_crs("EPSG:32629")
+
+gdf_roads_railsways = gpd.GeoDataFrame(pd.concat([gdf_roads_utm29n, gdf_railways_utm29n], ignore_index=True), crs=gdf_roads_utm29n.crs)
+classes = ['motorway', 'trunk', 'primary', 'secondary', 'tertiary', 'track', 'track_grade1', 'track_grade2', 'track_grade3', 'track_grade4', 'unclassified', 'railway']
+gdf_roads_railsways = gdf_roads_railsways[gdf_roads_railsways['fclass'].isin(classes)]
     #Land Availability (Agricultural Land, Urban zone, Industrial zone, Rural zone)
 gdf_landuse_utm29n = gpd.read_file(r'C:\Users\psclr\Documents\02 Master\Masterprojekt\QGIS\Daten\Landuse\gis_osm_landuse_a_free_1.shp').to_crs("EPSG:32629")
 
@@ -86,7 +94,36 @@ gdf_evaluation_groundwater = (gdf_intersection_area_groundwater_high /
         #Surface Water
 
     #Accessibility
+weights_roads = {'motorway': 0.25,
+                  'trunk': 0.18,
+                  'primary':0.12, 
+                  'secondary':0.09, 
+                  'tertiary':0.06, 
+                  'track':0.01, 
+                  'track_grade1':0.03, 
+                  'track_grade2':0.02, 
+                  'track_grade3':0.01, 
+                  'track_grade4':0.01, 
+                  'unclassified':0.04, 
+                  'railway':0.18}
 
+df_sum = pd.DataFrame(columns = classes)
+for i in range(len(gdf_grid_morocco)):
+    cell_morocco = gdf_grid_morocco['geometry'].iloc[i]
+    cell_bool_intersection = gdf_roads_railsways.intersects(cell_morocco)
+    list_index_intersection = cell_bool_intersection[cell_bool_intersection == True].index.tolist()
+    roads_class = gdf_roads_railsways.loc[list_index_intersection]['fclass']
+    road_length = gdf_roads_railsways.loc[list_index_intersection].intersection(cell_morocco).length
+
+    df = pd.DataFrame({'class': roads_class, 'length': road_length})
+
+    for y in classes:
+        a = df[df['class'] == y]['length'].sum()
+        df_sum.loc[i, y] = a
+
+df_sum = (df_sum/df_sum.max())*100*weights_roads.values()
+
+df_sum_cells = df_sum.sum(axis=1)
     #Land Availability
         #Agricultural Land
 
@@ -103,12 +140,12 @@ gdf_intersection_industrie = (gdf_grid_morocco.intersection(gdf_industrie_morocc
 #No Go Zones
 
 #Sum
-array_sum = array_evaluation_pv + array_evaluation_wind + gdf_evaluation_groundwater + gdf_intersection_industrie 
+array_sum = array_evaluation_pv + array_evaluation_wind + gdf_evaluation_groundwater + gdf_intersection_industrie + df_sum_cells.astype(float)
 gdf_grid_morocco['pv_yeald'] = array_evaluation_pv
 gdf_grid_morocco['windpower'] = array_evaluation_wind
 gdf_grid_morocco['groundwater'] = gdf_evaluation_groundwater
 gdf_grid_morocco['indust'] = gdf_intersection_industrie
+gdf_grid_morocco['accessibility'] = df_sum_cells
 gdf_grid_morocco['sum'] = array_sum
 
-
-# gdf_grid_morocco.to_file('grid_morocco_h2_pot_test_2.shp', driver='ESRI Shapefile')
+gdf_grid_morocco.to_file('grid_morocco_h2_pot_test_3.shp', driver='ESRI Shapefile')

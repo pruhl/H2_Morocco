@@ -5,8 +5,12 @@ import pandas as pd
 # Daten einlesen
 gdf_grid_morocco = gpd.read_file(r'C:\Users\psclr\Documents\02 Master\Masterprojekt\Python\grid_morocco_clear.shp')
 
+gdf_railways_utm29n = gpd.read_file(r'C:\Users\psclr\Documents\02 Master\Masterprojekt\QGIS\Daten\Landuse\gis_osm_railways_free_1.shp').to_crs("EPSG:32629")
+gdf_railways_utm29n['fclass'] = 'railway'
 gdf_roads_utm29n = gpd.read_file(r'C:\Users\psclr\Documents\02 Master\Masterprojekt\QGIS\Daten\Landuse\gis_osm_roads_free_1.shp').to_crs("EPSG:32629")
-classes = ['motorway', 'trunk', 'primary', 'secondary', 'tertiary', 'track', 'track_grade1', 'track_grade2', 'track_grade3', 'track_grade4', 'unclassified']
+
+gdf_roads_railsways = gpd.GeoDataFrame(pd.concat([gdf_roads_utm29n, gdf_railways_utm29n], ignore_index=True), crs=gdf_roads_utm29n.crs)
+classes = ['motorway', 'trunk', 'primary', 'secondary', 'tertiary', 'track', 'track_grade1', 'track_grade2', 'track_grade3', 'track_grade4', 'unclassified', 'railway']
 weights_roads = {'motorway': 0.25,
                   'trunk': 0.18,
                   'primary':0.12, 
@@ -17,16 +21,18 @@ weights_roads = {'motorway': 0.25,
                   'track_grade2':0.02, 
                   'track_grade3':0.01, 
                   'track_grade4':0.01, 
-                  'unclassified':0.04}
-gdf_roads_utm29n = gdf_roads_utm29n[gdf_roads_utm29n['fclass'].isin(classes)]
+                  'unclassified':0.04, 
+                  'railway':0.18}
+
+gdf_roads_railsways = gdf_roads_railsways[gdf_roads_railsways['fclass'].isin(classes)]
 
 df_sum = pd.DataFrame(columns = classes)
 for i in range(len(gdf_grid_morocco)):
     cell_morocco = gdf_grid_morocco['geometry'].iloc[i]
-    cell_bool_intersection = gdf_roads_utm29n.intersects(cell_morocco)
-    list_index_intersection_roads = cell_bool_intersection[cell_bool_intersection == True].index.tolist()
-    roads_class = gdf_roads_utm29n.loc[list_index_intersection_roads]['fclass']
-    road_length = gdf_roads_utm29n.loc[list_index_intersection_roads].intersection(cell_morocco).length
+    cell_bool_intersection = gdf_roads_railsways.intersects(cell_morocco)
+    list_index_intersection = cell_bool_intersection[cell_bool_intersection == True].index.tolist()
+    roads_class = gdf_roads_railsways.loc[list_index_intersection]['fclass']
+    road_length = gdf_roads_railsways.loc[list_index_intersection].intersection(cell_morocco).length
 
     df = pd.DataFrame({'class': roads_class, 'length': road_length})
 
