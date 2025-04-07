@@ -15,7 +15,6 @@ dict_weights = {'avg_pv_yeald': 0.0557,
 
 #Empty Grid
 gdf_grid_morocco = gpd.read_file(r"C:\Users\psclr\Documents\02 Master\Masterprojekt\Python\grid_morocco_clear.shp")
-gdf_grid_morocco_centroid = gdf_grid_morocco.centroid
 
 #Data
     #Energy Availibility
@@ -50,8 +49,8 @@ classes = ['motorway', 'trunk', 'primary', 'secondary', 'tertiary', 'track', 'tr
 gdf_roads_railsways = gdf_roads_railsways[gdf_roads_railsways['fclass'].isin(classes)]
     #Land Availability (Agricultural Land, Urban zone, Industrial zone, Rural zone)
 gdf_landuse_utm29n = gpd.read_file(r'C:\Users\psclr\Documents\02 Master\Masterprojekt\QGIS\Daten\Landuse\gis_osm_landuse_a_free_1.shp').to_crs("EPSG:32629")
-
-    #Conflict Areas
+    #non Conflict Areas
+gdf_morocco = gpd.read_file(r'C:\Users\psclr\Documents\02 Master\Masterprojekt\QGIS\Daten\morocco.geojson').to_crs("EPSG:32629").union_all()
 
 #Calculations
     #Energy Availibility
@@ -107,45 +106,96 @@ weights_roads = {'motorway': 0.25,
                   'unclassified':0.04, 
                   'railway':0.18}
 
-df_sum = pd.DataFrame(columns = classes)
+df_accessibility = pd.DataFrame(columns = classes)
 for i in range(len(gdf_grid_morocco)):
-    cell_morocco = gdf_grid_morocco['geometry'].iloc[i]
-    cell_bool_intersection = gdf_roads_railsways.intersects(cell_morocco)
+    cell = gdf_grid_morocco['geometry'].iloc[i]
+    cell_bool_intersection = gdf_roads_railsways.intersects(cell)
     list_index_intersection = cell_bool_intersection[cell_bool_intersection == True].index.tolist()
     roads_class = gdf_roads_railsways.loc[list_index_intersection]['fclass']
-    road_length = gdf_roads_railsways.loc[list_index_intersection].intersection(cell_morocco).length
+    road_length = gdf_roads_railsways.loc[list_index_intersection].intersection(cell).length
 
     df = pd.DataFrame({'class': roads_class, 'length': road_length})
 
     for y in classes:
-        a = df[df['class'] == y]['length'].sum()
-        df_sum.loc[i, y] = a
+        df_accessibility.loc[i, y] = df[df['class'] == y]['length'].sum()
 
-df_sum = (df_sum/df_sum.max())*100*weights_roads.values()
+df_accessibility = (df_accessibility/df_accessibility.max())*100*weights_roads.values()
 
-df_sum_cells = df_sum.sum(axis=1)
+df_accessibility_sum = df_accessibility.sum(axis=1)
     #Land Availability
         #Agricultural Land
+gdf_agriculture_morocco = gdf_landuse_utm29n[gdf_landuse_utm29n['fclass'].isin(['farmland', 'farmyard', 'meadow', 'orchard', 'vineyard'])]
+array_agriculture = np.array([])
+for i in range(len(gdf_grid_morocco)):
+    cell = gdf_grid_morocco['geometry'].iloc[i]
+    cell_intersection = gdf_agriculture_morocco.intersects(cell)
+    list_index_intersection = cell_intersection[cell_intersection == True].index.tolist()
+    area = gdf_agriculture_morocco.loc[list_index_intersection].intersection(cell).area.sum()
 
+    array_agriculture = np.append(array_agriculture, area/cell.area)
+
+array_agriculture -= array_agriculture.max()
+array_agriculture = (array_agriculture/array_agriculture.min())*100
         #Urban zone
+gdf_urban_morocco = gdf_landuse_utm29n[gdf_landuse_utm29n['fclass'].isin(['residential'])]
+array_urban = np.array([])
+for i in range(len(gdf_grid_morocco)):
+    cell = gdf_grid_morocco['geometry'].iloc[i]
+    cell_intersection = gdf_urban_morocco.intersects(cell)
+    list_index_intersection = cell_intersection[cell_intersection == True].index.tolist()
+    area = gdf_urban_morocco.loc[list_index_intersection].intersection(cell).area.sum()
 
+    array_urban = np.append(array_urban, area/cell.area)
+
+array_urban -= array_urban.max()
+array_urban = (array_urban/array_urban.min())*100
         #Industrial zone
 gdf_industrie_morocco = gdf_landuse_utm29n[gdf_landuse_utm29n['fclass'].isin(['industrial'])].union_all()
 
 gdf_intersection_industrie = (gdf_grid_morocco.intersection(gdf_industrie_morocco).area/gdf_grid_morocco.area)*100
         #Rural zone
+array_rural = np.array([])
+for i in range(len(gdf_grid_morocco)):
+    cell = gdf_grid_morocco['geometry'].iloc[i]
+    cell_intersection = gdf_landuse_utm29n.intersects(cell)
+    list_index_intersection = cell_intersection[cell_intersection == True].index.tolist()
+    area = gdf_landuse_utm29n.loc[list_index_intersection].intersection(cell).area.sum()
 
-    #Conflict Areas
+    array_rural = np.append(array_rural, area/cell.area if area/cell.area <= 1 else 1)
 
+array_rural -= 1
+array_rural = (array_rural/array_rural.min())*100
+    #non Conflict Areas
+non_conflict = gdf_grid_morocco.intersects(gdf_morocco)
+
+non_conflict.loc[non_conflict == True] = 100
+non_conflict.loc[non_conflict == False] = 0
+
+non_conflict.astype(float)
 #No Go Zones
 
 #Sum
-array_sum = array_evaluation_pv + array_evaluation_wind + gdf_evaluation_groundwater + gdf_intersection_industrie + df_sum_cells.astype(float)
-gdf_grid_morocco['pv_yeald'] = array_evaluation_pv
-gdf_grid_morocco['windpower'] = array_evaluation_wind
-gdf_grid_morocco['groundwater'] = gdf_evaluation_groundwater
-gdf_grid_morocco['indust'] = gdf_intersection_industrie
-gdf_grid_morocco['accessibility'] = df_sum_cells
+array_sum = (array_evaluation_pv * dict_weights['avg_pv_yeald'] + 
+             array_evaluation_wind * dict_weights['avg_windpower'] + 
+             gdf_evaluation_groundwater * dict_weights['water avalibility'] + 
+             gdf_intersection_industrie * dict_weights['industrial_zone_share'] + 
+             df_accessibility_sum.astype(float) * dict_weights['accessibility'] + 
+             array_agriculture * dict_weights['agricultural_land_share'] + 
+             non_conflict * dict_weights['non conflict areas']+
+             array_urban * dict_weights['urban_zone_share']+
+             array_rural * dict_weights['rural_zone_share'])
+
+gdf_grid_morocco['avg_pv_yeald'] = array_evaluation_pv
+gdf_grid_morocco['avg_windpower'] = array_evaluation_wind
+gdf_grid_morocco['water avalibility'] = gdf_evaluation_groundwater
+gdf_grid_morocco['industrial_zone_share'] = gdf_intersection_industrie
+gdf_grid_morocco['accessibility'] = df_accessibility_sum.astype(float)
+gdf_grid_morocco['agricultural_land_share'] = array_agriculture
+gdf_grid_morocco['non conflict areas'] = non_conflict
+gdf_grid_morocco['urban_zone_share'] = array_urban
+gdf_grid_morocco['rural_zone_share'] = array_rural
 gdf_grid_morocco['sum'] = array_sum
 
-gdf_grid_morocco.to_file('grid_morocco_h2_pot_test_3.shp', driver='ESRI Shapefile')
+# gdf_grid_morocco = gdf_grid_morocco*dict_weights.values()
+
+gdf_grid_morocco.to_file('grid_morocco_h2_pot_test_4.shp', driver='ESRI Shapefile')
