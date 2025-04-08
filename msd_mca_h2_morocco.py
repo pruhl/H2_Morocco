@@ -30,12 +30,11 @@ gdf_groundwater_western_sahara_utm29n = gdf_groundwater_western_sahara_utm29n.re
                                                                                      {'WSGLG': 'MorGLG', 'WSHGComb': 'MorHGComb'})
 gdf_groundwater_morocco_concat = pd.concat([gdf_groundwater_morocco_utm29n, gdf_groundwater_western_sahara_utm29n], 
                                            ignore_index=True)
-gdf_groundwater_morocco_high = pd.concat([gdf_groundwater_morocco_concat[gdf_groundwater_morocco_concat['MorHGComb'] == 'CSIF-M/H'], 
-                                         gdf_groundwater_morocco_concat[gdf_groundwater_morocco_concat['MorHGComb'] == 'CSFK-H/VH']], 
-                                         ignore_index=True)
+gdf_groundwater = gdf_groundwater_morocco_concat[gdf_groundwater_morocco_concat['MorHGComb'].isin(['CSIF-M/H', 'CSFK-H/VH'])]
         #Seawater Desalination Plants
 
         #Surface Water
+gdf_rivers = gpd.read_file(r"C:\Users\psclr\Documents\02 Master\Masterprojekt\QGIS\Daten\hotosm_mar_waterways_gpkg\hotosm_mar_waterways.gpkg").to_crs("EPSG:32629")
 
     #Accessibility
 gdf_grid_morocco = gpd.read_file(r'C:\Users\psclr\Documents\02 Master\Masterprojekt\Python\grid_morocco_clear.shp')
@@ -83,15 +82,33 @@ array_evaluation_wind = (array_wind_power /
                      array_wind_power.max()) * 100
     #Water Availability
         #Groundwater
-gdf_union_high_water_area = gdf_groundwater_morocco_high.union_all()
-gdf_intersection_area_groundwater_high = gdf_grid_morocco.intersection(gdf_union_high_water_area).area
+array_gw = np.array([])
+for i in range(len(gdf_grid_morocco)):
+    cell = gdf_grid_morocco['geometry'].iloc[i]
+    cell_intersection = gdf_groundwater.intersects(cell)
+    list_index_intersection = cell_intersection[cell_intersection == True].index.tolist()
+    area = gdf_groundwater.loc[list_index_intersection].intersection(cell).area.sum()
 
-gdf_evaluation_groundwater = (gdf_intersection_area_groundwater_high / 
-                              gdf_intersection_area_groundwater_high.max()) * 100
+    array_gw = np.append(array_gw, area/cell.area if area/cell.area <= 1 else 1)
+
+array_gw = (array_gw/array_gw.max())*100
         #Seawater Desalination Plants
 
         #Surface Water
+array_rivers = np.array([])
+for i in range(len(gdf_grid_morocco)):
+    cell = gdf_grid_morocco['geometry'].iloc[i]
+    cell_bool_intersection = gdf_rivers.intersects(cell)
+    list_index_intersection = cell_bool_intersection[cell_bool_intersection == True].index.tolist()
+    rivers_length = gdf_rivers.loc[list_index_intersection].intersection(cell).length.sum()
 
+    array_rivers = np.append(array_rivers, rivers_length)
+
+array_rivers = (array_rivers/array_rivers.max())*100
+
+array_water = array_gw + array_rivers
+
+array_water = (array_water/array_water.max())*100
     #Accessibility
 weights_roads = {'motorway': 0.25,
                   'trunk': 0.18,
@@ -184,7 +201,7 @@ for i in range(len(gdf_grid_morocco)):
 #Sum
 array_sum = (array_evaluation_pv * dict_weights['avg_pv_yeald'] + 
              array_evaluation_wind * dict_weights['avg_windpower'] + 
-             gdf_evaluation_groundwater * dict_weights['water avalibility'] + 
+             array_water * dict_weights['water avalibility'] + 
              gdf_intersection_industrie * dict_weights['industrial_zone_share'] + 
              df_accessibility_sum.astype(float) * dict_weights['accessibility'] + 
              array_agriculture * dict_weights['agricultural_land_share'] + 
@@ -194,7 +211,7 @@ array_sum = (array_evaluation_pv * dict_weights['avg_pv_yeald'] +
 
 gdf_grid_morocco['avg_pv_yeald'] = array_evaluation_pv
 gdf_grid_morocco['avg_windpower'] = array_evaluation_wind
-gdf_grid_morocco['water avalibility'] = gdf_evaluation_groundwater
+gdf_grid_morocco['water avalibility'] = array_water
 gdf_grid_morocco['industrial_zone_share'] = gdf_intersection_industrie
 gdf_grid_morocco['accessibility'] = df_accessibility_sum.astype(float)
 gdf_grid_morocco['agricultural_land_share'] = array_agriculture
@@ -204,4 +221,4 @@ gdf_grid_morocco['rural_zone_share'] = array_rural
 gdf_grid_morocco['nogo_zones'] = array_nogo
 gdf_grid_morocco['sum'] = array_sum * array_nogo
 
-gdf_grid_morocco.to_file('grid_morocco_h2_pot_test_5.shp', driver='ESRI Shapefile')
+gdf_grid_morocco.to_file('grid_morocco_h2_pot_test_6.shp', driver='ESRI Shapefile')
