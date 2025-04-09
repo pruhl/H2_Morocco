@@ -5,13 +5,16 @@ gdf_grid_morocco = gpd.read_file(r"C:\Users\psclr\Documents\02 Master\Masterproj
 
 gdf_landuse_utm29n = gpd.read_file(r'C:\Users\psclr\Documents\02 Master\Masterprojekt\QGIS\Daten\Landuse\gis_osm_landuse_a_free_1.shp').to_crs("EPSG:32629")
 
+def list_index(cell,gdf):
+    intersects = gdf.intersects(cell)
+    return intersects[intersects == True].index.tolist()
+
 array_rural = np.array([])
 for i in range(len(gdf_grid_morocco)):
-    cell = gdf_grid_morocco['geometry'].iloc[i]
-    cell_intersection = gdf_landuse_utm29n.intersects(cell)
-    list_index_intersection = cell_intersection[cell_intersection == True].index.tolist()
-    area = gdf_landuse_utm29n.loc[list_index_intersection].intersection(cell).area.sum()
+    cell = gdf_grid_morocco.geometry[i]
+    list_index_intersection = list_index(cell, gdf_landuse_utm29n)
 
+    area = gdf_landuse_utm29n.loc[list_index_intersection].intersection(cell).area.sum()
     array_rural = np.append(array_rural, area/cell.area if area/cell.area <= 1 else 1)
 
 array_rural -= 1

@@ -37,6 +37,6 @@ for i in range(len(gdf_grid_morocco)):
 
 array_rivers = (array_rivers/array_rivers.max())*100
 
-# array_water = array_gw + array_rivers
+array_water = np.maximum(array_gw, array_rivers)
 
 # array_water = (array_water/array_water.max())*100

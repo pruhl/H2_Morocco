@@ -2,6 +2,7 @@ import numpy as np
 import pandas as pd
 import geopandas as gpd
 
+
 #Weights
 dict_weights = {'avg_pv_yeald': 0.0557, 
                 'avg_windpower': 0.1113, 
@@ -16,10 +17,9 @@ dict_weights = {'avg_pv_yeald': 0.0557,
 #Empty Grid
 gdf_grid_morocco = gpd.read_file(r"C:\Users\psclr\Documents\02 Master\Masterprojekt\Python\grid_morocco_clear.shp")
 
-def list_index(gdf, i, grid = gdf_grid_morocco):
-    cell = grid['geometry'].iloc[i]
+def list_index(cell,gdf):
     intersects = gdf.intersects(cell)
-    return cell, intersects[intersects == True].index.tolist()
+    return intersects[intersects == True].index.tolist()
 #Data
     #Energy Availibility
         #PV
@@ -53,59 +53,14 @@ classes = ['motorway', 'trunk', 'primary', 'secondary', 'tertiary', 'track', 'tr
 gdf_roads_railsways = gdf_roads_railsways[gdf_roads_railsways['fclass'].isin(classes)]
     #Land Availability (Agricultural Land, Urban zone, Industrial zone, Rural zone)
 gdf_landuse_utm29n = gpd.read_file(r'C:\Users\psclr\Documents\02 Master\Masterprojekt\QGIS\Daten\Landuse\gis_osm_landuse_a_free_1.shp').to_crs("EPSG:32629")
+gdf_agriculture_morocco = gdf_landuse_utm29n[gdf_landuse_utm29n['fclass'].isin(['farmland', 'farmyard', 'meadow', 'orchard', 'vineyard'])]
+gdf_urban_morocco = gdf_landuse_utm29n[gdf_landuse_utm29n['fclass'].isin(['residential'])]
+gdf_nogo_zones = gdf_landuse_utm29n[gdf_landuse_utm29n['fclass'].isin(['military', 'nature_reserve', 'recreation_ground'])]
+gdf_industrie_morocco = gdf_landuse_utm29n[gdf_landuse_utm29n['fclass'].isin(['industrial'])]
     #non Conflict Areas
 gdf_morocco = gpd.read_file(r'C:\Users\psclr\Documents\02 Master\Masterprojekt\QGIS\Daten\morocco.geojson').to_crs("EPSG:32629").union_all()
 
 #Calculations
-    #Energy Availibility
-        #PV/Wind
-array_pv_yeald = np.array([])
-array_wind_power = np.array([])
-for i in range(len(gdf_grid_morocco)):
-    cell_pv, list_index_intersection_pv = list_index(gdf_pv_morocco_utm29n, i)
-    cell_wind, list_index_intersection_wind = list_index(gdf_wind_morocco_utm29n, i)
-    
-    if len(list_index_intersection_pv) == 0:
-        pv_yeald = 0
-    else:
-        pv_yeald = gdf_pv_morocco_utm29n['pv_yeald'].iloc[list_index_intersection_pv].sum()/len(list_index_intersection_pv)
-    
-    if len(list_index_intersection_wind) == 0:
-        wind_power = 0
-    else:
-        wind_power = gdf_wind_morocco_utm29n['wind_power'].iloc[list_index_intersection_wind].sum()/len(list_index_intersection_wind)
-    
-    array_pv_yeald = np.append(array_pv_yeald, pv_yeald)
-    array_wind_power = np.append(array_wind_power, wind_power)
-
-array_evaluation_pv = (array_pv_yeald / 
-                     array_pv_yeald.max()) * 100
-array_evaluation_wind = (array_wind_power / 
-                     array_wind_power.max()) * 100
-    #Water Availability
-        #Groundwater
-array_gw = np.array([])
-for i in range(len(gdf_grid_morocco)):
-    cell, list_index_intersection = list_index(gdf_groundwater, i)
-    area = gdf_groundwater.loc[list_index_intersection].intersection(cell).area.sum()
-
-    array_gw = np.append(array_gw, area/cell.area if area/cell.area <= 1 else 1)
-
-array_gw = (array_gw/array_gw.max())*100
-        #Seawater Desalination Plants
-
-        #Surface Water
-array_rivers = np.array([])
-for i in range(len(gdf_grid_morocco)):
-    cell, list_index_intersection = list_index(gdf_rivers, i)
-    rivers_length = gdf_rivers.loc[list_index_intersection].intersection(cell).length.sum()
-
-    array_rivers = np.append(array_rivers, rivers_length)
-
-array_rivers = (array_rivers/array_rivers.max())*100
-
-array_water = np.maximum(array_gw, array_rivers)
-    #Accessibility
 weights_roads = {'motorway': 0.25,
                   'trunk': 0.18,
                   'primary':0.12, 
@@ -119,77 +74,109 @@ weights_roads = {'motorway': 0.25,
                   'unclassified':0.04, 
                   'railway':0.18}
 
+array_pv_yeald = np.array([])
+array_wind_power = np.array([])
+array_gw = np.array([])
+array_rivers = np.array([])
 df_accessibility = pd.DataFrame(columns = classes)
+array_agriculture = np.array([])
+array_urban = np.array([])
+array_rural = np.array([])
+array_nogo = np.array([])
+array_iundustrie = np.array([])
 for i in range(len(gdf_grid_morocco)):
-    cell, list_index_intersection = list_index(gdf_roads_railsways, i)
-    roads_class = gdf_roads_railsways.loc[list_index_intersection]['fclass']
-    road_length = gdf_roads_railsways.loc[list_index_intersection].intersection(cell).length
+    cell = gdf_grid_morocco.geometry[i]
+    
+    list_index_intersection_pv = list_index(cell, gdf_pv_morocco_utm29n)
+    list_index_intersection_wind = list_index(cell, gdf_wind_morocco_utm29n)
+    list_index_intersection_groundwater = list_index(cell, gdf_groundwater)
+    list_index_intersection_rivers = list_index(cell, gdf_rivers)
+    list_index_intersection_roads = list_index(cell, gdf_roads_railsways)
+    list_index_intersection_rural = list_index(cell, gdf_landuse_utm29n)
+    list_index_intersection_nogo = list_index(cell, gdf_nogo_zones)
+    list_index_intersection_agriculture = list_index(cell, gdf_agriculture_morocco)
+    list_index_intersection_urban = list_index(cell, gdf_urban_morocco)
+    list_index_intersection_industrie = list_index(cell, gdf_industrie_morocco)
+
+    #Energy Availibility
+    if len(list_index_intersection_pv) == 0:
+        pv_yeald = 0
+    else:
+        pv_yeald = gdf_pv_morocco_utm29n['pv_yeald'].iloc[list_index_intersection_pv].sum()/len(list_index_intersection_pv)
+    
+    if len(list_index_intersection_wind) == 0:
+        wind_power = 0
+    else:
+        wind_power = gdf_wind_morocco_utm29n['wind_power'].iloc[list_index_intersection_wind].sum()/len(list_index_intersection_wind)
+    
+    array_pv_yeald = np.append(array_pv_yeald, pv_yeald)
+    array_wind_power = np.append(array_wind_power, wind_power)
+    #Water Availability
+        #Groundwater
+    area_gw = gdf_groundwater.loc[list_index_intersection_groundwater].intersection(cell).area.sum()
+    array_gw = np.append(array_gw, area_gw/cell.area if area_gw/cell.area <= 1 else 1)
+        #Rivers
+    rivers_length = gdf_rivers.loc[list_index_intersection_rivers].intersection(cell).length.sum()
+    array_rivers = np.append(array_rivers, rivers_length)
+        #Seawater Desalination Plants
+    #Accessibility
+    roads_class = gdf_roads_railsways.loc[list_index_intersection_roads]['fclass']
+    road_length = gdf_roads_railsways.loc[list_index_intersection_roads].intersection(cell).length
 
     df = pd.DataFrame({'class': roads_class, 'length': road_length})
 
     for y in classes:
         df_accessibility.loc[i, y] = df[df['class'] == y]['length'].sum()
-
-df_accessibility = (df_accessibility/df_accessibility.max())*100*weights_roads.values()
-
-df_accessibility_sum = df_accessibility.sum(axis=1)
+    
     #Land Availability
         #Agricultural Land
-gdf_agriculture_morocco = gdf_landuse_utm29n[gdf_landuse_utm29n['fclass'].isin(['farmland', 'farmyard', 'meadow', 'orchard', 'vineyard'])]
-array_agriculture = np.array([])
-for i in range(len(gdf_grid_morocco)):
-    cell, list_index_intersection = list_index(gdf_agriculture_morocco, i)
-    area = gdf_agriculture_morocco.loc[list_index_intersection].intersection(cell).area.sum()
+    area_agri = gdf_agriculture_morocco.loc[list_index_intersection_agriculture].intersection(cell).area.sum()
+    array_agriculture = np.append(array_agriculture, area_agri/cell.area)
+        #Urban zone
+    area_urb = gdf_urban_morocco.loc[list_index_intersection_urban].intersection(cell).area.sum()
+    array_urban = np.append(array_urban, area_urb/cell.area)
+        #Industrial zone
+    area_ind = gdf_industrie_morocco.loc[list_index_intersection_industrie].intersection(cell).area.sum()
+    array_iundustrie = np.append(array_iundustrie, area_ind/cell.area)
+        #Rural zone
+    area_rur = gdf_landuse_utm29n.loc[list_index_intersection_rural].intersection(cell).area.sum()
+    array_rural = np.append(array_rural, area_rur/cell.area if area_rur/cell.area <= 1 else 1)
+    #No Go Zones
+    array_nogo = np.append(array_nogo, 0 if any(list_index_intersection_nogo) else 1)
 
-    array_agriculture = np.append(array_agriculture, area/cell.area)
+array_evaluation_pv = (array_pv_yeald / 
+                     array_pv_yeald.max()) * 100
+array_evaluation_wind = (array_wind_power / 
+                     array_wind_power.max()) * 100
+array_gw = (array_gw/array_gw.max())*100
+array_rivers = (array_rivers/array_rivers.max())*100
+array_water = np.maximum(array_gw, array_rivers)
+
+df_accessibility = (df_accessibility/df_accessibility.max())*100*weights_roads.values()
+df_accessibility_sum = df_accessibility.sum(axis=1)
 
 array_agriculture -= array_agriculture.max()
 array_agriculture = (array_agriculture/array_agriculture.min())*100
-        #Urban zone
-gdf_urban_morocco = gdf_landuse_utm29n[gdf_landuse_utm29n['fclass'].isin(['residential'])]
-array_urban = np.array([])
-for i in range(len(gdf_grid_morocco)):
-    cell, list_index_intersection = list_index(gdf_urban_morocco, i)
-    area = gdf_urban_morocco.loc[list_index_intersection].intersection(cell).area.sum()
-
-    array_urban = np.append(array_urban, area/cell.area)
 
 array_urban -= array_urban.max()
 array_urban = (array_urban/array_urban.min())*100
-        #Industrial zone
-gdf_industrie_morocco = gdf_landuse_utm29n[gdf_landuse_utm29n['fclass'].isin(['industrial'])].union_all()
 
-gdf_intersection_industrie = (gdf_grid_morocco.intersection(gdf_industrie_morocco).area/gdf_grid_morocco.area)*100
-        #Rural zone
-array_rural = np.array([])
-for i in range(len(gdf_grid_morocco)):
-    cell, list_index_intersection = list_index(gdf_landuse_utm29n, i)
-    area = gdf_landuse_utm29n.loc[list_index_intersection].intersection(cell).area.sum()
-
-    array_rural = np.append(array_rural, area/cell.area if area/cell.area <= 1 else 1)
+array_iundustrie = (array_iundustrie/array_iundustrie.max())*100
 
 array_rural -= 1
 array_rural = (array_rural/array_rural.min())*100
+
     #non Conflict Areas
 non_conflict = gdf_grid_morocco.intersects(gdf_morocco)
 
 non_conflict.loc[non_conflict == True] = 100
 non_conflict.loc[non_conflict == False] = 0
 
-#No Go Zones
-gdf_nogo_zones = gdf_landuse_utm29n[gdf_landuse_utm29n['fclass'].isin(['military', 'nature_reserve', 'recreation_ground'])]
-
-array_nogo = np.array([])
-for i in range(len(gdf_grid_morocco)):
-    cell, list_index_intersection = list_index(gdf_nogo_zones, i)
-
-    array_nogo = np.append(array_nogo, 0 if any(list_index_intersection) else 1)
-
 #Sum
 array_sum = (array_evaluation_pv * dict_weights['avg_pv_yeald'] + 
              array_evaluation_wind * dict_weights['avg_windpower'] + 
              array_water * dict_weights['water avalibility'] + 
-             gdf_intersection_industrie * dict_weights['industrial_zone_share'] + 
+             array_iundustrie * dict_weights['industrial_zone_share'] + 
              df_accessibility_sum.astype(float) * dict_weights['accessibility'] + 
              array_agriculture * dict_weights['agricultural_land_share'] + 
              non_conflict.astype(float) * dict_weights['non conflict areas']+
@@ -199,7 +186,7 @@ array_sum = (array_evaluation_pv * dict_weights['avg_pv_yeald'] +
 gdf_grid_morocco['avg_pv_yeald'] = array_evaluation_pv
 gdf_grid_morocco['avg_windpower'] = array_evaluation_wind
 gdf_grid_morocco['water avalibility'] = array_water
-gdf_grid_morocco['industrial_zone_share'] = gdf_intersection_industrie
+gdf_grid_morocco['industrial_zone_share'] = array_iundustrie
 gdf_grid_morocco['accessibility'] = df_accessibility_sum.astype(float)
 gdf_grid_morocco['agricultural_land_share'] = array_agriculture
 gdf_grid_morocco['non conflict areas'] = non_conflict.astype(float)
@@ -208,4 +195,4 @@ gdf_grid_morocco['rural_zone_share'] = array_rural
 gdf_grid_morocco['nogo_zones'] = array_nogo
 gdf_grid_morocco['sum'] = array_sum * array_nogo
 
-gdf_grid_morocco.to_file('grid_morocco_h2_pot_test_6.shp', driver='ESRI Shapefile')
+gdf_grid_morocco.to_file('grid_morocco_h2_pot_test_7.shp', driver='ESRI Shapefile')
