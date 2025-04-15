@@ -19,4 +19,3 @@ for i in range(len(gdf_grid_morocco)):
 
 array_rural -= 1
 array_rural = (array_rural/array_rural.min())*100
-test
