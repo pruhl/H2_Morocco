@@ -1,23 +1,35 @@
 import geopandas as gpd 
 import numpy as np
-from shapely.geometry import point
+import pandas as pd
 
 #Data
     #Grid
 gdf_grid_morocco = gpd.read_file(r"C:\Users\psclr\Documents\02 Master\Masterprojekt\Python\grid_morocco_clear.shp")
 gdf_grid_morocco_centroid = gdf_grid_morocco.centroid
 
-    #Export Ports
-gdf_export_ports = gpd.GeoDataFrame({
-    'geometry': [point(-7.5, -7.5), point(35.5, 36.5)],
-    'name': ['Port1', 'Port2'],
-    'country': ['Morocco', 'Morocco']
-    }, crs="EPSG:4326")
+#Distance all cells to all cells
+list_distance = []
+for i in range(len(gdf_grid_morocco)):
+    
+    d = gdf_grid_morocco_centroid.distance(gdf_grid_morocco_centroid[i])
+    list_distance.append(d)
 
-array_distance_export_ports = np.array([])
-for i in range(len(gdf_grid_morocco_centroid)):
-    cell = gdf_grid_morocco['geometry'][i]
-    min_distance = gdf_export_ports['geometry'].distance(cell).min()
+df_distance = pd.DataFrame(list_distance)
 
-    array_distance_export_ports = np.append(array_distance_export_ports, min_distance)
+# Watercost
+lcowater_groundwater = 1 # €/m³
+lcowater_desalination = 5 # €/m³
+lcowater_surfacewater = 2 # €/m³
+
+#Grid Cost
+
+#H2 Pipeline Cost
+
+#H2 Trailer Cost
+
+#Water Pipline Cost
+
+#Water Trailer Cost
+
+#Calcuation of LCOH (cheepest option for each cell)
 
