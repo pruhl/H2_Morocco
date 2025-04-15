@@ -45,4 +45,3 @@ df_sum = (df_sum/df_sum.max())*100*weights_roads.values()
 df_sum_cells = df_sum.sum(axis=1)
 
 # gdf_grid_morocco.to_file('industrial_share.shp', driver='ESRI Shapefile')
-# test
