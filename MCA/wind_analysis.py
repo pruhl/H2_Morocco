@@ -7,7 +7,7 @@ gdf_grid_morocco = gpd.read_file('Grid_morocco/grid_morocco_clear.shp')
     #Curent potential map
 gdf_current_potential = gpd.read_file('grid_morocco_h2_pot_test_7.shp')
     #Wind
-gdf_wind_morocco_utm29n = gpd.read_file(r"C:\Users\psclr\Documents\02 Master\Masterprojekt\QGIS\Daten\Wind_Energiedichte\wind_power_clear_150m_gross.shp").to_crs("EPSG:32629")
+gdf_wind_morocco_utm29n = gpd.read_file('Wind_pot_morocco_FLH.shp').to_crs("EPSG:32629")
 
 def list_index(gdf, i, grid = gdf_grid_morocco):
     cell = grid['geometry'].iloc[i]
@@ -21,9 +21,9 @@ for i in range(len(gdf_grid_morocco)):
     if len(list_index_intersection_wind) == 0:
         wind_power = 0
     else:
-        wind_power = gdf_wind_morocco_utm29n['wind_power'].iloc[list_index_intersection_wind].sum()/len(list_index_intersection_wind)
+        wind_power = gdf_wind_morocco_utm29n['FLH_wind'].iloc[list_index_intersection_wind].sum()/len(list_index_intersection_wind)
     
-    array_pv_yeald = np.append(array_wind_power, wind_power)
+    array_wind_power = np.append(array_wind_power, wind_power)
 
 array_evaluation_wind = (array_wind_power / 
                      array_wind_power.max()) * 100

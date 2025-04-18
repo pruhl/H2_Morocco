@@ -13,6 +13,7 @@ dict_weights = {'avg_pv_yeald': 0.0557,
                 'water avalibility': 0.3399,
                 'non conflict areas': 0.1663}
 
+
 #Empty Grid
 gdf_grid_morocco = gpd.read_file(r"C:\Users\psclr\Documents\02 Master\Masterprojekt\Python\grid_morocco_clear.shp")
 
