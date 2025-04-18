@@ -3,14 +3,19 @@ import numpy as np
 import pandas as pd
 
 # Daten einlesen
-gdf_grid_morocco = gpd.read_file(r'C:\Users\psclr\Documents\02 Master\Masterprojekt\Python\grid_morocco_clear.shp')
-
+    #Grid
+gdf_grid_morocco = gpd.read_file('Grid_morocco/grid_morocco_clear.shp')
+    #Curent potential map
+gdf_current_potential = gpd.read_file(r'C:\Users\psclr\Documents\02 Master\Masterprojekt\Python\grid_morocco_h2_pot_test_7.shx')
+    #Accessibility
 gdf_railways_utm29n = gpd.read_file(r'C:\Users\psclr\Documents\02 Master\Masterprojekt\QGIS\Daten\Landuse\gis_osm_railways_free_1.shp').to_crs("EPSG:32629")
 gdf_railways_utm29n['fclass'] = 'railway'
 gdf_roads_utm29n = gpd.read_file(r'C:\Users\psclr\Documents\02 Master\Masterprojekt\QGIS\Daten\Landuse\gis_osm_roads_free_1.shp').to_crs("EPSG:32629")
 
 gdf_roads_railsways = gpd.GeoDataFrame(pd.concat([gdf_roads_utm29n, gdf_railways_utm29n], ignore_index=True), crs=gdf_roads_utm29n.crs)
 classes = ['motorway', 'trunk', 'primary', 'secondary', 'tertiary', 'track', 'track_grade1', 'track_grade2', 'track_grade3', 'track_grade4', 'unclassified', 'railway']
+gdf_roads_railsways = gdf_roads_railsways[gdf_roads_railsways['fclass'].isin(classes)]
+
 weights_roads = {'motorway': 0.25,
                   'trunk': 0.18,
                   'primary':0.12, 
@@ -24,9 +29,7 @@ weights_roads = {'motorway': 0.25,
                   'unclassified':0.04, 
                   'railway':0.18}
 
-gdf_roads_railsways = gdf_roads_railsways[gdf_roads_railsways['fclass'].isin(classes)]
-
-df_sum = pd.DataFrame(columns = classes)
+df_accessibility = pd.DataFrame(columns = classes)
 for i in range(len(gdf_grid_morocco)):
     cell_morocco = gdf_grid_morocco['geometry'].iloc[i]
     cell_bool_intersection = gdf_roads_railsways.intersects(cell_morocco)
@@ -38,10 +41,13 @@ for i in range(len(gdf_grid_morocco)):
 
     for y in classes:
         a = df[df['class'] == y]['length'].sum()
-        df_sum.loc[i, y] = a
+        df_accessibility.loc[i, y] = a
 
-df_sum = (df_sum/df_sum.max())*100*weights_roads.values()
+df_accessibility = (df_accessibility/df_accessibility.max())*100*weights_roads.values()
 
-df_sum_cells = df_sum.sum(axis=1)
+ds_accessibility_sum = df_accessibility.sum(axis=1).astype(float)
 
-# gdf_grid_morocco.to_file('industrial_share.shp', driver='ESRI Shapefile')
+#Replace old column with new one
+gdf_current_potential['accessibil'] = ds_accessibility_sum
+
+gdf_current_potential.to_file('grid_morocco_h2_pot_test_7.shp', driver='ESRI Shapefile')
