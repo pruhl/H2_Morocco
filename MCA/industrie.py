@@ -1,31 +1,20 @@
 import geopandas as gpd
-import numpy as np
 
 # Daten einlesen
     #Grid
 gdf_grid_morocco = gpd.read_file('Grid_morocco/grid_morocco_clear.shp')
     #Curent potential map
 gdf_current_potential = gpd.read_file(r'C:\Users\psclr\Documents\02 Master\Masterprojekt\Python\grid_morocco_h2_pot_test_7.shx')
-    #Urban landuse
+    #Industrial
 gdf_landuse_utm29n = gpd.read_file(r'C:\Users\psclr\Documents\02 Master\Masterprojekt\QGIS\Daten\Landuse\gis_osm_landuse_a_free_1.shp').to_crs("EPSG:32629")
 
-gdf_urban_morocco = gdf_landuse_utm29n[gdf_landuse_utm29n['fclass'].isin(['residential'])]
+gdf_industrie_morocco = gdf_landuse_utm29n[gdf_landuse_utm29n['fclass'].isin(['industrial'])].union_all()
 
-array_urban = np.array([])
-for i in range(len(gdf_grid_morocco)):
-    cell = gdf_grid_morocco['geometry'].iloc[i]
-    cell_intersection = gdf_urban_morocco.intersects(cell)
-    list_index_intersection = cell_intersection[cell_intersection == True].index.tolist()
-    area = gdf_urban_morocco.loc[list_index_intersection].intersection(cell).area.sum()
-
-    array_urban = np.append(array_urban, area/cell.area)
-
-array_urban -= array_urban.max()
-array_urban = (array_urban/array_urban.min())*100
+gdf_intersection_industrie = (gdf_grid_morocco.intersection(gdf_industrie_morocco).area/gdf_grid_morocco.area)*100
 
 #Replace old column with new one
-weight_urban = 0.0148
-gdf_current_potential['urban_zone'] = array_urban * weight_urban
+weight_indust = 0.16
+gdf_current_potential['industrial'] = gdf_intersection_industrie * weight_indust
 gdf_current_potential['sum'] = gdf_current_potential['avg_pv_yea','avg_windpo', 
                                                      'water aval', 'industrial',
                                                      'accessibil', 'agricultur',

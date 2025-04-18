@@ -1,5 +1,4 @@
 import geopandas as gpd
-import numpy as np
 import pandas as pd
 
 # Daten einlesen
@@ -13,7 +12,9 @@ gdf_railways_utm29n['fclass'] = 'railway'
 gdf_roads_utm29n = gpd.read_file(r'C:\Users\psclr\Documents\02 Master\Masterprojekt\QGIS\Daten\Landuse\gis_osm_roads_free_1.shp').to_crs("EPSG:32629")
 
 gdf_roads_railsways = gpd.GeoDataFrame(pd.concat([gdf_roads_utm29n, gdf_railways_utm29n], ignore_index=True), crs=gdf_roads_utm29n.crs)
-classes = ['motorway', 'trunk', 'primary', 'secondary', 'tertiary', 'track', 'track_grade1', 'track_grade2', 'track_grade3', 'track_grade4', 'unclassified', 'railway']
+classes = ['motorway', 'trunk', 'primary', 'secondary', 
+           'tertiary', 'track', 'track_grade1', 'track_grade2', 
+           'track_grade3', 'track_grade4', 'unclassified', 'railway']
 gdf_roads_railsways = gdf_roads_railsways[gdf_roads_railsways['fclass'].isin(classes)]
 
 weights_roads = {'motorway': 0.25,
@@ -48,6 +49,12 @@ df_accessibility = (df_accessibility/df_accessibility.max())*100*weights_roads.v
 ds_accessibility_sum = df_accessibility.sum(axis=1).astype(float)
 
 #Replace old column with new one
-gdf_current_potential['accessibil'] = ds_accessibility_sum
+weight_accessibility = 0.0831
+gdf_current_potential['accessibil'] = ds_accessibility_sum * weight_accessibility
+gdf_current_potential['sum'] = gdf_current_potential['avg_pv_yea','avg_windpo', 
+                                                     'water aval', 'industrial',
+                                                     'accessibil', 'agricultur',
+                                                     'non confli', 'urban_zone',
+                                                     'rural_zone' ].sum(axis=1) * gdf_current_potential['nogo_zones']
 
 gdf_current_potential.to_file('grid_morocco_h2_pot_test_7.shp', driver='ESRI Shapefile')
