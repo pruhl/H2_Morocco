@@ -15,7 +15,7 @@ dict_weights = {'avg_pv_yeald': 0.0557,
                 'non conflict areas': 0.1663}
 
 #Empty Grid
-gdf_grid_morocco = gpd.read_file(r"C:\Users\psclr\Documents\02 Master\Masterprojekt\Python\grid_morocco_clear.shp")
+gdf_grid_morocco = gpd.read_file('Grid_morocco/grid_morocco_clear.shp')
 
 def list_index(cell,gdf):
     intersects = gdf.intersects(cell)
@@ -42,8 +42,6 @@ gdf_groundwater = gdf_groundwater_morocco_concat[gdf_groundwater_morocco_concat[
 gdf_rivers = gpd.read_file(r"C:\Users\psclr\Documents\02 Master\Masterprojekt\QGIS\Daten\hotosm_mar_waterways_gpkg\hotosm_mar_waterways.gpkg").to_crs("EPSG:32629")
 
     #Accessibility
-gdf_grid_morocco = gpd.read_file(r'C:\Users\psclr\Documents\02 Master\Masterprojekt\Python\grid_morocco_clear.shp')
-
 gdf_railways_utm29n = gpd.read_file(r'C:\Users\psclr\Documents\02 Master\Masterprojekt\QGIS\Daten\Landuse\gis_osm_railways_free_1.shp').to_crs("EPSG:32629")
 gdf_railways_utm29n['fclass'] = 'railway'
 gdf_roads_utm29n = gpd.read_file(r'C:\Users\psclr\Documents\02 Master\Masterprojekt\QGIS\Daten\Landuse\gis_osm_roads_free_1.shp').to_crs("EPSG:32629")
@@ -153,7 +151,7 @@ array_rivers = (array_rivers/array_rivers.max())*100
 array_water = np.maximum(array_gw, array_rivers)
 
 df_accessibility = (df_accessibility/df_accessibility.max())*100*weights_roads.values()
-df_accessibility_sum = df_accessibility.sum(axis=1)
+ds_accessibility_sum = df_accessibility.sum(axis=1)
 
 array_agriculture -= array_agriculture.max()
 array_agriculture = (array_agriculture/array_agriculture.min())*100
@@ -177,22 +175,22 @@ array_sum = (array_evaluation_pv * dict_weights['avg_pv_yeald'] +
              array_evaluation_wind * dict_weights['avg_windpower'] + 
              array_water * dict_weights['water avalibility'] + 
              array_iundustrie * dict_weights['industrial_zone_share'] + 
-             df_accessibility_sum.astype(float) * dict_weights['accessibility'] + 
+             ds_accessibility_sum.astype(float) * dict_weights['accessibility'] + 
              array_agriculture * dict_weights['agricultural_land_share'] + 
              non_conflict.astype(float) * dict_weights['non conflict areas']+
              array_urban * dict_weights['urban_zone_share']+
              array_rural * dict_weights['rural_zone_share'])
 
-gdf_grid_morocco['avg_pv_yeald'] = array_evaluation_pv
-gdf_grid_morocco['avg_windpower'] = array_evaluation_wind
-gdf_grid_morocco['water avalibility'] = array_water
-gdf_grid_morocco['industrial_zone_share'] = array_iundustrie
-gdf_grid_morocco['accessibility'] = df_accessibility_sum.astype(float)
-gdf_grid_morocco['agricultural_land_share'] = array_agriculture
-gdf_grid_morocco['non conflict areas'] = non_conflict.astype(float)
-gdf_grid_morocco['urban_zone_share'] = array_urban
-gdf_grid_morocco['rural_zone_share'] = array_rural
-gdf_grid_morocco['nogo_zones'] = array_nogo
+gdf_grid_morocco['avg_pv_yeald'] = array_evaluation_pv * dict_weights['avg_pv_yeald']
+gdf_grid_morocco['avg_windpower'] = array_evaluation_wind * dict_weights['avg_windpower']
+gdf_grid_morocco['water avalibility'] = array_water * dict_weights['water avalibility']
+gdf_grid_morocco['industrial_zone_share'] = array_iundustrie * dict_weights['industrial_zone_share']
+gdf_grid_morocco['accessibility'] = ds_accessibility_sum.astype(float) * dict_weights['accessibility']
+gdf_grid_morocco['agricultural_land_share'] = array_agriculture * dict_weights['agricultural_land_share']
+gdf_grid_morocco['non conflict areas'] = non_conflict.astype(float) * dict_weights['non conflict areas']
+gdf_grid_morocco['urban_zone_share'] = array_urban * dict_weights['urban_zone_share']
+gdf_grid_morocco['rural_zone_share'] = array_rural * dict_weights['rural_zone_share']
+gdf_grid_morocco['nogo_zones'] = array_nogo 
 gdf_grid_morocco['sum'] = array_sum * array_nogo
 
 gdf_grid_morocco.to_file('grid_morocco_h2_pot_test_7.shp', driver='ESRI Shapefile')

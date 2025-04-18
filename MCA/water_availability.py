@@ -6,7 +6,7 @@ import pandas as pd
     #Grid
 gdf_grid_morocco = gpd.read_file('Grid_morocco/grid_morocco_clear.shp')
     #Curent potential map
-gdf_current_potential = gpd.read_file(r'C:\Users\psclr\Documents\02 Master\Masterprojekt\Python\grid_morocco_h2_pot_test_7.shx')
+gdf_current_potential = gpd.read_file('grid_morocco_h2_pot_test_7.shp')
     #Water availability
         #Groundwater
 gdf_groundwater_morocco_utm29n = gpd.read_file(r"C:\Users\psclr\Documents\02 Master\Masterprojekt\QGIS\Daten\Morocco\Morocco_HG.shp").to_crs("EPSG:32629")
@@ -47,10 +47,10 @@ array_water = np.maximum(array_gw, array_rivers)
 #Replace old column with new one
 weight_water = 0.3399
 gdf_current_potential['water aval'] = array_water * weight_water
-gdf_current_potential['sum'] = gdf_current_potential['avg_pv_yea','avg_windpo', 
+gdf_current_potential['sum'] = gdf_current_potential[['avg_pv_yea','avg_windpo', 
                                                      'water aval', 'industrial',
                                                      'accessibil', 'agricultur',
                                                      'non confli', 'urban_zone',
-                                                     'rural_zone' ].sum(axis=1) * gdf_current_potential['nogo_zones']
+                                                     'rural_zone']].sum(axis=1) * gdf_current_potential['nogo_zones']
 
 gdf_current_potential.to_file('grid_morocco_h2_pot_test_7.shp', driver='ESRI Shapefile')

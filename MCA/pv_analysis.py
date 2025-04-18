@@ -5,7 +5,7 @@ import numpy as np
     #Grid
 gdf_grid_morocco = gpd.read_file('Grid_morocco/grid_morocco_clear.shp')
     #Curent potential map
-gdf_current_potential = gpd.read_file(r'C:\Users\psclr\Documents\02 Master\Masterprojekt\Python\grid_morocco_h2_pot_test_7.shx')
+gdf_current_potential = gpd.read_file('grid_morocco_h2_pot_test_7.shp')
     #PV
 gdf_pv_morocco_utm29n = gpd.read_file(r"C:\Users\psclr\Documents\02 Master\Masterprojekt\QGIS\Daten\Morocco_GISdata_LTAy_YearlyMonthlyTotals_GlobalSolarAtlas-v2_GEOTIFF\PV_yeald_clear.shp").to_crs("EPSG:32629")
 
@@ -31,10 +31,10 @@ array_evaluation_pv = (array_pv_yeald /
 #Replace old column with new one
 weight_pv = 0.0557
 gdf_current_potential['avg_pv_yea'] = array_evaluation_pv * weight_pv
-gdf_current_potential['sum'] = gdf_current_potential['avg_pv_yea','avg_windpo', 
+gdf_current_potential['sum'] = gdf_current_potential[['avg_pv_yea','avg_windpo', 
                                                      'water aval', 'industrial',
                                                      'accessibil', 'agricultur',
                                                      'non confli', 'urban_zone',
-                                                     'rural_zone' ].sum(axis=1) * gdf_current_potential['nogo_zones']
+                                                     'rural_zone']].sum(axis=1) * gdf_current_potential['nogo_zones']
 
 gdf_current_potential.to_file('grid_morocco_h2_pot_test_7.shp', driver='ESRI Shapefile')
