@@ -16,7 +16,7 @@ gdf_groundwater_morocco_concat = pd.concat([gdf_groundwater_morocco_utm29n, gdf_
                                            ignore_index=True)
 gdf_groundwater = gdf_groundwater_morocco_concat[gdf_groundwater_morocco_concat['MorHGComb'].isin(['CSIF-M/H', 'CSFK-H/VH'])]
         #Desalination plants
-        
+gdf_coast = gpd.read_file(r"C:\Users\psclr\Documents\02 Master\Masterprojekt\QGIS\Daten\morocco_coast_line.shp").to_crs("EPSG:32629")        
         #Surface Water
 gdf_rivers = gpd.read_file(r"C:\Users\psclr\Documents\02 Master\Masterprojekt\QGIS\Daten\hotosm_mar_waterways_gpkg\hotosm_mar_waterways.gpkg").to_crs("EPSG:32629")
 
@@ -42,7 +42,21 @@ for i in range(len(gdf_grid_morocco)):
 
 array_rivers = (array_rivers/array_rivers.max())*100
 
+array_desalination = np.array([])
+for i in range(len(gdf_grid_morocco)):
+    cell = gdf_grid_morocco['geometry'].iloc[i]
+    cell_intersection = cell.intersects(gdf_coast.geometry)
+    if any(cell_intersection):
+        score = 100
+    else:
+        score = 0
+
+    array_desalination = np.append(array_desalination, score)
+
+array_gw = (array_gw/array_gw.max())*100
+
 array_water = np.maximum(array_gw, array_rivers)
+array_water = np.maximum(array_water, array_desalination)
 
 #Replace old column with new one
 weight_water = 0.3399
