@@ -5,7 +5,7 @@ gdf_pv_morocco_utm29n = gpd.read_file(r"C:\Users\psclr\Documents\02 Master\Maste
 gdf_grid_morocco = gpd.read_file(r"C:\Users\psclr\Documents\02 Master\Masterprojekt\Python\MCA\Grid_morocco\grid_morocco_clear.shp")
 gdf_h2_cost_morocco = gpd.read_file('h2_cost_morocco.shp')
 
-capex_pv = 1200 # €/kWp
+capex_pv = 1000 # €/kWp
 opex_pv = 0.02 * capex_pv # €/kWp
 
 lifetime_pv = 25 # years
@@ -34,6 +34,6 @@ for i in range(len(gdf_grid_morocco)):
 
     array_pv_lcoe = np.append(array_pv_lcoe, lcoe)
 
-gdf_h2_cost_morocco['LCOE_pv [E'] = array_pv_lcoe #In GDF sind nur 10 zeichen erlaubt
+gdf_h2_cost_morocco['LCOE_pv'] = array_pv_lcoe #In GDF sind nur 10 zeichen erlaubt
 
 gdf_h2_cost_morocco.to_file('h2_cost_morocco.shp', driver='ESRI Shapefile')

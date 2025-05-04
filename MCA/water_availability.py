@@ -19,6 +19,7 @@ gdf_groundwater = gdf_groundwater_morocco_concat[gdf_groundwater_morocco_concat[
 gdf_coast = gpd.read_file(r"C:\Users\psclr\Documents\02 Master\Masterprojekt\QGIS\Daten\morocco_coast_line.shp").to_crs("EPSG:32629")        
         #Surface Water
 gdf_rivers = gpd.read_file(r"C:\Users\psclr\Documents\02 Master\Masterprojekt\QGIS\Daten\hotosm_mar_waterways_gpkg\hotosm_mar_waterways.gpkg").to_crs("EPSG:32629")
+gdf_rivers = gdf_rivers[gdf_rivers['waterway'].isin(['river']), gdf_rivers['water'].isin(['reservoir'])]
 
 array_gw = np.array([])
 for i in range(len(gdf_grid_morocco)):

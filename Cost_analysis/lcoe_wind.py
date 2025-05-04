@@ -27,7 +27,7 @@ for i in range(len(gdf_grid_morocco)):
     cell_wind, list_index_intersection_wind = list_index(gdf_wind_morocco_utm29n, i)
 
     if len(list_index_intersection_wind) == 0:
-        intersection_next_cell = gdf_wind_morocco_utm29n.dwithin(cell_wind, distance=5001)
+        intersection_next_cell = gdf_wind_morocco_utm29n.dwithin(cell_wind, distance=1)
         list_intersection_next_cell = intersection_next_cell[intersection_next_cell == True].index.tolist()
         lcoe = gdf_wind_morocco_utm29n['LCOE_wind [EUR/kWh]'].iloc[list_intersection_next_cell].sum()/len(list_intersection_next_cell)
     else:

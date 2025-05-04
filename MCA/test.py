@@ -2,6 +2,7 @@ import numpy as np
 import pandas as pd
 import geopandas as gpd
 
+from msd_mca_h2_morocco import list_index
 
 #Weights
 dict_weights = {'avg_pv_yeald': 0.0557, 
@@ -17,9 +18,9 @@ dict_weights = {'avg_pv_yeald': 0.0557,
 #Empty Grid
 gdf_grid_morocco = gpd.read_file('Grid_morocco/grid_morocco_clear.shp')
 
-def list_index(cell,gdf):
-    intersects = gdf.intersects(cell)
-    return intersects[intersects == True].index.tolist()
+# def list_index(cell,gdf):
+#     intersects = gdf.intersects(cell)
+#     return intersects[intersects == True].index.tolist()
 #Data
     #Energy Availibility
         #PV
@@ -40,7 +41,7 @@ gdf_groundwater = gdf_groundwater_morocco_concat[gdf_groundwater_morocco_concat[
 
         #Surface Water
 gdf_rivers = gpd.read_file(r"C:\Users\psclr\Documents\02 Master\Masterprojekt\QGIS\Daten\hotosm_mar_waterways_gpkg\hotosm_mar_waterways.gpkg").to_crs("EPSG:32629")
-
+gdf_rivers = gdf_rivers[gdf_rivers['waterway'].isin(['river'])]
     #Accessibility
 gdf_railways_utm29n = gpd.read_file(r'C:\Users\psclr\Documents\02 Master\Masterprojekt\QGIS\Daten\Landuse\gis_osm_railways_free_1.shp').to_crs("EPSG:32629")
 gdf_railways_utm29n['fclass'] = 'railway'
