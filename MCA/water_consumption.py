@@ -1,0 +1,70 @@
+import geopandas as gpd
+import numpy as np
+import pandas as pd
+
+gdf_grid_morocco        = gpd.read_file('Grid_morocco/grid_morocco_clear.shp')
+gdf_landuse_utm29n      = gpd.read_file(r'C:\Users\psclr\Documents\02 Master\Masterprojekt\QGIS\Daten\Landuse\gis_osm_landuse_a_free_1.shp').to_crs("EPSG:32629")
+
+gdf_landuse_mar         = gpd.read_file(r'C:\Users\psclr\Downloads\geonetwork_landcover_mar_gc_adg\mar_gc_adg.shp').to_crs("EPSG:32629") 
+
+gdf_landuse_wsa         = gpd.read_file(r'C:\Users\psclr\Downloads\geonetwork_landcover_wsa_gc_adg\wsa_gc_adg.shp').to_crs("EPSG:32629")
+
+gdf_landuse_concat      = pd.concat([gdf_landuse_mar, gdf_landuse_wsa])
+
+gdf_landuse_urban       = gdf_landuse_concat[gdf_landuse_concat['GRIDCODE'].isin([190])]
+
+gdf_landuse_agri_100    = gdf_landuse_concat[gdf_landuse_concat['GRIDCODE'].isin([11, 12, 13, 14, 15, 16])]
+gdf_landuse_agri_70     = gdf_landuse_concat[gdf_landuse_concat['GRIDCODE'].isin([20,21])]
+gdf_landuse_agri_30     = gdf_landuse_concat[gdf_landuse_concat['GRIDCODE'].isin([30, 31, 32])]
+
+gdf_landuse_industrial  = gdf_landuse_utm29n[gdf_landuse_utm29n['fclass'].isin(['industrial'])]
+
+agri    = 0.87
+urban   = 0.10
+indust  = 0.03
+
+water_consumption = 16.25e9
+
+area_sum_agri = gdf_landuse_agri_100.area.sum() + gdf_landuse_agri_70.area.sum() * 0.7 + gdf_landuse_agri_30.area.sum() *0.3
+
+gdf_landuse_urban['Water_Consumption']      = (gdf_landuse_urban.area/gdf_landuse_urban.area.sum()) * urban * water_consumption
+
+gdf_landuse_agri_100['Water_Consumption']   = (gdf_landuse_agri_100.area/area_sum_agri) * agri * water_consumption
+gdf_landuse_agri_70['Water_Consumption']    = (gdf_landuse_agri_70.area/area_sum_agri) * agri * water_consumption * 0.7
+gdf_landuse_agri_30['Water_Consumption']    = (gdf_landuse_agri_30.area/area_sum_agri) * agri * water_consumption * 0.3
+
+gdf_landuse_industrial['Water_Consumption'] = (gdf_landuse_industrial.area/gdf_landuse_industrial.area.sum()) * indust * water_consumption
+
+for i in range(len(gdf_grid_morocco)):
+    cell = gdf_grid_morocco['geometry'].iloc[i]
+    # Urban
+    cell_intersection_urban = gdf_landuse_urban.intersects(cell)
+    list_index_intersection_urban = cell_intersection_urban[cell_intersection_urban == True].index.tolist()
+    area_urban = gdf_landuse_urban.loc[list_index_intersection_urban].intersection(cell).area.sum()
+    water_consumption_urban = (area_urban/gdf_landuse_urban.area.sum()) * urban * water_consumption
+
+    # Agriculture
+    cell_intersection_agri_100 = gdf_landuse_agri_100.intersects(cell)
+    list_index_intersection_agri_100 = cell_intersection_agri_100[cell_intersection_agri_100 == True].index.tolist()
+    area_agri_100 = gdf_landuse_agri_100.loc[list_index_intersection_agri_100].intersection(cell).area.sum()
+    water_consumption_agri_100 = (area_agri_100/area_sum_agri) * agri * water_consumption
+
+    cell_intersection_agri_70 = gdf_landuse_agri_70.intersects(cell)
+    list_index_intersection_agri_70 = cell_intersection_agri_70[cell_intersection_agri_70 == True].index.tolist()
+    area_agri_70 = gdf_landuse_agri_70.loc[list_index_intersection_agri_70].intersection(cell).area.sum()
+    water_consumption_agri_70 = (area_agri_70/area_sum_agri) * agri * water_consumption * 0.7
+
+    cell_intersection_agri_30 = gdf_landuse_agri_30.intersects(cell)
+    list_index_intersection_agri_30 = cell_intersection_agri_30[cell_intersection_agri_30 == True].index.tolist()
+    area_agri_30 = gdf_landuse_agri_30.loc[list_index_intersection_agri_30].intersection(cell).area.sum()
+    water_consumption_agri_30 = (area_agri_30/area_sum_agri) * agri * water_consumption * 0.3
+
+    # Industrial
+    cell_intersection_industrial = gdf_landuse_industrial.intersects(cell)
+    list_index_intersection_industrial = cell_intersection_industrial[cell_intersection_industrial == True].index.tolist()
+    area_industrial = gdf_landuse_industrial.loc[list_index_intersection_industrial].intersection(cell).area.sum()
+    water_consumption_industrial = (area_industrial/gdf_landuse_industrial.area.sum()) * indust * water_consumption
+
+    sum_water_consumption = water_consumption_urban + water_consumption_agri_100 + water_consumption_agri_70 + water_consumption_agri_30 + water_consumption_industrial
+
+    gdf_grid_morocco.at[i, 'Water_Consumption'] = sum_water_consumption

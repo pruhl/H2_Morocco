@@ -7,6 +7,7 @@ import pandas as pd
 gdf_h2_cost                 = gpd.read_file('h2_cost_morocco.shp')
 gdf_h2_cost_centroid        = gdf_h2_cost.geometry.centroid
 gdf_ports                   = gpd.read_file(r"C:\Users\psclr\Documents\02 Master\Masterprojekt\QGIS\Daten\Esri Shapefile\industrial_port.shp").to_crs(gdf_h2_cost.crs)
+gdf_morocco_boundary        = gpd.read_file(r"C:\Users\psclr\Documents\02 Master\Masterprojekt\QGIS\Daten\morocco_Morocco_Country_Boundary.shp").to_crs(gdf_h2_cost.crs)
 
 #Distance all cells to all cells
 list_distance = []
@@ -15,7 +16,10 @@ for i in range(len(gdf_h2_cost)):
     list_distance.append(d)
 
 df_distance_cells = pd.DataFrame(list_distance)
+
 #Distance all cells to ports
+# intersections = gdf_ports.intersects(gdf_morocco_boundary)
+# gdf_ports = gdf_ports[intersections] 
 list_distance_ports = []
 for i in range(len(gdf_h2_cost)):
     d = min(gdf_ports.distance(gdf_h2_cost_centroid[i]))
@@ -111,8 +115,14 @@ df_h2_cost = pd.DataFrame(
      'source_el': list_el_source})
 
 
-gdf_h2_cost = gdf_h2_cost.join(df_h2_cost)
+#gdf_h2_cost = gdf_h2_cost.join(df_h2_cost)
+gdf_h2_cost['Electricit'] = list_h2_electricity
+gdf_h2_cost['Electrolys'] = list_h2_electrolysis
+gdf_h2_cost['Pipeline ['] = list_h2_pipe
+gdf_h2_cost['H2 Price ['] = list_h2_cost
+gdf_h2_cost['index_sour'] = list_index_cell
+gdf_h2_cost['source_el'] = list_el_source
 
-gdf_h2_cost['H2 Price [EUR/MWh_h2]'] = gdf_h2_cost['H2 Price [EUR/MWh_h2]'].round(2)
+gdf_h2_cost['H2 Price ['] = gdf_h2_cost['H2 Price ['].round(2)
 
 gdf_h2_cost.to_file('h2_cost_morocco.shp', driver='ESRI Shapefile')
