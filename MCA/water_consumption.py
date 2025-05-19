@@ -24,7 +24,7 @@ agri    = 0.87
 urban   = 0.104
 indust  = 0.026
 
-water_consumption = 16.25e9
+water_consumption = 15.9e9     #billion m3/year
 
 area_sum_agri = gdf_landuse_agri_100.area.sum() + gdf_landuse_agri_70.area.sum() * 0.7 + gdf_landuse_agri_30.area.sum() *0.3
 

@@ -54,5 +54,5 @@ network.add("Link", name = "Electrolyzer", bus0 = "bus_electricity", bus1 = "bus
 network.add("Generator", name = "negative_gen", bus = "bus_hydrogen",
              p_nom_extendable = True, sign = -1, e_sum_min = energy_production_min, e_sum_max = energy_production_min)
 
-network.optimize(solver = "gurobi")
+network.optimize(solver_name = "gurobi")
 
