@@ -1,22 +1,23 @@
 import pandas as pd
 import pypsa
+import requests
 
 #Annahmen
 #Eletrolyse (PEM)
-p_nom_el = 100000 #kW
-eff_el = 0.7 #efficiency
-capex_el    = 1000  # €/kW
-opex_el     = 0.02 * capex_el  # €/kW
-el_r        = 0.04  # discount rate
-el_lifetime = 20    # years
+p_nom_el = 100000                                                           #kW
+eff_el = 0.7                                                                #efficiency
+capex_el    = 1000                                                          # €/kW
+opex_el     = 0.02 * capex_el                                               # €/kW
+el_r        = 0.04                                                          # discount rate
+el_lifetime = 20                                                            # years
 el_annuity  = (((1 + el_r) ** el_lifetime * el_r)
-                / ((1 + el_r) ** el_lifetime - 1)) * capex_el + opex_el # €/kW
+                / ((1 + el_r) ** el_lifetime - 1)) * capex_el + opex_el     # €/kW
 
 energy_production_min = 3.1e9 # kWh
 
 #PV
-df_pv = pd.read_csv('ninja_pv_34.6401_-4.8542_uncorrected.csv', header=3)
-df_pv_el = df_pv['electricity']
+# df_pv = pd.read_csv('ninja_pv_34.6401_-4.8542_uncorrected.csv', header=3)
+# df_pv_el = df_pv['electricity']
 capex_pv = 1000 # €/kWp
 opex_pv = 0.02 * capex_pv # €/kWp
 lifetime_pv = 25 # years
@@ -25,19 +26,23 @@ r_pv = 0.04 # discount rate
 annuity_pv = ((1 + r_pv) ** lifetime_pv * r_pv) / ((1 + r_pv) ** lifetime_pv - 1) * capex_pv + opex_pv # €/kWp
 
 #Wind
-df_wind = pd.read_csv('ninja_wind_34.6401_-4.8542_corrected.csv', header=3)
-df_wind_el = df_wind['electricity']
+# df_wind = pd.read_csv('ninja_wind_34.6401_-4.8542_corrected.csv', header=3)
+# df_wind_el = df_wind['electricity']
+
 capex_wind = 1600 # €/kW
 opex_wind = 0.02 * capex_wind # €/kWp
 lifetime_wind = 25 # years
 r_wind = 0.04 # discount rate
 annuity_wind = ((1 + r_wind) ** lifetime_wind * r_wind) / ((1 + r_wind) ** lifetime_wind - 1) * capex_wind + opex_wind # €/kWp
 
+df_pv_wind = pd.read_csv('pv_wind_electricity.csv')
+df_wind_el = df_pv_wind[f'electricity_Wind_{0}']
+df_pv_el = df_pv_wind[f'electricity_PV_{0}']
+
 network = pypsa.Network()
-network.set_snapshots(range(len(df_pv)))
+network.set_snapshots(range(len(df_pv_wind)))
 
 #Bus
-
 network.add("Bus", name = "bus_electricity")
 network.add("Bus", name = "bus_hydrogen")
 #Generators
@@ -54,5 +59,21 @@ network.add("Link", name = "Electrolyzer", bus0 = "bus_electricity", bus1 = "bus
 network.add("Generator", name = "negative_gen", bus = "bus_hydrogen",
              p_nom_extendable = True, sign = -1, e_sum_min = energy_production_min, e_sum_max = energy_production_min)
 
+df_flh_electrolyzer = pd.DataFrame(columns=['FLH_electrolyzer'])
+
 network.optimize(solver_name = "gurobi")
 
+df = (network.generators_t.p['negative_gen'].sum())/network.generators.p_nom_opt['negative_gen']
+
+df_flh_electrolyzer.at[0, 'FLH_electrolyzer'] = df
+for i in range(1, 50):
+    df_wind_el = df_pv_wind[f'electricity_Wind_{i}']
+    df_pv_el = df_pv_wind[f'electricity_PV_{i}']
+    network.generators_t.p_max_pu['pv'] = df_pv_el.values
+    network.generators_t.p_max_pu['wind'] = df_wind_el.values
+    network.optimize(solver_name = "gurobi")
+    df = (network.generators_t.p['negative_gen'].sum())/network.generators.p_nom_opt['negative_gen']
+
+    df_flh_electrolyzer.at[i, 'FLH_electrolyzer'] = df
+
+df_flh_electrolyzer.to_csv('FLH_electrolyzer.csv')

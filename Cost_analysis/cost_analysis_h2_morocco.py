@@ -28,14 +28,14 @@ for i in range(len(gdf_h2_cost)):
 df_distance_ports = pd.DataFrame(list_distance_ports)
 
 #Case
-p_nom_el    = 100   # MW
-eff_el      = 0.7   # efficiency of electrolysis
-flh_el_pv   = 3000  # full load hours of electrolysis with PV
-flh_el_wind = 4000  # full load hours of electrolysis with windpower
-capex_el    = 1000 * 1000  # €/MW
-opex_el     = 0.02 * capex_el  # €/MW
-el_r        = 0.04  # discount rate
-el_lifetime = 20    # years
+p_nom_el    = 100               # MW
+eff_el      = 0.7               # efficiency of electrolysis
+flh_el_pv   = 3000              # full load hours of electrolysis with PV
+flh_el_wind = 4000              # full load hours of electrolysis with windpower
+capex_el    = 1000 * 1000       # €/MW
+opex_el     = 0.02 * capex_el   # €/MW
+el_r        = 0.04              # discount rate
+el_lifetime = 20                # years
 el_annuity  = (((1 + el_r) ** el_lifetime * el_r)
                 / ((1 + el_r) ** el_lifetime - 1)) * p_nom_el # €/a
 opex_el = opex_el * p_nom_el # €/a

@@ -22,19 +22,19 @@ def list_index(gdf, i, grid = gdf_grid_morocco):
 
 gdf_wind_morocco_utm29n['LCOE_wind [EUR/kWh]'] = (capex_wind * annuity_wind + opex_wind) / gdf_wind_morocco_utm29n['FLH_wind']
 
-array_wind_lcoe = np.array([])
 for i in range(len(gdf_grid_morocco)):
     cell_wind, list_index_intersection_wind = list_index(gdf_wind_morocco_utm29n, i)
 
     if len(list_index_intersection_wind) == 0:
-        intersection_next_cell = gdf_wind_morocco_utm29n.dwithin(cell_wind, distance=1)
+        intersection_next_cell = gdf_wind_morocco_utm29n.dwithin(cell_wind, distance=5001)
         list_intersection_next_cell = intersection_next_cell[intersection_next_cell == True].index.tolist()
         lcoe = gdf_wind_morocco_utm29n['LCOE_wind [EUR/kWh]'].iloc[list_intersection_next_cell].sum()/len(list_intersection_next_cell)
+        flh_wind = gdf_wind_morocco_utm29n['FLH_wind'].iloc[list_intersection_next_cell].sum()/len(list_intersection_next_cell)
     else:
         lcoe = gdf_wind_morocco_utm29n['LCOE_wind [EUR/kWh]'].iloc[list_index_intersection_wind].sum()/len(list_index_intersection_wind)
+        flh_wind = gdf_wind_morocco_utm29n['FLH_wind'].iloc[list_index_intersection_wind].sum()/len(list_index_intersection_wind)
 
-    array_wind_lcoe = np.append(array_wind_lcoe, lcoe)
-
-gdf_h2_cost_morocco['LCOE_wind'] = array_wind_lcoe  #nur 10 zeichen erlaubt (eigentlich €/KWh)
+    gdf_h2_cost_morocco.at[i, 'LCOE_wind'] = lcoe
+    gdf_h2_cost_morocco.at[i, 'FLH_wind'] = flh_wind
 
 gdf_h2_cost_morocco.to_file('h2_cost_morocco.shp', driver='ESRI Shapefile')

@@ -21,7 +21,6 @@ def list_index(gdf, i, grid = gdf_grid_morocco):
 
 gdf_pv_morocco_utm29n['LCOE_pv [EUR/kWh]'] = (capex_pv * annuity_pv + opex_pv) / gdf_pv_morocco_utm29n['pv_yeald']
 
-array_pv_lcoe = np.array([])
 for i in range(len(gdf_grid_morocco)):
     cell_pv, list_index_intersection_pv = list_index(gdf_pv_morocco_utm29n, i)
 
@@ -29,11 +28,12 @@ for i in range(len(gdf_grid_morocco)):
         intersection_next_cell = gdf_pv_morocco_utm29n.dwithin(cell_pv, distance=5001)
         list_intersection_next_cell = intersection_next_cell[intersection_next_cell == True].index.tolist()
         lcoe = gdf_pv_morocco_utm29n['LCOE_pv [EUR/kWh]'].iloc[list_intersection_next_cell].sum()/len(list_intersection_next_cell)
+        flh_pv = gdf_pv_morocco_utm29n['pv_yeald'].iloc[list_intersection_next_cell].sum()/len(list_intersection_next_cell)
     else:
         lcoe = gdf_pv_morocco_utm29n['LCOE_pv [EUR/kWh]'].iloc[list_index_intersection_pv].sum()/len(list_index_intersection_pv)
+        flh_pv = gdf_pv_morocco_utm29n['pv_yeald'].iloc[list_index_intersection_pv].sum()/len(list_index_intersection_pv)
 
-    array_pv_lcoe = np.append(array_pv_lcoe, lcoe)
-
-gdf_h2_cost_morocco['LCOE_pv'] = array_pv_lcoe #In GDF sind nur 10 zeichen erlaubt
+    gdf_h2_cost_morocco.at[i, 'LCOE_pv'] = lcoe
+    gdf_h2_cost_morocco.at[i, 'FLH_pv'] = flh_pv
 
 gdf_h2_cost_morocco.to_file('h2_cost_morocco.shp', driver='ESRI Shapefile')
