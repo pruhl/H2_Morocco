@@ -2,14 +2,14 @@ import requests
 import pandas as pd
 import json
 
-coordinates = pd.read_excel('PV_WIND_50_Punkte.xlsx', sheet_name='Wind_Punkte')
+coordinates = pd.read_excel('PV_WIND_50_Punkte.xlsx', sheet_name='PV_Punkte')
 df_electricity = pd.read_csv('pv_wind_electricity.csv', index_col=0)
 df_electricity.reset_index(drop=True, inplace=True)
 #df_electricity = pd.DataFrame()
 
 token = 'ab3c6a38f8ad704e00fb3e2ee7e7584c36f8c078'     #Pascal
 #token = '1aa2a150a835fa055ee06eb84e96d5302222612d'      #Max
-#token = '7cdfd4e7524e7ffe4490467156f20725f8e3d666'      #Soufiane
+#token = '7cdfd4e7524e7ffe4490467156f20725f8e3d666'     #Soufiane
 api_base = 'https://www.renewables.ninja/api/'
 
 s = requests.session()
@@ -59,8 +59,8 @@ for i in range(48, 50):   # Nur sechs Anfragen pro Min (2*3), um API-Limits zu b
     data_wind = pd.read_json(json.dumps(parsed_response_wind['data']), orient='index')
     metadata_wind = parsed_response_wind['metadata']
 
-    data_pv.rename(columns={'electricity': f'electricity_PV_{i}'}, inplace=True)
-    data_wind.rename(columns={'electricity': f'electricity_Wind_{i}'}, inplace=True)
+    data_pv.rename(columns={'electricity': f'electricity_PV_{50+i}'}, inplace=True)
+    data_wind.rename(columns={'electricity': f'electricity_Wind_{50+i}'}, inplace=True)
 
     df_concat = pd.concat([data_pv, data_wind], axis=1)
     df_concat.reset_index(drop=True, inplace=True)

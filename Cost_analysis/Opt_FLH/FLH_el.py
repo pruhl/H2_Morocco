@@ -1,6 +1,5 @@
 import pandas as pd
 import pypsa
-import requests
 
 #Annahmen
 #Eletrolyse (PEM)
@@ -66,7 +65,7 @@ network.optimize(solver_name = "gurobi")
 df = (network.generators_t.p['negative_gen'].sum())/network.generators.p_nom_opt['negative_gen']
 
 df_flh_electrolyzer.at[0, 'FLH_electrolyzer'] = df
-for i in range(1, 50):
+for i in range(1, 100):
     df_wind_el = df_pv_wind[f'electricity_Wind_{i}']
     df_pv_el = df_pv_wind[f'electricity_PV_{i}']
     network.generators_t.p_max_pu['pv'] = df_pv_el.values
