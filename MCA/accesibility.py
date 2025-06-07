@@ -1,11 +1,11 @@
 import geopandas as gpd
 import pandas as pd
 
+from custom import list_index
+
 # Daten einlesen
-    #Grid
-gdf_grid_morocco = gpd.read_file('Grid_morocco/grid_morocco_clear.shp')
     #Curent potential map
-gdf_current_potential = gpd.read_file('grid_morocco_h2_pot_test_7.shp')
+gdf_current_potential = gpd.read_file('grid_morocco_h2_pot_test_8.shp')
     #Accessibility
 gdf_railways_utm29n = gpd.read_file(r'C:\Users\psclr\Documents\02 Master\Masterprojekt\QGIS\Daten\Landuse\gis_osm_railways_free_1.shp').to_crs("EPSG:32629")
 gdf_railways_utm29n['fclass'] = 'railway'
@@ -31,10 +31,8 @@ weights_roads = {'motorway': 0.25,
                   'railway':0.18}
 
 df_accessibility = pd.DataFrame(columns = classes)
-for i in range(len(gdf_grid_morocco)):
-    cell_morocco = gdf_grid_morocco['geometry'].iloc[i]
-    cell_bool_intersection = gdf_roads_railsways.intersects(cell_morocco)
-    list_index_intersection = cell_bool_intersection[cell_bool_intersection == True].index.tolist()
+for i in range(len(gdf_current_potential)):
+    cell_morocco, list_index_intersection = list_index(gdf_roads_railsways, i, gdf_current_potential)
     roads_class = gdf_roads_railsways.loc[list_index_intersection]['fclass']
     road_length = gdf_roads_railsways.loc[list_index_intersection].intersection(cell_morocco).length
 
@@ -57,4 +55,4 @@ gdf_current_potential['sum'] = gdf_current_potential[['avg_pv_yea','avg_windpo',
                                                      'non confli', 'urban_zone',
                                                      'rural_zone']].sum(axis=1) * gdf_current_potential['nogo_zones']
 
-gdf_current_potential.to_file('grid_morocco_h2_pot_test_7.shp', driver='ESRI Shapefile')
+gdf_current_potential.to_file('grid_morocco_h2_pot_test_8.shp', driver='ESRI Shapefile')

@@ -1,22 +1,17 @@
 import geopandas as gpd
 import numpy as np
 
+from custom import list_index
+
 # Daten einlesen
-    #Grid
-gdf_grid_morocco = gpd.read_file('Grid_morocco/grid_morocco_clear.shp')
     #Curent potential map
-gdf_current_potential = gpd.read_file('grid_morocco_h2_pot_test_7.shp')
+gdf_current_potential = gpd.read_file('grid_morocco_h2_pot_test_8.shp')
     #PV
 gdf_pv_morocco_utm29n = gpd.read_file(r"C:\Users\psclr\Documents\02 Master\Masterprojekt\QGIS\Daten\Morocco_GISdata_LTAy_YearlyMonthlyTotals_GlobalSolarAtlas-v2_GEOTIFF\PV_yeald_clear_ma_we.shp").to_crs("EPSG:32629")
 
-def list_index(gdf, i, grid = gdf_grid_morocco):
-    cell = grid['geometry'].iloc[i]
-    intersects = gdf.intersects(cell)
-    return cell, intersects[intersects == True].index.tolist()
-
 array_pv_yeald = np.array([])
-for i in range(len(gdf_grid_morocco)):
-    cell_pv, list_index_intersection_pv = list_index(gdf_pv_morocco_utm29n, i)
+for i in range(len(gdf_current_potential)):
+    cell_pv, list_index_intersection_pv = list_index(gdf_pv_morocco_utm29n, i, gdf_current_potential)
 
     if len(list_index_intersection_pv) == 0:
         pv_yeald = 0
@@ -37,4 +32,4 @@ gdf_current_potential['sum'] = gdf_current_potential[['avg_pv_yea','avg_windpo',
                                                      'non confli', 'urban_zone',
                                                      'rural_zone']].sum(axis=1) * gdf_current_potential['nogo_zones']
 
-gdf_current_potential.to_file('grid_morocco_h2_pot_test_7.shp', driver='ESRI Shapefile')
+gdf_current_potential.to_file('grid_morocco_h2_pot_test_8.shp', driver='ESRI Shapefile')

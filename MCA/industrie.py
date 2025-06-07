@@ -1,16 +1,15 @@
 import geopandas as gpd
 
 # Daten einlesen
-    #Grid
-gdf_grid_morocco = gpd.read_file('Grid_morocco/grid_morocco_clear.shp')
     #Curent potential map
-gdf_current_potential = gpd.read_file('grid_morocco_h2_pot_test_7.shp')
+gdf_current_potential = gpd.read_file('grid_morocco_h2_pot_test_8.shp')
     #Industrial
 gdf_landuse_utm29n = gpd.read_file(r'C:\Users\psclr\Documents\02 Master\Masterprojekt\QGIS\Daten\Landuse\gis_osm_landuse_a_free_1.shp').to_crs("EPSG:32629")
 
 gdf_industrie_morocco = gdf_landuse_utm29n[gdf_landuse_utm29n['fclass'].isin(['industrial'])].union_all()
 
-gdf_intersection_industrie = (gdf_grid_morocco.intersection(gdf_industrie_morocco).area/gdf_grid_morocco.area)*100
+gdf_intersection_industrie = (gdf_current_potential.intersection(gdf_industrie_morocco).area/
+                              gdf_current_potential.area)*100
 
 #Replace old column with new one
 weight_indust = 0.16
@@ -21,4 +20,4 @@ gdf_current_potential['sum'] = gdf_current_potential[['avg_pv_yea','avg_windpo',
                                                      'non confli', 'urban_zone',
                                                      'rural_zone']].sum(axis=1) * gdf_current_potential['nogo_zones']
 
-gdf_current_potential.to_file('grid_morocco_h2_pot_test_7.shp', driver='ESRI Shapefile')
+gdf_current_potential.to_file('grid_morocco_h2_pot_test_8.shp', driver='ESRI Shapefile')

@@ -2,7 +2,7 @@ import numpy as np
 import pandas as pd
 import geopandas as gpd
 
-from msd_mca_h2_morocco import list_index
+from custom import list_index_only_list
 
 #Weights
 dict_weights = {'avg_pv_yeald': 0.0557, 
@@ -18,9 +18,6 @@ dict_weights = {'avg_pv_yeald': 0.0557,
 #Empty Grid
 gdf_grid_morocco = gpd.read_file('Grid_morocco/grid_morocco_clear.shp')
 
-# def list_index(cell,gdf):
-#     intersects = gdf.intersects(cell)
-#     return intersects[intersects == True].index.tolist()
 #Data
     #Energy Availibility
         #PV
@@ -86,16 +83,16 @@ array_iundustrie = np.array([])
 for i in range(len(gdf_grid_morocco)):
     cell = gdf_grid_morocco.geometry[i]
     
-    list_index_intersection_pv = list_index(cell, gdf_pv_morocco_utm29n)
-    list_index_intersection_wind = list_index(cell, gdf_wind_morocco_utm29n)
-    list_index_intersection_groundwater = list_index(cell, gdf_groundwater)
-    list_index_intersection_rivers = list_index(cell, gdf_rivers)
-    list_index_intersection_roads = list_index(cell, gdf_roads_railsways)
-    list_index_intersection_rural = list_index(cell, gdf_landuse_utm29n)
-    list_index_intersection_nogo = list_index(cell, gdf_nogo_zones)
-    list_index_intersection_agriculture = list_index(cell, gdf_agriculture_morocco)
-    list_index_intersection_urban = list_index(cell, gdf_urban_morocco)
-    list_index_intersection_industrie = list_index(cell, gdf_industrie_morocco)
+    list_index_intersection_pv = list_index_only_list(cell, gdf_pv_morocco_utm29n)
+    list_index_intersection_wind = list_index_only_list(cell, gdf_wind_morocco_utm29n)
+    list_index_intersection_groundwater = list_index_only_list(cell, gdf_groundwater)
+    list_index_intersection_rivers = list_index_only_list(cell, gdf_rivers)
+    list_index_intersection_roads = list_index_only_list(cell, gdf_roads_railsways)
+    list_index_intersection_rural = list_index_only_list(cell, gdf_landuse_utm29n)
+    list_index_intersection_nogo = list_index_only_list(cell, gdf_nogo_zones)
+    list_index_intersection_agriculture = list_index_only_list(cell, gdf_agriculture_morocco)
+    list_index_intersection_urban = list_index_only_list(cell, gdf_urban_morocco)
+    list_index_intersection_industrie = list_index_only_list(cell, gdf_industrie_morocco)
 
     #Energy Availibility
     if len(list_index_intersection_pv) == 0:

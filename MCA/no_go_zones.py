@@ -1,6 +1,8 @@
 import geopandas as gpd
 import numpy as np
 
+from custom import list_index
+
 # Daten einlesen
     #Curent potential map
 gdf_current_potential = gpd.read_file('grid_morocco_h2_pot_test_8.shp')
@@ -17,9 +19,7 @@ gdf_topo_utm29n = gpd.read_file('ToPo_1500.shp').to_crs("EPSG:32629")
 
 array_nogo = np.array([])
 for i in range(len(gdf_current_potential)):
-    cell = gdf_current_potential['geometry'].iloc[i]
-    cell_intersection = gdf_nogo_zones.intersects(cell)
-    list_index_intersection = cell_intersection[cell_intersection == True].index.tolist()
+    cell, list_index_intersection = list_index(gdf_nogo_zones, i, gdf_current_potential)
 
     if len(list_index_intersection) == 0:
         a = 1

@@ -2,8 +2,6 @@ import geopandas as gpd
 import numpy as np
 import pandas as pd
 
-from custom import list_index
-
 gdf_current_potential = gpd.read_file('grid_morocco_h2_pot_test_7.shp')
 
 gdf_coast = gpd.read_file(r"C:\Users\psclr\Documents\02 Master\Masterprojekt\QGIS\Daten\morocco_coast_line.shp").to_crs("EPSG:32629")        

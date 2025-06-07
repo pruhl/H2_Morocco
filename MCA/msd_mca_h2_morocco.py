@@ -2,6 +2,7 @@ import numpy as np
 import pandas as pd
 import geopandas as gpd
 
+from custom import list_index
 #Weights
 dict_weights = {'avg_pv_yeald': 0.0557, 
                 'avg_windpower': 0.1113, 
@@ -17,10 +18,6 @@ dict_weights = {'avg_pv_yeald': 0.0557,
 #Empty Grid
 gdf_grid_morocco = gpd.read_file(r"C:\Users\psclr\Documents\02 Master\Masterprojekt\Python\grid_morocco_clear.shp")
 
-def list_index(gdf, i, grid = gdf_grid_morocco):
-    cell = grid['geometry'].iloc[i]
-    intersects = gdf.intersects(cell)
-    return cell, intersects[intersects == True].index.tolist()
 #Data
     #Energy Availibility
         #PV
@@ -61,8 +58,8 @@ gdf_morocco = gpd.read_file(r'C:\Users\psclr\Documents\02 Master\Masterprojekt\Q
 array_pv_yeald = np.array([])
 array_wind_power = np.array([])
 for i in range(len(gdf_grid_morocco)):
-    cell_pv, list_index_intersection_pv = list_index(gdf_pv_morocco_utm29n, i)
-    cell_wind, list_index_intersection_wind = list_index(gdf_wind_morocco_utm29n, i)
+    cell_pv, list_index_intersection_pv = list_index(gdf_pv_morocco_utm29n, i, gdf_grid_morocco)
+    cell_wind, list_index_intersection_wind = list_index(gdf_wind_morocco_utm29n, i, gdf_grid_morocco)
     
     if len(list_index_intersection_pv) == 0:
         pv_yeald = 0
@@ -85,7 +82,7 @@ array_evaluation_wind = (array_wind_power /
         #Groundwater
 array_gw = np.array([])
 for i in range(len(gdf_grid_morocco)):
-    cell, list_index_intersection = list_index(gdf_groundwater, i)
+    cell, list_index_intersection = list_index(gdf_groundwater, i, gdf_grid_morocco)
     area = gdf_groundwater.loc[list_index_intersection].intersection(cell).area.sum()
 
     array_gw = np.append(array_gw, area/cell.area if area/cell.area <= 1 else 1)
@@ -96,7 +93,7 @@ array_gw = (array_gw/array_gw.max())*100
         #Surface Water
 array_rivers = np.array([])
 for i in range(len(gdf_grid_morocco)):
-    cell, list_index_intersection = list_index(gdf_rivers, i)
+    cell, list_index_intersection = list_index(gdf_rivers, i, gdf_grid_morocco)
     rivers_length = gdf_rivers.loc[list_index_intersection].intersection(cell).length.sum()
 
     array_rivers = np.append(array_rivers, rivers_length)
@@ -120,7 +117,7 @@ weights_roads = {'motorway': 0.25,
 
 df_accessibility = pd.DataFrame(columns = classes)
 for i in range(len(gdf_grid_morocco)):
-    cell, list_index_intersection = list_index(gdf_roads_railsways, i)
+    cell, list_index_intersection = list_index(gdf_roads_railsways, i, gdf_grid_morocco)
     roads_class = gdf_roads_railsways.loc[list_index_intersection]['fclass']
     road_length = gdf_roads_railsways.loc[list_index_intersection].intersection(cell).length
 
@@ -137,7 +134,7 @@ df_accessibility_sum = df_accessibility.sum(axis=1)
 gdf_agriculture_morocco = gdf_landuse_utm29n[gdf_landuse_utm29n['fclass'].isin(['farmland', 'farmyard', 'meadow', 'orchard', 'vineyard'])]
 array_agriculture = np.array([])
 for i in range(len(gdf_grid_morocco)):
-    cell, list_index_intersection = list_index(gdf_agriculture_morocco, i)
+    cell, list_index_intersection = list_index(gdf_agriculture_morocco, i, gdf_grid_morocco)
     area = gdf_agriculture_morocco.loc[list_index_intersection].intersection(cell).area.sum()
 
     array_agriculture = np.append(array_agriculture, area/cell.area)
@@ -148,7 +145,7 @@ array_agriculture = (array_agriculture/array_agriculture.min())*100
 gdf_urban_morocco = gdf_landuse_utm29n[gdf_landuse_utm29n['fclass'].isin(['residential'])]
 array_urban = np.array([])
 for i in range(len(gdf_grid_morocco)):
-    cell, list_index_intersection = list_index(gdf_urban_morocco, i)
+    cell, list_index_intersection = list_index(gdf_urban_morocco, i, gdf_grid_morocco)
     area = gdf_urban_morocco.loc[list_index_intersection].intersection(cell).area.sum()
 
     array_urban = np.append(array_urban, area/cell.area)
@@ -162,7 +159,7 @@ gdf_intersection_industrie = (gdf_grid_morocco.intersection(gdf_industrie_morocc
         #Rural zone
 array_rural = np.array([])
 for i in range(len(gdf_grid_morocco)):
-    cell, list_index_intersection = list_index(gdf_landuse_utm29n, i)
+    cell, list_index_intersection = list_index(gdf_landuse_utm29n, i, gdf_grid_morocco)
     area = gdf_landuse_utm29n.loc[list_index_intersection].intersection(cell).area.sum()
 
     array_rural = np.append(array_rural, area/cell.area if area/cell.area <= 1 else 1)
@@ -175,12 +172,12 @@ non_conflict = gdf_grid_morocco.intersects(gdf_morocco)
 non_conflict.loc[non_conflict == True] = 100
 non_conflict.loc[non_conflict == False] = 0
 
-#No Go Zones
+#No Go Zones --> ToPo is missing!!!
 gdf_nogo_zones = gdf_landuse_utm29n[gdf_landuse_utm29n['fclass'].isin(['military', 'nature_reserve', 'recreation_ground'])]
 
 array_nogo = np.array([])
 for i in range(len(gdf_grid_morocco)):
-    cell, list_index_intersection = list_index(gdf_nogo_zones, i)
+    cell, list_index_intersection = list_index(gdf_nogo_zones, i, gdf_grid_morocco)
 
     array_nogo = np.append(array_nogo, 0 if any(list_index_intersection) else 1)
 
