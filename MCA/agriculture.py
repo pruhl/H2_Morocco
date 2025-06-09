@@ -1,3 +1,4 @@
+import pandas as pd
 import geopandas as gpd
 import numpy as np
 
@@ -5,20 +6,27 @@ from custom import list_index
 
 # Daten einlesen
     #Curent potential map
-gdf_current_potential = gpd.read_file('grid_morocco_h2_pot_test_8.shp')
+gdf_current_potential = gpd.read_file('grid_morocco_h2_pot_test_9.shp')
     #Agriciulture
-gdf_landuse_utm29n = gpd.read_file(r'C:\Users\psclr\Documents\02 Master\Masterprojekt\QGIS\Daten\Landuse\gis_osm_landuse_a_free_1.shp').to_crs("EPSG:32629")
+# gdf_landuse_utm29n = gpd.read_file(r'C:\Users\psclr\Documents\02 Master\Masterprojekt\QGIS\Daten\Landuse\gis_osm_landuse_a_free_1.shp').to_crs("EPSG:32629")
 
-gdf_agriculture_morocco = gdf_landuse_utm29n[gdf_landuse_utm29n['fclass'].isin(['farmland', 'farmyard', 'meadow', 'orchard', 'vineyard'])]
+# gdf_agriculture_morocco = gdf_landuse_utm29n[gdf_landuse_utm29n['fclass'].isin(['farmland', 'farmyard', 'meadow', 'orchard', 'vineyard'])]
+gdf_landuse_mar         = gpd.read_file(r'C:\Users\psclr\Downloads\geonetwork_landcover_mar_gc_adg\mar_gc_adg.shp').to_crs("EPSG:32629") 
+
+gdf_landuse_wsa         = gpd.read_file(r'C:\Users\psclr\Downloads\geonetwork_landcover_wsa_gc_adg\wsa_gc_adg.shp').to_crs("EPSG:32629")
+
+gdf_landuse_concat      = pd.concat([gdf_landuse_mar, gdf_landuse_wsa])
+
+gdf_landuse_agri        = gdf_landuse_concat[gdf_landuse_concat['GRIDCODE'].isin([11, 12, 13, 14, 15, 16, 20, 21, 30, 31, 32])]
 
 array_agriculture = np.array([])
 for i in range(len(gdf_current_potential)):
-    cell, list_index_intersection = list_index(gdf_agriculture_morocco, i, gdf_current_potential)
-    area = gdf_agriculture_morocco.loc[list_index_intersection].intersection(cell).area.sum()
+    cell, list_index_intersection = list_index(gdf_landuse_agri, i, gdf_current_potential)
+    area = gdf_landuse_agri.loc[list_index_intersection].intersection(cell).area.sum()
 
     array_agriculture = np.append(array_agriculture, area/cell.area)
 
-array_agriculture -= array_agriculture.max()
+array_agriculture -= array_agriculture.max()    #Die Zelle mit dem geringstem Agri Anteil ist am besten bewertet
 array_agriculture = (array_agriculture/array_agriculture.min())*100
 
 #Replace old column with new one
@@ -30,4 +38,4 @@ gdf_current_potential['sum'] = gdf_current_potential[['avg_pv_yea','avg_windpo',
                                                      'non confli', 'urban_zone',
                                                      'rural_zone']].sum(axis=1) * gdf_current_potential['nogo_zones']
 
-gdf_current_potential.to_file('grid_morocco_h2_pot_test_8.shp', driver='ESRI Shapefile')
+gdf_current_potential.to_file('grid_morocco_h2_pot_test_9.shp', driver='ESRI Shapefile')
