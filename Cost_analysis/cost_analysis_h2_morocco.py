@@ -6,8 +6,7 @@ import pandas as pd
     #Grid
 gdf_h2_cost                 = gpd.read_file('h2_cost_morocco.shp')
 gdf_h2_cost_centroid        = gdf_h2_cost.geometry.centroid
-gdf_ports                   = gpd.read_file(r"C:\Users\psclr\Documents\02 Master\Masterprojekt\QGIS\Daten\Esri Shapefile\industrial_port.shp").to_crs(gdf_h2_cost.crs)
-gdf_morocco_boundary        = gpd.read_file(r"C:\Users\psclr\Documents\02 Master\Masterprojekt\QGIS\Daten\morocco_Morocco_Country_Boundary.shp").to_crs(gdf_h2_cost.crs)
+gdf_ports                   = gpd.read_file("Data/industrial_ports_morocco.shp").to_crs(gdf_h2_cost.crs)
 
 #Distance all cells to all cells
 list_distance = []
@@ -45,8 +44,6 @@ for j in range(len(gdf_h2_cost)):
             gdf_h2_cost.at[j, 'FLH_el'] = max(list_flh_el)
 
 #Distance all cells to ports
-# intersections = gdf_ports.intersects(gdf_morocco_boundary)
-# gdf_ports = gdf_ports[intersections] 
 list_distance_ports = []
 for i in range(len(gdf_h2_cost)):
     d = min(gdf_ports.distance(gdf_h2_cost_centroid[i]))
@@ -105,51 +102,51 @@ list_h2_pipe = []
 list_index_cell = []
 list_el_source = []
 list_h2_cost = []
-# for i in range(len(gdf_h2_cost)):
-#     pv_cost         = ((el_cost_pv + df_distance_cells[i] * (dc_annuity + dc_opex) + anual_cost_converter)/
-#                        (p_nom_el * eff_el * flh_el_pv))
-#     pv_min          = min(pv_cost)
-#     index_pv_min    = pv_cost.idxmin()        
-#     wind_cost       = ((el_cost_wind + df_distance_cells[i] * (dc_annuity + dc_opex) + anual_cost_converter)/
-#                        (p_nom_el * eff_el * flh_el_wind))
-#     wind_min        = min(wind_cost)
-#     index_wind_min  = wind_cost.idxmin()
+for i in range(len(gdf_h2_cost)):
+    pv_cost         = ((el_cost_pv + df_distance_cells[i] * (dc_annuity + dc_opex) + anual_cost_converter)/
+                       (p_nom_el * eff_el * flh_el_pv))
+    pv_min          = min(pv_cost)
+    index_pv_min    = pv_cost.idxmin()        
+    wind_cost       = ((el_cost_wind + df_distance_cells[i] * (dc_annuity + dc_opex) + anual_cost_converter)/
+                       (p_nom_el * eff_el * flh_el_wind))
+    wind_min        = min(wind_cost)
+    index_wind_min  = wind_cost.idxmin()
     
-#     cost_elektrycity_min    = min(pv_min, wind_min)
-#     index_cell              = index_pv_min if cost_elektrycity_min == pv_min else index_wind_min
-#     source_el               = 'PV' if cost_elektrycity_min == pv_min else 'Wind'
+    cost_elektrycity_min    = min(pv_min, wind_min)
+    index_cell              = index_pv_min if cost_elektrycity_min == pv_min else index_wind_min
+    source_el               = 'PV' if cost_elektrycity_min == pv_min else 'Wind'
     
-#     cost_el_h2              = el_annuity/(p_nom_el * eff_el * flh_el_pv) if source_el == 'PV' else el_annuity/(p_nom_el * eff_el * flh_el_wind)
-#     cost_el_h2              += opex_el/(p_nom_el * eff_el * flh_el_pv) if source_el == 'PV' else opex_el/(p_nom_el * eff_el * flh_el_wind)
+    cost_el_h2              = el_annuity/(p_nom_el * eff_el * flh_el_pv) if source_el == 'PV' else el_annuity/(p_nom_el * eff_el * flh_el_wind)
+    cost_el_h2              += opex_el/(p_nom_el * eff_el * flh_el_pv) if source_el == 'PV' else opex_el/(p_nom_el * eff_el * flh_el_wind)
 
-#     cost_h2_pipe            = df_distance_ports.iat[i,0] * h2_pipe_annuity / (p_nom_el * eff_el * flh_el_pv) if source_el == 'PV' else df_distance_ports.iat[i,0] * h2_pipe_annuity / (p_nom_el * eff_el * flh_el_wind)
+    cost_h2_pipe            = df_distance_ports.iat[i,0] * h2_pipe_annuity / (p_nom_el * eff_el * flh_el_pv) if source_el == 'PV' else df_distance_ports.iat[i,0] * h2_pipe_annuity / (p_nom_el * eff_el * flh_el_wind)
 
-#     h2_price = cost_elektrycity_min + cost_el_h2 + cost_h2_pipe
+    h2_price = cost_elektrycity_min + cost_el_h2 + cost_h2_pipe
 
-#     list_h2_electricity.append(cost_elektrycity_min)
-#     list_index_cell.append(index_cell)
-#     list_el_source.append(source_el)
-#     list_h2_electrolysis.append(cost_el_h2)
-#     list_h2_pipe.append(cost_h2_pipe)
-#     list_h2_cost.append(h2_price)
+    list_h2_electricity.append(cost_elektrycity_min)
+    list_index_cell.append(index_cell)
+    list_el_source.append(source_el)
+    list_h2_electrolysis.append(cost_el_h2)
+    list_h2_pipe.append(cost_h2_pipe)
+    list_h2_cost.append(h2_price)
 
-# df_h2_cost = pd.DataFrame(
-#     {'Electricity [EUR/MWh_h2]': list_h2_electricity,
-#      'Electrolysis [EUR/MWh_h2]': list_h2_electrolysis,
-#      'Pipeline [EUR/MWh_h2]': list_h2_pipe,
-#      'H2 Price [EUR/MWh_h2]': list_h2_cost, 
-#      'index_source_el': list_index_cell, 
-#      'source_el': list_el_source})
+df_h2_cost = pd.DataFrame(
+    {'Electricity [EUR/MWh_h2]': list_h2_electricity,
+     'Electrolysis [EUR/MWh_h2]': list_h2_electrolysis,
+     'Pipeline [EUR/MWh_h2]': list_h2_pipe,
+     'H2 Price [EUR/MWh_h2]': list_h2_cost, 
+     'index_source_el': list_index_cell, 
+     'source_el': list_el_source})
 
 
-# #gdf_h2_cost = gdf_h2_cost.join(df_h2_cost)
-# gdf_h2_cost['Electricit'] = list_h2_electricity
-# gdf_h2_cost['Electrolys'] = list_h2_electrolysis
-# gdf_h2_cost['Pipeline ['] = list_h2_pipe
-# gdf_h2_cost['H2 Price ['] = list_h2_cost
-# gdf_h2_cost['index_sour'] = list_index_cell
-# gdf_h2_cost['source_el'] = list_el_source
+#gdf_h2_cost = gdf_h2_cost.join(df_h2_cost)
+gdf_h2_cost['Electricit'] = list_h2_electricity
+gdf_h2_cost['Electrolys'] = list_h2_electrolysis
+gdf_h2_cost['Pipeline ['] = list_h2_pipe
+gdf_h2_cost['H2 Price ['] = list_h2_cost
+gdf_h2_cost['index_sour'] = list_index_cell
+gdf_h2_cost['source_el'] = list_el_source
 
-# gdf_h2_cost['H2 Price ['] = gdf_h2_cost['H2 Price ['].round(2)
+gdf_h2_cost['H2 Price ['] = gdf_h2_cost['H2 Price ['].round(2)
 
-gdf_h2_cost.to_file('h2_cost_morocco.shp', driver='ESRI Shapefile')
+gdf_h2_cost.to_file('h2_cost_morocco_2.shp', driver='ESRI Shapefile')

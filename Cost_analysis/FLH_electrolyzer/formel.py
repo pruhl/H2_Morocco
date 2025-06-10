@@ -32,7 +32,6 @@ print("Formel: y =", f"{model.coef_[0]}*{poly.get_feature_names_out()[0]} +{mode
 
 for i in range(len(df_flh_el)):
     y = 0.0*1 +-6.6770138990268e-05*df_pv[i] + 0.0009983995228525259*df_wind[i] + -0.0792907929992582*df_pv[i]**2 + 0.6015039377643137*df_pv[i]*df_wind[i] + -0.17342074638805446*df_wind[i]**2 + 0.00023937794024431227*df_pv[i]**3 + -0.0006510799366329*df_pv[i]**2*df_wind[i] + 0.00019244450456020793*df_pv[i]*df_wind[i]**2 + -1.816467055199652e-06*df_wind[i]**3 + -8.5611244271594e-08*df_pv[i]**4 + 1.7739890917961985e-07*df_pv[i]**3*df_wind[i] + -5.4292976076750066e-08*df_pv[i]**2*df_wind[i]**2 +1.3219706105279685e-09*df_pv[i]*df_wind[i]**3 +-4.5916292049454945e-11*df_wind[i]**4 +-244026.2227515451
-    #y = 0.0*1 +2.3300847735746117e-05*df_pv[i] + 0.000989975461021474*df_wind[i] + 0.039698250531352605*df_pv[i]**2 + 0.6773889381668023*df_pv[i]*df_wind[i] + -0.18346173742823574*df_wind[i]**2 + 0.00018972780598021586*df_pv[i]**3 + -0.0007363766172944372*df_pv[i]**2*df_wind[i] + 0.00020457303904330951*df_pv[i]*df_wind[i]**2 + -1.8899238803569144e-06*df_wind[i]**3 + -8.385932855961002e-08*df_pv[i]**4 + 2.0311812318590393e-07*df_pv[i]**3*df_wind[i] + -5.9474915476495186e-08*df_pv[i]**2*df_wind[i]**2 + 1.9176669613403185e-09*df_pv[i]*df_wind[i]**3 + -1.151973484729259e-10*df_wind[i]**4 + -365571.94351789093
     df_flh_el.at[i, 'FLH function graph'] = y
 
 df_flh_el.plot(ylabel='FLH_electrolyzer', title='FLH_electrolyzer with PV and Wind', xlabel= 'Itteration')

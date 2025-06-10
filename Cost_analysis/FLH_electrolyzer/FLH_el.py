@@ -14,19 +14,12 @@ el_annuity  = (((1 + el_r) ** el_lifetime * el_r)
 
 energy_production_min = 3.1e9 # kWh
 
-#PV
-# df_pv = pd.read_csv('ninja_pv_34.6401_-4.8542_uncorrected.csv', header=3)
-# df_pv_el = df_pv['electricity']
 capex_pv = 1000 # €/kWp
 opex_pv = 0.02 * capex_pv # €/kWp
 lifetime_pv = 25 # years
 r_pv = 0.04 # discount rate
 
 annuity_pv = ((1 + r_pv) ** lifetime_pv * r_pv) / ((1 + r_pv) ** lifetime_pv - 1) * capex_pv + opex_pv # €/kWp
-
-#Wind
-# df_wind = pd.read_csv('ninja_wind_34.6401_-4.8542_corrected.csv', header=3)
-# df_wind_el = df_wind['electricity']
 
 capex_wind = 1600 # €/kW
 opex_wind = 0.02 * capex_wind # €/kWp
