@@ -55,17 +55,27 @@ df_flh_electrolyzer = pd.DataFrame(columns=['FLH_electrolyzer'])
 
 network.optimize(solver_name = "gurobi")
 
-df = (network.generators_t.p['negative_gen'].sum())/network.generators.p_nom_opt['negative_gen']
+pv = (network.generators.p_nom_opt['pv']/network.generators.p_nom_opt['negative_gen'])*100
+wind = (network.generators.p_nom_opt['wind']/network.generators.p_nom_opt['negative_gen'])*100
+flh_el = (network.generators_t.p['negative_gen'].sum())/network.generators.p_nom_opt['negative_gen']
 
-df_flh_electrolyzer.at[0, 'FLH_electrolyzer'] = df
+df_flh_electrolyzer.at[0, 'FLH_electrolyzer'] = flh_el
+df_flh_electrolyzer.at[0, 'PV'] = pv
+df_flh_electrolyzer.at[0, 'Wind'] = wind
+
 for i in range(1, 100):
     df_wind_el = df_pv_wind[f'electricity_Wind_{i}']
     df_pv_el = df_pv_wind[f'electricity_PV_{i}']
     network.generators_t.p_max_pu['pv'] = df_pv_el.values
     network.generators_t.p_max_pu['wind'] = df_wind_el.values
     network.optimize(solver_name = "gurobi")
-    df = (network.generators_t.p['negative_gen'].sum())/network.generators.p_nom_opt['negative_gen']
+    flh_el = (network.generators_t.p['negative_gen'].sum())/network.generators.p_nom_opt['negative_gen']
+    pv = (network.generators.p_nom_opt['pv']/network.generators.p_nom_opt['negative_gen'])*100
+    wind = (network.generators.p_nom_opt['wind']/network.generators.p_nom_opt['negative_gen'])*100
 
-    df_flh_electrolyzer.at[i, 'FLH_electrolyzer'] = df
+
+    df_flh_electrolyzer.at[i, 'FLH_electrolyzer'] = flh_el
+    df_flh_electrolyzer.at[i, 'PV'] = pv
+    df_flh_electrolyzer.at[i, 'Wind'] = wind
 
 df_flh_electrolyzer.to_csv('FLH_electrolyzer.csv')
