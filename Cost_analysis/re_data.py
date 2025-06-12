@@ -2,8 +2,8 @@ import requests
 import pandas as pd
 import json
 
-coordinates = pd.read_excel('PV_WIND_50_Punkte.xlsx', sheet_name='PV_Punkte')
-df_electricity = pd.read_csv('pv_wind_electricity.csv', index_col=0)
+coordinates = pd.read_excel('Data/PV_WIND_50_Punkte.xlsx', sheet_name='PV_Punkte')
+df_electricity = pd.read_csv('Data/pv_wind_electricity.csv', index_col=0)
 df_electricity.reset_index(drop=True, inplace=True)
 #df_electricity = pd.DataFrame()
 
@@ -19,7 +19,7 @@ s.headers = {'Authorization': 'Token ' + token}
 url_pv = api_base + 'data/pv'
 url_wind = api_base + 'data/wind'
 
-for i in range(48, 50):   # Nur sechs Anfragen pro Min (2*3), um API-Limits zu beachten: Maximal 50 pro Stunden
+for i in range(1):   # Nur sechs Anfragen pro Min (2*3), um API-Limits zu beachten: Maximal 50 pro Stunden
     lat = coordinates.at[i, 'Latitude']
     lon = coordinates.at[i, 'Longitude']
     # PV
@@ -59,11 +59,11 @@ for i in range(48, 50):   # Nur sechs Anfragen pro Min (2*3), um API-Limits zu b
     data_wind = pd.read_json(json.dumps(parsed_response_wind['data']), orient='index')
     metadata_wind = parsed_response_wind['metadata']
 
-    data_pv.rename(columns={'electricity': f'electricity_PV_{50+i}'}, inplace=True)
-    data_wind.rename(columns={'electricity': f'electricity_Wind_{50+i}'}, inplace=True)
+    data_pv.rename(columns={'electricity': f'electricity_PV_{i}'}, inplace=True)
+    data_wind.rename(columns={'electricity': f'electricity_Wind_{i}'}, inplace=True)
 
     df_concat = pd.concat([data_pv, data_wind], axis=1)
     df_concat.reset_index(drop=True, inplace=True)
     df_electricity = pd.concat([df_electricity, df_concat], axis=1)
 
-df_electricity.to_csv('pv_wind_electricity.csv')
+#df_electricity.to_csv('pv_wind_electricity.csv')

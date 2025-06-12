@@ -45,8 +45,6 @@ network.add("Generator", name = "wind", bus = "bus_electricity",
 #Link Electrolyzer
 network.add("Link", name = "Electrolyzer", bus0 = "bus_electricity", bus1 = "bus_hydrogen",
             p_nom_extendable = True, efficiency = eff_el, capital_cost = el_annuity)
-#Storage
-#network.add("StorageUnit", name = "storage_hydrogen", bus = "bus_hydrogen", p_nom_extendable = True)
 
 network.add("Generator", name = "negative_gen", bus = "bus_hydrogen",
              p_nom_extendable = True, sign = -1, e_sum_min = energy_production_min, e_sum_max = energy_production_min)
