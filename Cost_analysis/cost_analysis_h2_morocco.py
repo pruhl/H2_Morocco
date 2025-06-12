@@ -16,33 +16,6 @@ for i in range(len(gdf_h2_cost)):
 
 df_distance_cells = pd.DataFrame(list_distance)
 
-#FLH each cell from pv_wind each cell --> Nochmals zu verbessern!oder kontrollieren
-for j in range(len(gdf_h2_cost)):
-    list_flh_el = []
-    for i in range(len(gdf_h2_cost)):
-        pv_flh = gdf_h2_cost.at[i, 'FLH_pv']
-        wind_flh = gdf_h2_cost.at[j, 'FLH_wind']
-        flh_electrolysis = (
-            -6.6770138990268e-05 * pv_flh
-            + 0.0009983995228525259 * wind_flh
-            - 0.0792907929992582 * pv_flh**2
-            + 0.6015039377643137 * pv_flh * wind_flh
-            - 0.17342074638805446 * wind_flh**2
-            + 0.00023937794024431227 * pv_flh**3
-            - 0.0006510799366329 * pv_flh**2 * wind_flh
-            + 0.00019244450456020793 * pv_flh * wind_flh**2
-            - 1.816467055199652e-06 * wind_flh**3
-            - 8.5611244271594e-08 * pv_flh**4
-            + 1.7739890917961985e-07 * pv_flh**3 * wind_flh
-            - 5.4292976076750066e-08 * pv_flh**2 * wind_flh**2
-            + 1.3219706105279685e-09 * pv_flh * wind_flh**3
-            - 4.5916292049454945e-11 * wind_flh**4
-            - 244026.2227515451
-        )
-        list_flh_el.append(flh_electrolysis)
-        if i == len(gdf_h2_cost) - 1:
-            gdf_h2_cost.at[j, 'FLH_el'] = max(list_flh_el)
-
 #Distance all cells to ports
 list_distance_ports = []
 for i in range(len(gdf_h2_cost)):
