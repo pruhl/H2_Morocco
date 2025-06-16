@@ -125,6 +125,7 @@ for i in range(len(gdf_h2_cost)):
 
 gdf_cost_cells = gpd.GeoDataFrame(df_cost_cells, geometry=gdf_h2_cost.geometry, crs=gdf_h2_cost.crs)
 gdf_cost_cells.to_file('Maps/h2_cost_morocco_3.shp', driver='ESRI Shapefile')
+
 #     list_h2_electricity.append(cost_elektrycity_min)
 #     list_index_cell.append(index_cell)
 #     list_el_source.append(source_el)

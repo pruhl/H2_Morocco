@@ -5,7 +5,7 @@ from custom import list_index
 
 # Daten einlesen
     #Curent potential map
-gdf_current_potential = gpd.read_file('grid_morocco_h2_pot_test_8.shp')
+gdf_current_potential = gpd.read_file('Maps/test.shp')
     #Accessibility
 gdf_railways_utm29n = gpd.read_file(r'C:\Users\psclr\Documents\02 Master\Masterprojekt\QGIS\Daten\Landuse\gis_osm_railways_free_1.shp').to_crs("EPSG:32629")
 gdf_railways_utm29n['fclass'] = 'railway'
@@ -47,7 +47,8 @@ df_accessibility = (df_accessibility/df_accessibility.max())*100*weights_roads.v
 ds_accessibility_sum = df_accessibility.sum(axis=1).astype(float)
 
 #Replace old column with new one
-weight_accessibility = 0.0831
+# weight_accessibility = 0.0831 #V1
+weight_accessibility = 0.0823   #V2
 gdf_current_potential['accessibil'] = ds_accessibility_sum * weight_accessibility
 gdf_current_potential['sum'] = gdf_current_potential[['avg_pv_yea','avg_windpo', 
                                                      'water aval', 'industrial',
@@ -55,4 +56,4 @@ gdf_current_potential['sum'] = gdf_current_potential[['avg_pv_yea','avg_windpo',
                                                      'non confli', 'urban_zone',
                                                      'rural_zone']].sum(axis=1) * gdf_current_potential['nogo_zones']
 
-gdf_current_potential.to_file('grid_morocco_h2_pot_test_8.shp', driver='ESRI Shapefile')
+gdf_current_potential.to_file('Maps/test_2.shp', driver='ESRI Shapefile')

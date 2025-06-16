@@ -6,7 +6,7 @@ from custom import list_index
 
 # Daten einlesen
     #Curent potential map
-gdf_current_potential = gpd.read_file('grid_morocco_h2_pot_test_9.shp')
+gdf_current_potential = gpd.read_file('Maps/test_2.shp')
     #Urban landuse
 # gdf_landuse_utm29n = gpd.read_file(r'C:\Users\psclr\Documents\02 Master\Masterprojekt\QGIS\Daten\Landuse\gis_osm_landuse_a_free_1.shp').to_crs("EPSG:32629")
 
@@ -30,7 +30,8 @@ array_urban -= array_urban.max()   #Die Zelle mit dem geringstem Urban Anteil is
 array_urban = (array_urban/array_urban.min())*100
 
 #Replace old column with new one
-weight_urban = 0.0148
+# weight_urban = 0.0148   #V1
+weight_urban = 0.0179   #V2
 gdf_current_potential['urban_zone'] = array_urban * weight_urban
 gdf_current_potential['sum'] = gdf_current_potential[['avg_pv_yea','avg_windpo', 
                                                      'water aval', 'industrial',
@@ -38,4 +39,4 @@ gdf_current_potential['sum'] = gdf_current_potential[['avg_pv_yea','avg_windpo',
                                                      'non confli', 'urban_zone',
                                                      'rural_zone']].sum(axis=1) * gdf_current_potential['nogo_zones']
 
-gdf_current_potential.to_file('grid_morocco_h2_pot_test_9.shp', driver='ESRI Shapefile')
+gdf_current_potential.to_file('Maps/test_2.shp', driver='ESRI Shapefile')
