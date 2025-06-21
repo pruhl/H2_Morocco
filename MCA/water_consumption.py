@@ -14,7 +14,7 @@ gdf_landuse_concat      = pd.concat([gdf_landuse_mar, gdf_landuse_wsa])
 
 gdf_landuse_urban       = gdf_landuse_concat[gdf_landuse_concat['GRIDCODE'].isin([190])]
 
-gdf_landuse_agri_100    = gdf_landuse_concat[gdf_landuse_concat['GRIDCODE'].isin([11, 12, 13, 14, 15, 16])]
+gdf_landuse_agri_100    = gdf_landuse_concat[gdf_landuse_concat['GRIDCODE'].isin([11, 12, 13])]
 gdf_landuse_agri_70     = gdf_landuse_concat[gdf_landuse_concat['GRIDCODE'].isin([20,21])]
 gdf_landuse_agri_30     = gdf_landuse_concat[gdf_landuse_concat['GRIDCODE'].isin([30, 31, 32])]
 
@@ -64,4 +64,4 @@ for i in range(len(gdf_grid_morocco)):
 
     gdf_grid_morocco.at[i, 'Water_Consumption'] = sum_water_consumption
 
-gdf_grid_morocco.to_file('Water_Consumption.shp', driver='ESRI Shapefile')
+gdf_grid_morocco.to_file('Data/Water_Consumption_2.shp', driver='ESRI Shapefile')

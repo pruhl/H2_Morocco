@@ -5,6 +5,8 @@ import geopandas as gpd
 gdf_current_potential = gpd.read_file('Maps/grid_morocco_h2_pot_test_9.shp')
     #non_conflict
 gdf_morocco = gpd.read_file(r'C:\Users\psclr\Documents\02 Master\Masterprojekt\QGIS\Daten\morocco.geojson').to_crs("EPSG:32629").union_all()
+    #conflict
+gdf_conflict = gpd.read_file('Data/conflict_area.shp').to_crs("EPSG:32629")
 
 non_conflict = gdf_current_potential.intersects(gdf_morocco)
 
@@ -13,13 +15,20 @@ non_conflict.loc[non_conflict == False] = 0
 
 non_conflict = non_conflict.astype(float)
 
-#Replace old column with new one
-weight_non_conflict = 0
-gdf_current_potential['non confli'] = non_conflict * weight_non_conflict
-gdf_current_potential['sum'] = gdf_current_potential[['avg_pv_yea','avg_windpo', 
-                                                     'water aval', 'industrial',
-                                                     'accessibil', 'agricultur',
-                                                     'non confli', 'urban_zone',
-                                                     'rural_zone']].sum(axis=1) * gdf_current_potential['nogo_zones']
+# conflict = gdf_current_potential.intersects(gdf_conflict.geometry[0])
 
-gdf_current_potential.to_file('Maps/test.shp', driver='ESRI Shapefile')
+# conflict.loc[conflict == True] = 0
+# conflict.loc[conflict == False] = 100
+
+# conflict = conflict.astype(float)
+
+# #Replace old column with new one
+# weight_non_conflict = 0.1663
+# gdf_current_potential['non confli'] = conflict * weight_non_conflict
+# gdf_current_potential['sum'] = gdf_current_potential[['avg_pv_yea','avg_windpo', 
+#                                                      'water aval', 'industrial',
+#                                                      'accessibil', 'agricultur',
+#                                                      'non confli', 'urban_zone',
+#                                                      'rural_zone']].sum(axis=1) * gdf_current_potential['nogo_zones']
+
+# gdf_current_potential.to_file('Maps/grid_morocco_h2_pot_test_10.shp', driver='ESRI Shapefile')
