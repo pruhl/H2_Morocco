@@ -47,8 +47,7 @@ df_accessibility = (df_accessibility/df_accessibility.max())*100*weights_roads.v
 ds_accessibility_sum = df_accessibility.sum(axis=1).astype(float)
 
 #Replace old column with new one
-# weight_accessibility = 0.0831 #V1
-weight_accessibility = 0.0823   #V2
+weight_accessibility = 0.0831
 gdf_current_potential['accessibil'] = ds_accessibility_sum * weight_accessibility
 gdf_current_potential['sum'] = gdf_current_potential[['avg_pv_yea','avg_windpo', 
                                                      'water aval', 'industrial',

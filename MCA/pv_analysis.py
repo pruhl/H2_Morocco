@@ -24,8 +24,7 @@ array_evaluation_pv = (array_pv_yeald /
                      array_pv_yeald.max()) * 100
 
 #Replace old column with new one
-# weight_pv = 0.0557  #V1
-weight_pv = 0.0657  #V2
+weight_pv = 0.0557
 gdf_current_potential['avg_pv_yea'] = array_evaluation_pv * weight_pv
 gdf_current_potential['sum'] = gdf_current_potential[['avg_pv_yea','avg_windpo', 
                                                      'water aval', 'industrial',

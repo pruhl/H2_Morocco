@@ -30,8 +30,7 @@ array_agriculture -= array_agriculture.max()    #Die Zelle mit dem geringstem Ag
 array_agriculture = (array_agriculture/array_agriculture.min())*100
 
 #Replace old column with new one
-# weight_agri = 0.0194  #V1
-weight_agri = 0.0236  #V2
+weight_agri = 0.0194
 gdf_current_potential['agricultur'] = array_agriculture * weight_agri
 gdf_current_potential['sum'] = gdf_current_potential[['avg_pv_yea','avg_windpo', 
                                                      'water aval', 'industrial',

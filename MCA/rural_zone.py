@@ -31,8 +31,7 @@ for i in range(len(gdf_current_potential)):
 array_rural = (array_rural/array_rural.max())*100   #Die Zelle mit dem höhstem Rural Anteil ist am besten bewertet
 
 #Replace old column with new one
-# weight_rural = 0.0496   #V1
-weight_rural = 0.0604     #V2
+weight_rural = 0.0496
 gdf_current_potential['rural_zone'] = array_rural * weight_rural
 gdf_current_potential['sum'] = gdf_current_potential[['avg_pv_yea','avg_windpo', 
                                                      'water aval', 'industrial',

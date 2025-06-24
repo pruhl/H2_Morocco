@@ -30,8 +30,7 @@ array_urban -= array_urban.max()   #Die Zelle mit dem geringstem Urban Anteil is
 array_urban = (array_urban/array_urban.min())*100
 
 #Replace old column with new one
-# weight_urban = 0.0148   #V1
-weight_urban = 0.0179   #V2
+weight_urban = 0.0148
 gdf_current_potential['urban_zone'] = array_urban * weight_urban
 gdf_current_potential['sum'] = gdf_current_potential[['avg_pv_yea','avg_windpo', 
                                                      'water aval', 'industrial',

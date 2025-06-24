@@ -24,17 +24,17 @@ agri    = 0.87
 urban   = 0.104
 indust  = 0.026
 
-water_consumption = 15.9e9     #billion m3/year
+water_consumption = 15.9     #BCM/a
 
 area_sum_agri = gdf_landuse_agri_100.area.sum() + gdf_landuse_agri_70.area.sum() * 0.7 + gdf_landuse_agri_30.area.sum() *0.3
 
-gdf_landuse_urban['Water_Consumption']      = (gdf_landuse_urban.area/gdf_landuse_urban.area.sum()) * urban * water_consumption
+gdf_landuse_urban['Water_Consumption[BCM]']      = (gdf_landuse_urban.area/gdf_landuse_urban.area.sum()) * urban * water_consumption
 
-gdf_landuse_agri_100['Water_Consumption']   = (gdf_landuse_agri_100.area/area_sum_agri) * agri * water_consumption
-gdf_landuse_agri_70['Water_Consumption']    = (gdf_landuse_agri_70.area/area_sum_agri) * agri * water_consumption * 0.7
-gdf_landuse_agri_30['Water_Consumption']    = (gdf_landuse_agri_30.area/area_sum_agri) * agri * water_consumption * 0.3
+gdf_landuse_agri_100['Water_Consumption[BCM]']   = (gdf_landuse_agri_100.area/area_sum_agri) * agri * water_consumption
+gdf_landuse_agri_70['Water_Consumption[BCM]']    = (gdf_landuse_agri_70.area/area_sum_agri) * agri * water_consumption * 0.7
+gdf_landuse_agri_30['Water_Consumption[BCM]']    = (gdf_landuse_agri_30.area/area_sum_agri) * agri * water_consumption * 0.3
 
-gdf_landuse_industrial['Water_Consumption'] = (gdf_landuse_industrial.area/gdf_landuse_industrial.area.sum()) * indust * water_consumption
+gdf_landuse_industrial['Water_Consumption[BCM]'] = (gdf_landuse_industrial.area/gdf_landuse_industrial.area.sum()) * indust * water_consumption
 
 for i in range(len(gdf_grid_morocco)):
     # Urban
@@ -62,6 +62,6 @@ for i in range(len(gdf_grid_morocco)):
 
     sum_water_consumption = water_consumption_urban + water_consumption_agri_100 + water_consumption_agri_70 + water_consumption_agri_30 + water_consumption_industrial
 
-    gdf_grid_morocco.at[i, 'Water_Consumption'] = sum_water_consumption
+    gdf_grid_morocco.at[i, 'Water_Consumption[BCM]'] = sum_water_consumption
 
-gdf_grid_morocco.to_file('Data/Water_Consumption_2.shp', driver='ESRI Shapefile')
+gdf_grid_morocco['Water_Consumption[BCM]'].to_csv('Data/Water_Consumption.csv')

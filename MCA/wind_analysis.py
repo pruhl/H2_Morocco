@@ -24,8 +24,7 @@ array_evaluation_wind = (array_wind_power /
                      array_wind_power.max()) * 100
 
 #Replace old column with new one
-# weight_wind = 0.1113    #V1
-weight_wind = 0.1315    #V2
+weight_wind = 0.1113
 gdf_current_potential['avg_windpo'] = array_evaluation_wind * weight_wind
 gdf_current_potential['sum'] = gdf_current_potential[['avg_pv_yea','avg_windpo', 
                                                      'water aval', 'industrial',
