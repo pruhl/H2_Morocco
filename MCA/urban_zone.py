@@ -4,13 +4,13 @@ import numpy as np
 
 from custom import list_index
 
-# Daten einlesen
-    #Curent potential map
-gdf_current_potential = gpd.read_file('Maps/test_2.shp')
+# Data
+    #Curent potential
+gdf_current_potential = gpd.read_file('Maps/mca_h2_morocco_2025.shp')
     #Urban landuse
 # gdf_landuse_utm29n = gpd.read_file(r'C:\Users\psclr\Documents\02 Master\Masterprojekt\QGIS\Daten\Landuse\gis_osm_landuse_a_free_1.shp').to_crs("EPSG:32629")
-
 # gdf_urban_morocco = gdf_landuse_utm29n[gdf_landuse_utm29n['fclass'].isin(['residential'])]
+
 gdf_landuse_mar         = gpd.read_file(r'C:\Users\psclr\Downloads\geonetwork_landcover_mar_gc_adg\mar_gc_adg.shp').to_crs("EPSG:32629") 
 
 gdf_landuse_wsa         = gpd.read_file(r'C:\Users\psclr\Downloads\geonetwork_landcover_wsa_gc_adg\wsa_gc_adg.shp').to_crs("EPSG:32629")
@@ -26,7 +26,7 @@ for i in range(len(gdf_current_potential)):
 
     array_urban = np.append(array_urban, area/cell.area)
 
-array_urban -= array_urban.max()   #Die Zelle mit dem geringstem Urban Anteil ist am besten bewertet
+array_urban -= array_urban.max()
 array_urban = (array_urban/array_urban.min())*100
 
 #Replace old column with new one
@@ -38,4 +38,4 @@ gdf_current_potential['sum'] = gdf_current_potential[['avg_pv_yea','avg_windpo',
                                                      'non confli', 'urban_zone',
                                                      'rural_zone']].sum(axis=1) * gdf_current_potential['nogo_zones']
 
-gdf_current_potential.to_file('Maps/test_2.shp', driver='ESRI Shapefile')
+gdf_current_potential.to_file('Maps/mca_h2_morocco_2025.shp', driver='ESRI Shapefile')

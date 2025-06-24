@@ -1,8 +1,8 @@
 import geopandas as gpd
 
-# Daten einlesen
-    #Curent potential map
-gdf_current_potential = gpd.read_file('Maps/test_2.shp')
+# Data
+    #Curent potential
+gdf_current_potential = gpd.read_file('Maps/mca_h2_morocco_2025.shp')
     #Industrial
 gdf_landuse_utm29n = gpd.read_file(r'C:\Users\psclr\Documents\02 Master\Masterprojekt\QGIS\Daten\Landuse\gis_osm_landuse_a_free_1.shp').to_crs("EPSG:32629")
 
@@ -13,13 +13,13 @@ ds_intersection_industrie = (gdf_current_potential.intersection(gdf_industrie_mo
 
 ds_intersection_industrie = (ds_intersection_industrie/ds_intersection_industrie.max())*100
 
-#Replace old column with new one
-# weight_indust = 0.16
-# gdf_current_potential['industrial'] = gdf_intersection_industrie * weight_indust
-# gdf_current_potential['sum'] = gdf_current_potential[['avg_pv_yea','avg_windpo', 
-#                                                      'water aval', 'industrial',
-#                                                      'accessibil', 'agricultur',
-#                                                      'non confli', 'urban_zone',
-#                                                      'rural_zone']].sum(axis=1) * gdf_current_potential['nogo_zones']
+# Replace old column with new one
+weight_indust = 0.16
+gdf_current_potential['industrial'] = ds_intersection_industrie * weight_indust
+gdf_current_potential['sum'] = gdf_current_potential[['avg_pv_yea','avg_windpo', 
+                                                     'water aval', 'industrial',
+                                                     'accessibil', 'agricultur',
+                                                     'non confli', 'urban_zone',
+                                                     'rural_zone']].sum(axis=1) * gdf_current_potential['nogo_zones']
 
-# gdf_current_potential.to_file('Maps/test_2.shp', driver='ESRI Shapefile')
+gdf_current_potential.to_file('Maps/mca_h2_morocco_2025.shp', driver='ESRI Shapefile')
