@@ -1,5 +1,6 @@
 import geopandas as gpd
 import pandas as pd
+import numpy as np
 
 from custom import list_index
 
@@ -10,7 +11,10 @@ gdf_landuse_mar         = gpd.read_file(r'C:\Users\psclr\Downloads\geonetwork_la
 
 gdf_landuse_wsa         = gpd.read_file(r'C:\Users\psclr\Downloads\geonetwork_landcover_wsa_gc_adg\wsa_gc_adg.shp').to_crs("EPSG:32629")
 
-gdf_landuse_concat      = pd.concat([gdf_landuse_mar, gdf_landuse_wsa])
+# gdf_landuse_concat      = gpd.GeoDataFrame(pd.concat([gdf_landuse_mar, gdf_landuse_wsa])) #Landuse today
+# gdf_landuse_concat      = gpd.read_file('Data/morocco_landuse_2030.shp')    #Landuse 2030
+gdf_landuse_concat      = gpd.read_file('Data/morocco_landuse_2050.shp')    #Landuse 2050
+
 
 gdf_landuse_urban       = gdf_landuse_concat[gdf_landuse_concat['GRIDCODE'].isin([190])]
 
@@ -20,11 +24,21 @@ gdf_landuse_agri_30     = gdf_landuse_concat[gdf_landuse_concat['GRIDCODE'].isin
 
 gdf_landuse_industrial  = gdf_landuse_utm29n[gdf_landuse_utm29n['fclass'].isin(['industrial'])]
 
-agri    = 0.87
-urban   = 0.104
-indust  = 0.026
+# agri    = 0.87  #Today
+# urban   = 0.104 #Today
+# indust  = 0.026 #Today
 
-water_consumption = 15.9     #BCM/a
+# agri    = np.interp(2030, [2025, 2050], [0.87, 0.75])     #2030
+# urban   = np.interp(2030, [2025, 2050], [0.104, 0.223])   #2030
+# indust  = np.interp(2030, [2025, 2050], [0.026, 0.027])   #2030
+
+agri    = 0.75  #2050
+urban   = 0.223 #2050
+indust  = 0.027 #2050
+
+# water_consumption = 15.9                                            #BCM/a Today
+# water_consumption = np.interp(2030, [2025, 2050], [15.9, 24.223]) #BCM/a 2030
+water_consumption = 24.223                                        #BCM/a 2050
 
 area_sum_agri = gdf_landuse_agri_100.area.sum() + gdf_landuse_agri_70.area.sum() * 0.7 + gdf_landuse_agri_30.area.sum() *0.3
 
@@ -64,4 +78,4 @@ for i in range(len(gdf_grid_morocco)):
 
     gdf_grid_morocco.at[i, 'Water_Consumption[BCM]'] = sum_water_consumption
 
-gdf_grid_morocco['Water_Consumption[BCM]'].to_csv('Data/Water_Consumption.csv')
+gdf_grid_morocco['Water_Consumption[BCM]'].to_csv('Data/Water_Consumption_2050.csv')

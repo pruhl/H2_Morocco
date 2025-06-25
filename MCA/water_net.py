@@ -8,7 +8,10 @@ gdf_coast = gpd.read_file(r"C:\Users\psclr\Documents\02 Master\Masterprojekt\QGI
 
 df_gw_availability = pd.read_csv('Data/water_availability_gw.csv')
 df_sw_availability = pd.read_csv('Data/water_availability_sw.csv')
-df_water_consumption = pd.read_csv('Data/Water_Consumption.csv')
+
+df_water_consumption = pd.read_csv('Data/Water_Consumption.csv')        #Today
+# df_water_consumption = pd.read_csv('Data/Water_Consumption_2030.csv')   #2030
+# df_water_consumption = pd.read_csv('Data/Water_Consumption_2050.csv')   #2050
 
 ds_water = (- df_water_consumption['Water_Consumption[BCM]'] * 10**9 
             + df_gw_availability['water_availability_gw[MCM]'] *10**6 
