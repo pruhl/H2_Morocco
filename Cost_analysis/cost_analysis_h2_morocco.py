@@ -9,7 +9,9 @@ gdf_h2_cost_centroid        = gdf_h2_cost.geometry.centroid
     #Industrial ports
 gdf_ports                   = gpd.read_file("Data/industrial_ports_morocco.shp").to_crs(gdf_h2_cost.crs)
     #RE and Eletrolysis data
-gdf_re_data                = gpd.read_file('Data/data_re_flh_electrolyzer.shp').to_crs(gdf_h2_cost.crs)
+gdf_re_data                 = gpd.read_file('Data/data_re_flh_electrolyzer.shp').to_crs(gdf_h2_cost.crs)
+df_re_flh                   = pd.read_csv('Data/flh_re.csv')
+df_re_flh_cell              = pd.read_csv('Data/cell_flh_re.csv')
 
 #Distance all cells to all cells
 list_distance = []
@@ -107,11 +109,15 @@ list_index_cell = []
 list_el_source = []
 list_h2_cost = []
 
-#zuweisung der RE Quelle
+#Zuweisung der RE Quelle
 df_cost_cells = pd.DataFrame()
 for i in range(len(gdf_h2_cost_centroid)):
-    d = gdf_re_data.distance(gdf_h2_cost_centroid[i])
-    idx = d.idxmin()  # Index of the closest RE source
+    # d = gdf_re_data.distance(gdf_h2_cost_centroid[i])
+    # idx = d.idxmin()  # Index of the closest RE source
+    ref_points = df_re_flh[['FLH_PV', 'FLH_Wind']].values
+    comp_point = df_re_flh_cell.iloc[i].values
+    d = np.sqrt(np.sum((ref_points - comp_point) ** 2, axis=1))
+    idx = np.argmin(d)
     df_cost_cells.at[i, 'Cost_re [EUR/a]'] = gdf_re_data.at[idx, 'Cost_re [EUR/a]']
     df_cost_cells.at[i, 'FLH_electrolyzer'] = gdf_re_data.at[idx, 'FLH_electr']
 
@@ -124,7 +130,7 @@ for i in range(len(gdf_h2_cost)):
     df_cost_cells.at[i, 'H2 Price [EUR/MWh_h2]'] = cost  # Store the H2 price for the cell
 
 gdf_cost_cells = gpd.GeoDataFrame(df_cost_cells, geometry=gdf_h2_cost.geometry, crs=gdf_h2_cost.crs)
-gdf_cost_cells.to_file('Maps/h2_cost_morocco_3.shp', driver='ESRI Shapefile')
+gdf_cost_cells.to_file('Maps/h2_cost_morocco_4.shp', driver='ESRI Shapefile')
 
 #     list_h2_electricity.append(cost_elektrycity_min)
 #     list_index_cell.append(index_cell)
