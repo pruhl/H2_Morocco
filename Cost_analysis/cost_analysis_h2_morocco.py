@@ -1,6 +1,8 @@
 import geopandas as gpd 
 import numpy as np
 import pandas as pd
+import matplotlib.pyplot as plt
+from scipy.stats import norm
 
 #Data
     #Curent cost map
@@ -84,7 +86,7 @@ annuity_converrter  = (((1 + r_dc) ** lifetime_dc * r_dc)
 annual_cost_converter = annuity_converrter + opex_converter # €/a
 annual_cost_dc_line = annuity_dc_line + opex_dc_line        # €/km/a
 
-df_dc_cost_cells = df_distance_cells * annual_cost_dc_line + annual_cost_converter
+df_dc_cost_cells = df_distance_cells.where(df_distance_cells.isnull(), df_distance_cells * annual_cost_dc_line + annual_cost_converter) 
 
 #H2 Pipeline Cost
 capex_h2_pipe       = 0.988 * 1000              # €/km/MW_h2
@@ -101,19 +103,9 @@ df_h2_pipe_cost_cells = df_distance_ports * annual_cost_h2_pipe
 
 #Water Pipline Cost --> coming soon!
 
-#Calcuation of LCOH (cheepest option for each cell)
-list_h2_electrolysis = []
-list_h2_electricity = []
-list_h2_pipe = []
-list_index_cell = []
-list_el_source = []
-list_h2_cost = []
-
 #Zuweisung der RE Quelle
 df_cost_cells = pd.DataFrame()
 for i in range(len(gdf_h2_cost_centroid)):
-    # d = gdf_re_data.distance(gdf_h2_cost_centroid[i])
-    # idx = d.idxmin()  # Index of the closest RE source
     ref_points = df_re_flh[['FLH_PV', 'FLH_Wind']].values
     comp_point = df_re_flh_cell.iloc[i].values
     d = np.sqrt(np.sum((ref_points - comp_point) ** 2, axis=1))
@@ -130,31 +122,27 @@ for i in range(len(gdf_h2_cost)):
     df_cost_cells.at[i, 'H2 Price [EUR/MWh_h2]'] = cost  # Store the H2 price for the cell
 
 gdf_cost_cells = gpd.GeoDataFrame(df_cost_cells, geometry=gdf_h2_cost.geometry, crs=gdf_h2_cost.crs)
-gdf_cost_cells.to_file('Maps/h2_cost_morocco_4.shp', driver='ESRI Shapefile')
+# gdf_cost_cells.to_file('Maps/h2_cost_morocco_4.shp', driver='ESRI Shapefile')
 
-#     list_h2_electricity.append(cost_elektrycity_min)
-#     list_index_cell.append(index_cell)
-#     list_el_source.append(source_el)
-#     list_h2_electrolysis.append(cost_el_h2)
-#     list_h2_pipe.append(cost_h2_pipe)
-#     list_h2_cost.append(h2_price)
+# Werte auswählen
+costs = gdf_cost_cells['H2 Price [EUR/MWh_h2]']
 
-# df_h2_cost = pd.DataFrame(
-#     {'Electricity [EUR/MWh_h2]': list_h2_electricity,
-#      'Electrolysis [EUR/MWh_h2]': list_h2_electrolysis,
-#      'Pipeline [EUR/MWh_h2]': list_h2_pipe,
-#      'H2 Price [EUR/MWh_h2]': list_h2_cost, 
-#      'index_source_el': list_index_cell, 
-#      'source_el': list_el_source})
+# Histogramm plotten
+plt.hist(costs, bins=50, density=True, alpha=0.6, color='b', label='Daten')
 
-# #gdf_h2_cost = gdf_h2_cost.join(df_h2_cost)
-# gdf_h2_cost['Electricit'] = list_h2_electricity
-# gdf_h2_cost['Electrolys'] = list_h2_electrolysis
-# gdf_h2_cost['Pipeline ['] = list_h2_pipe
-# gdf_h2_cost['H2 Price ['] = list_h2_cost
-# gdf_h2_cost['index_sour'] = list_index_cell
-# gdf_h2_cost['source_el'] = list_el_source
+# Parameter der Normalverteilung schätzen
+mu, std = norm.fit(costs)
 
-# gdf_h2_cost['H2 Price ['] = gdf_h2_cost['H2 Price ['].round(2)
+# x-Werte für die Gauß-Kurve
+xmin, xmax = plt.xlim()
+x = np.linspace(xmin, xmax, 100)
+p = norm.pdf(x, mu, std)
 
-# gdf_h2_cost.to_file('h2_cost_morocco_2.shp', driver='ESRI Shapefile')
+# Gauß-Kurve plotten
+plt.plot(x, p, 'r', linewidth=2, label='Gaußsche Verteilung')
+
+plt.legend()
+plt.xlabel('H2 Price [EUR/MWh_h2]')
+plt.ylabel('Dichte')
+plt.title('Histogramm mit Gaußscher Verteilung')
+plt.show()
