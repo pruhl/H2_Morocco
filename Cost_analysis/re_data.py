@@ -2,6 +2,8 @@ import requests
 import pandas as pd
 import json
 
+# Get location-specific profiles in morocco from renewables ninja 
+
 coordinates = pd.read_excel('Data/PV_WIND_50_Punkte.xlsx', sheet_name='PV_Punkte')
 df_electricity = pd.read_csv('Data/pv_wind_electricity.csv', index_col=0)
 df_electricity.reset_index(drop=True, inplace=True)
@@ -66,4 +68,19 @@ for i in range(1):   # Nur sechs Anfragen pro Min (2*3), um API-Limits zu beacht
     df_concat.reset_index(drop=True, inplace=True)
     df_electricity = pd.concat([df_electricity, df_concat], axis=1)
 
-#df_electricity.to_csv('pv_wind_electricity.csv')
+# Calculation of Fullloadhours of pv and wind for locaions
+# df_re = pd.read_csv('Data/pv_wind_electricity.csv')
+# df_re = df_re.drop(columns= ['Unnamed: 0'])
+
+ds_sum = df_electricity.sum()
+
+df_flh = pd.DataFrame(columns=['FLH_PV', 'FLH_Wind'])
+for i in range(0, 50):
+    pv = ds_sum[f'electricity_PV_{i}']
+    wind = ds_sum[f'electricity_Wind_{i}']
+
+    df_flh.at[i, 'FLH_PV'] = pv
+    df_flh.at[i, 'FLH_Wind'] = wind
+
+df_flh.to_csv('Data/flh_re.csv', index=False)
+df_electricity.to_csv('pv_wind_electricity.csv')
