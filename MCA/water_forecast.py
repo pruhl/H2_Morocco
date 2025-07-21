@@ -41,30 +41,30 @@ for i in range(len(gdf_current_pot)):
         if j == len(gdf_cwb)-1:
             list_cwb_cell.append(cwb_cell)
 
-df_cwb_cell = pd.DataFrame(data={'CWP_zell':list_cwb_cell})
+df_cwb_cell = pd.DataFrame(data={'CWP_zell':list_cwb_cell}) #CWB for each cell 
 df_total_loss_water_cell = (df_cwb_cell['CWP_zell']/df_cwb_cell['CWP_zell'].sum()) * water_loss_2050    #Is positiv
 df_water_cell_2050 = ds_water_ges_2025 - df_total_loss_water_cell    #Pos or neg water in each cell
 
 # # Score for 2050
-ds_water_res_2025 = (- df_water_consumption_2025['Water_Consumption[BCM]'] * 10**9 
-            + df_water_2025_gw['water_availability_gw[MCM]'] *10**6 
-            + df_water_2025_sw['water_availability_sw[MCM]'] *10**6)
-ds_water_res_2050 = (- df_water_consumption_2050['Water_Consumption[BCM]'] * 10**9 
-            + df_water_cell_2050 *10**6)
+# ds_water_res_2025 = (- df_water_consumption_2025['Water_Consumption[BCM]'] * 10**9 
+#             + df_water_2025_gw['water_availability_gw[MCM]'] *10**6 
+#             + df_water_2025_sw['water_availability_sw[MCM]'] *10**6)
+# ds_water_res_2050 = (- df_water_consumption_2050['Water_Consumption[BCM]'] * 10**9 
+#             + df_water_cell_2050 *10**6)
 
 # # V1/V2 With min max in positiv values
 # ds_water_res = ds_water_res_2050.copy()
-# ds_water = df_water_cell_2050.copy()
+ds_water = df_water_cell_2050.copy()
 
 # ds_water_res.loc[ds_water_res <= 0] = 0
 # ds_water_res.loc[ds_water_res > 0] = (ds_water_res.loc[ds_water_res > 0]/
-#                               ds_water_res_2025.max()) * 50                 #2025 as benchmark
+#                               ds_water_res_2025.max()) * 100                 #2025 as benchmark
 
-# ds_water.loc[ds_water <= 0] = 0
-# ds_water.loc[ds_water > 0] = (ds_water.loc[ds_water > 0]/
-#                               ds_water_ges_2025.max()) * 50                 #2025 as benchmark
+ds_water.loc[ds_water <= 0] = 0
+ds_water.loc[ds_water > 0] = (ds_water.loc[ds_water > 0]/
+                              ds_water_ges_2025.max()) * 100                 #2025 as benchmark
 
-# ds_water_50_50 = ds_water + ds_water_res
+ds_water_50_50 = ds_water                       # ds_water_50_50 = ds_water + ds_water_res
 
 # V1/V2 With/Without cost
 # Cost sites are always 100
@@ -80,14 +80,14 @@ ds_water_res_2050 = (- df_water_consumption_2050['Water_Consumption[BCM]'] * 10*
 
 #     array_water = np.append(array_water, score)
 
-# V3 Min-Max skale
+# # V3 Min-Max skale
 
-ds_water        = ((df_water_cell_2050 - df_water_cell_2050.min())/
-                   (ds_water_ges_2025.max()-df_water_cell_2050.min()))*50   #2025 as benchmark
-ds_water_res    = ((ds_water_res_2050 - ds_water_res_2050.min())/
-                   (ds_water_res_2025.max()-ds_water_res_2050.min()))*50    #2025 as benchmark
+# ds_water        = ((df_water_cell_2050 - df_water_cell_2050.min())/
+#                    (ds_water_ges_2025.max()-df_water_cell_2050.min()))*100   #2025 as benchmark
+# ds_water_res    = ((ds_water_res_2050 - ds_water_res_2050.min())/
+#                    (ds_water_res_2025.max()-ds_water_res_2050.min()))*100    #2025 as benchmark
 
-ds_water_50_50 = ds_water + ds_water_res
+# ds_water_50_50 = ds_water            #ds_water_50_50 = ds_water + ds_water_res
 
 weight_water = 0.3399
 # gdf_current_pot['water aval'] = array_water * weight_water
@@ -97,4 +97,4 @@ gdf_current_pot['sum'] = gdf_current_pot[['avg_pv_yea','avg_windpo',
                                                      'accessibil', 'agricultur',
                                                      'non confli', 'urban_zone',
                                                      'rural_zone']].sum(axis=1) * gdf_current_pot['nogo_zones']
-gdf_current_pot.to_file('Maps/mca_h2_morocco_2050_water_50_50_V3.shp', driver='ESRI Shapefile')
+gdf_current_pot.to_file('Maps/mca_h2_morocco_2050_water_available_V2.shp', driver='ESRI Shapefile')

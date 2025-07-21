@@ -16,6 +16,7 @@ ds_ratio_distance = ds_distance_to_conflict_area/ds_distance_to_morocco
 ds_ratio_distance.loc[ds_ratio_distance == 0] = 0
 ds_ratio_distance.loc[ds_ratio_distance == np.inf] = 100
 
+#Rang-Skale
 kriterium = (ds_ratio_distance > 0) & (ds_ratio_distance < 100) | (ds_ratio_distance > 100)
 
 ds_ranks = ds_ratio_distance.loc[kriterium].rank().astype(int)-1
