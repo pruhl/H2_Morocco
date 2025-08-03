@@ -4,9 +4,11 @@ import pandas as pd
 from custom import list_index
 
 # Data
-    #Curent potential
+    # Current potential, from previous MCA
+    # Source: none
 gdf_current_potential = gpd.read_file('Maps/mca_h2_morocco_2025.shp')
-    #Accessibility
+    # Accessibility
+    # Source: OSM, downloaded via QGIS
 gdf_railways_utm29n = gpd.read_file(r'C:\Users\psclr\Documents\02 Master\Masterprojekt\QGIS\Daten\Landuse\gis_osm_railways_free_1.shp').to_crs("EPSG:32629")
 gdf_railways_utm29n['fclass'] = 'railway'
 gdf_roads_utm29n = gpd.read_file(r'C:\Users\psclr\Documents\02 Master\Masterprojekt\QGIS\Daten\Landuse\gis_osm_roads_free_1.shp').to_crs("EPSG:32629")

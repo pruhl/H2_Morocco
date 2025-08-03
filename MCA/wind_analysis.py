@@ -4,9 +4,10 @@ import numpy as np
 from custom import list_index
 
 # Data
-    #Curent potential
+    # Current potential
 gdf_current_potential = gpd.read_file('Maps/mca_h2_morocco_2025.shp')
-    #Wind
+    # Wind
+    # Sorce: Global Wind Atlas
 gdf_wind_morocco_utm29n = gpd.read_file(r"C:\Users\psclr\Documents\02 Master\Masterprojekt\QGIS\Daten\Wind_Energiedichte\wind_yeald\Wind_pot_morocco_FLH.shp").to_crs("EPSG:32629")
 
 array_wind_power = np.array([])

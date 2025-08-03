@@ -4,9 +4,10 @@ import numpy as np
 from custom import list_index
 
 # Data
-    #Curent potential
+    # Current potential
 gdf_current_potential = gpd.read_file('Maps/mca_h2_morocco_2025.shp')
-    #PV
+    # PV
+    # Source: Global solar atlas
 gdf_pv_morocco_utm29n = gpd.read_file(r"C:\Users\psclr\Documents\02 Master\Masterprojekt\QGIS\Daten\Morocco_GISdata_LTAy_YearlyMonthlyTotals_GlobalSolarAtlas-v2_GEOTIFF\PV_yeald_clear_ma_we.shp").to_crs("EPSG:32629")
 
 array_pv_yeald = np.array([])

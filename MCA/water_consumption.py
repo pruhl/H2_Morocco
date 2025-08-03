@@ -5,15 +5,20 @@ import numpy as np
 from custom import list_index
 
 gdf_grid_morocco        = gpd.read_file('Grid_morocco/grid_morocco_clear.shp')
+    # Industrial landuse
+    # Source: OSM, via QGIS
 gdf_landuse_utm29n      = gpd.read_file(r'C:\Users\psclr\Documents\02 Master\Masterprojekt\QGIS\Daten\Landuse\gis_osm_landuse_a_free_1.shp').to_crs("EPSG:32629")
 
+    # Landuse
+    # Source: FAO, via: https://data.apps.fao.org/catalog/dataset/fad3f475-8973-463f-b56a-e6b6535c1db5  --> Morocco
+    # Source: FAO, via: https://data.apps.fao.org/catalog/iso/75aaf5c5-d579-425a-97fb-aa4580536df2      --> Western Sahara
+
 gdf_landuse_mar         = gpd.read_file(r'C:\Users\psclr\Downloads\geonetwork_landcover_mar_gc_adg\mar_gc_adg.shp').to_crs("EPSG:32629") 
-
 gdf_landuse_wsa         = gpd.read_file(r'C:\Users\psclr\Downloads\geonetwork_landcover_wsa_gc_adg\wsa_gc_adg.shp').to_crs("EPSG:32629")
+gdf_landuse_concat      = gpd.GeoDataFrame(pd.concat([gdf_landuse_mar, gdf_landuse_wsa])) #Landuse today
 
-# gdf_landuse_concat      = gpd.GeoDataFrame(pd.concat([gdf_landuse_mar, gdf_landuse_wsa])) #Landuse today
-# gdf_landuse_concat      = gpd.read_file('Data/morocco_landuse_2030.shp')    #Landuse 2030
-gdf_landuse_concat      = gpd.read_file('Data/morocco_landuse_2050.shp')    #Landuse 2050
+    # Same source, but for future landuse (from forecast_landuse.py)
+# gdf_landuse_concat      = gpd.read_file('Data/morocco_landuse_2050.shp')    #Landuse 2050
 
 
 gdf_landuse_urban       = gdf_landuse_concat[gdf_landuse_concat['GRIDCODE'].isin([190])]
@@ -24,21 +29,17 @@ gdf_landuse_agri_30     = gdf_landuse_concat[gdf_landuse_concat['GRIDCODE'].isin
 
 gdf_landuse_industrial  = gdf_landuse_utm29n[gdf_landuse_utm29n['fclass'].isin(['industrial'])]
 
+# Source: Economic concepts to address future water supply–demand imbalances in Iran, Morocco and Saudi Arabia
 # agri    = 0.87  #Today
 # urban   = 0.104 #Today
 # indust  = 0.026 #Today
-
-# agri    = np.interp(2030, [2025, 2050], [0.87, 0.75])     #2030
-# urban   = np.interp(2030, [2025, 2050], [0.104, 0.223])   #2030
-# indust  = np.interp(2030, [2025, 2050], [0.026, 0.027])   #2030
 
 agri    = 0.75  #2050
 urban   = 0.223 #2050
 indust  = 0.027 #2050
 
-# water_consumption = 15.9                                            #BCM/a Today
-# water_consumption = np.interp(2030, [2025, 2050], [15.9, 24.223]) #BCM/a 2030
-water_consumption = 24.223                                        #BCM/a 2050
+# water_consumption = 15.9  #BCM/a Today
+water_consumption = 24.223  #BCM/a 2050
 
 area_sum_agri = gdf_landuse_agri_100.area.sum() + gdf_landuse_agri_70.area.sum() * 0.7 + gdf_landuse_agri_30.area.sum() *0.3
 

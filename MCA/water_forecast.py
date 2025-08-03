@@ -1,12 +1,12 @@
 import geopandas as gpd
 import pandas as pd
-import numpy as np
-
-from custom import list_index
 
 gdf_current_pot     = gpd.read_file('Maps/mca_h2_morocco_2050.shp')
+# Precipitation and PET data
+# Source: Future projection of droughts in Morocco and potential impact on agriculture (PDF in Teams)
 gdf_precipitation   = gpd.read_file(r"C:\Users\psclr\Documents\02 Master\Masterprojekt\Precipitation_morocco_2050_corr.shp").to_crs('EPSG:32629')
 gdf_pet             = gpd.read_file(r"C:\Users\psclr\Documents\02 Master\Masterprojekt\PET_morocco_2050_corr.shp").to_crs('EPSG:32629')
+
 gdf_coast = gpd.read_file(r"C:\Users\psclr\Documents\02 Master\Masterprojekt\QGIS\Daten\morocco_coast_line.shp").to_crs("EPSG:32629")        
 df_water_2025_sw    = pd.read_csv('Data/water_availability_sw.csv')
 df_water_2025_gw    = pd.read_csv('Data/water_availability_gw.csv')

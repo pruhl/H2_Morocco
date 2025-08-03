@@ -99,9 +99,8 @@ annual_cost_h2_pipe = annuity_h2_pipe + opex_h2 * p_nom_el * eff_el  # €/km/a
 
 df_h2_pipe_cost_cells = df_distance_ports * annual_cost_h2_pipe
 
-#H2 Trailer Cost --> coming soon!
-
 #Water Pipline Cost --> coming soon!
+
 
 #Zuweisung der RE Quelle
 df_cost_cells = pd.DataFrame()

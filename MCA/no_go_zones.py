@@ -4,17 +4,19 @@ import numpy as np
 from custom import list_index
 
 # Data
-    #Curent potential
+    # Current potential
 gdf_current_potential = gpd.read_file('Maps/mca_h2_morocco_2025.shp')
-    #No-Go Zones
-#Military, nature reserves, recreation grounds
+    # No-Go Zones
+    # Source: OSM, via QGIS
 gdf_landuse_utm29n = gpd.read_file(r'C:\Users\psclr\Documents\02 Master\Masterprojekt\QGIS\Daten\Landuse\gis_osm_landuse_a_free_1.shp').to_crs("EPSG:32629")
 
+    # NO-GO Zones: Military, Nature Reserve, Recreation Ground
 gdf_nogo_zones = gdf_landuse_utm29n[gdf_landuse_utm29n['fclass'].isin(['military', 'nature_reserve', 'recreation_ground'])]
 gdf_nogo_zones.reset_index(drop=True, inplace=True)
 gdf_nogo_zones.index = range(len(gdf_nogo_zones))
 
-#topografic
+    # No-Go Zones: Topography
+    # Source: QGIS, via grid-statistics, origin source for topography: Soufiane fragen
 gdf_topo_utm29n = gpd.read_file('Data/ToPo_1500.shp').to_crs("EPSG:32629")   #Already 1 or 0, done in QGIS with grid-statistics
 
 array_nogo = np.array([])

@@ -1,3 +1,5 @@
+# Custom function for spatial indexing in GeoDataFrames
+
 def list_index(gdf, i, grid):
     cell = grid['geometry'].iloc[i]
     intersects = gdf.intersects(cell)

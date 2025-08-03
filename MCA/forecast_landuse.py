@@ -3,23 +3,24 @@ import pandas as pd
 import numpy as np
 
 # Data
+    # Source: FAO, via: https://data.apps.fao.org/catalog/dataset/fad3f475-8973-463f-b56a-e6b6535c1db5  --> Morocco
+    # Source: FAO, via: https://data.apps.fao.org/catalog/iso/75aaf5c5-d579-425a-97fb-aa4580536df2      --> Western Sahara
 gdf_landuse_mar         = gpd.read_file(r'C:\Users\psclr\Downloads\geonetwork_landcover_mar_gc_adg\mar_gc_adg.shp').to_crs("EPSG:32629") 
-
 gdf_landuse_wsa         = gpd.read_file(r'C:\Users\psclr\Downloads\geonetwork_landcover_wsa_gc_adg\wsa_gc_adg.shp').to_crs("EPSG:32629")
-
 gdf_landuse_concat      = gpd.GeoDataFrame(pd.concat([gdf_landuse_mar, gdf_landuse_wsa]))
 
 gdf_landuse_urban       = gdf_landuse_concat[gdf_landuse_concat['GRIDCODE'].isin([190])]
 
 gdf_morocco_boundary    = gpd.read_file(r"C:\Users\psclr\Documents\02 Master\Masterprojekt\QGIS\Daten\morocco_Morocco_Country_Boundary.shp").to_crs("EPSG:32629")
 
-#Urbanisation
-# urbanisation = 1.2  # Development of urban areas, noch regionalisieren und anpassen; 2030
-urbanisation = 1.5  # Development of urban areas, noch regionalisieren und anpassen; 2030
+# Urbanisation
+# Urbanisationrates: 
+# Source: "Urban Sustainability Development in Morocco, a Review", via: https://www.mdpi.com/2413-8851/8/2/28
+urbanisation = 1.5
 goal = gdf_landuse_urban.area.sum() * urbanisation
 s = np.sqrt(urbanisation)  # Linear scaling
 
-# Scale of Urbanareas
+# Scale of urbanareas
 gdf_urban = gdf_landuse_urban.copy()
 gdf_urban.geometry = gdf_urban.geometry.scale(
     xfact=s, 
