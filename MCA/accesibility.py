@@ -5,7 +5,6 @@ from custom import list_index
 
 # Data
     # Current potential, from previous MCA
-    # Source: none
 gdf_current_potential = gpd.read_file('Maps/mca_h2_morocco_2025.shp')
     # Accessibility
     # Source: OSM, downloaded via QGIS

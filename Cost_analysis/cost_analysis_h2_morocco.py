@@ -1,16 +1,16 @@
 import geopandas as gpd 
 import numpy as np
 import pandas as pd
-import matplotlib.pyplot as plt
-from scipy.stats import norm
 
 #Data
-    #Curent cost map
+    # Current cost map
 gdf_h2_cost                 = gpd.read_file('Maps/h2_cost_morocco.shp')
 gdf_h2_cost_centroid        = gdf_h2_cost.geometry.centroid
-    #Industrial ports
+    # Industrial ports
+    # Source: OSM, via QGIS
 gdf_ports                   = gpd.read_file("Data/industrial_ports_morocco.shp").to_crs(gdf_h2_cost.crs)
-    #RE and Eletrolysis data
+    # RE and Eletrolysis data, FLH electrolyzer, flh pv und wind, Leistung PV und Wind
+    # Via Pypsa
 gdf_re_data                 = gpd.read_file('Data/data_re_flh_electrolyzer.shp').to_crs(gdf_h2_cost.crs)
 df_re_flh                   = pd.read_csv('Data/flh_re.csv')
 df_re_flh_cell              = pd.read_csv('Data/cell_flh_re.csv')
@@ -39,13 +39,14 @@ capex_el    = 1000000           # [€/MW]
 opex_el     = 0.02 * capex_el   # [€/MW/a]
 r_el        = 0.04              # discount rate
 lifetime_el = 20                # [a]
+    # Berechnung der jährlichen Kosten
 annuity_el  = (((1 + r_el) ** lifetime_el * r_el)
                 / ((1 + r_el) ** lifetime_el - 1)) * p_nom_el * capex_el    # €/a
 annual_cost_el = annuity_el + opex_el * p_nom_el  # €/a
 
 # Watercost
 lco_gw      = 1     # €/m³
-lco_desal   = 5     # €/m³
+lco_desalination   = 5     # €/m³
 lco_sw      = 2     # €/m³
 
 # PV Cost
@@ -122,26 +123,3 @@ for i in range(len(gdf_h2_cost)):
 
 gdf_cost_cells = gpd.GeoDataFrame(df_cost_cells, geometry=gdf_h2_cost.geometry, crs=gdf_h2_cost.crs)
 # gdf_cost_cells.to_file('Maps/h2_cost_morocco_4.shp', driver='ESRI Shapefile')
-
-# Werte auswählen
-costs = gdf_cost_cells['H2 Price [EUR/MWh_h2]']
-
-# Histogramm plotten
-plt.hist(costs, bins=50, density=True, alpha=0.6, color='b', label='Daten')
-
-# Parameter der Normalverteilung schätzen
-mu, std = norm.fit(costs)
-
-# x-Werte für die Gauß-Kurve
-xmin, xmax = plt.xlim()
-x = np.linspace(xmin, xmax, 100)
-p = norm.pdf(x, mu, std)
-
-# Gauß-Kurve plotten
-plt.plot(x, p, 'r', linewidth=2, label='Gaußsche Verteilung')
-
-plt.legend()
-plt.xlabel('H2 Price [EUR/MWh_h2]')
-plt.ylabel('Dichte')
-plt.title('Histogramm mit Gaußscher Verteilung')
-plt.show()
