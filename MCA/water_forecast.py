@@ -1,7 +1,9 @@
 import geopandas as gpd
 import pandas as pd
+import numpy as np
 
 gdf_current_pot     = gpd.read_file('Maps/mca_h2_morocco_2050.shp')
+
 # Precipitation and PET data
 # Source: Future projection of droughts in Morocco and potential impact on agriculture (PDF in Teams)
 gdf_precipitation   = gpd.read_file(r"C:\Users\psclr\Documents\02 Master\Masterprojekt\Precipitation_morocco_2050_corr.shp").to_crs('EPSG:32629')
@@ -45,53 +47,43 @@ df_cwb_cell = pd.DataFrame(data={'CWP_zell':list_cwb_cell}) #CWB for each cell
 df_total_loss_water_cell = (df_cwb_cell['CWP_zell']/df_cwb_cell['CWP_zell'].sum()) * water_loss_2050    #Is positiv
 df_water_cell_2050 = ds_water_ges_2025 - df_total_loss_water_cell    #Pos or neg water in each cell
 
-# # Score for 2050
-# ds_water_res_2025 = (- df_water_consumption_2025['Water_Consumption[BCM]'] * 10**9 
-#             + df_water_2025_gw['water_availability_gw[MCM]'] *10**6 
-#             + df_water_2025_sw['water_availability_sw[MCM]'] *10**6)
-# ds_water_res_2050 = (- df_water_consumption_2050['Water_Consumption[BCM]'] * 10**9 
-#             + df_water_cell_2050 *10**6)
+# Score for 2050
+ds_water_res_2025 = (- df_water_consumption_2025['Water_Consumption[BCM]'] * 10**9 
+            + df_water_2025_gw['water_availability_gw[MCM]'] *10**6 
+            + df_water_2025_sw['water_availability_sw[MCM]'] *10**6)
+ds_water_res_2050 = (- df_water_consumption_2050['Water_Consumption[BCM]'] * 10**9 
+            + df_water_cell_2050 *10**6)
 
-# # V1/V2 With min max in positiv values
-# ds_water_res = ds_water_res_2050.copy()
+# 50/50 between Wateravailability and Wateravailability residual
+ds_water_res = ds_water_res_2050.copy()
 ds_water = df_water_cell_2050.copy()
 
-# ds_water_res.loc[ds_water_res <= 0] = 0
-# ds_water_res.loc[ds_water_res > 0] = (ds_water_res.loc[ds_water_res > 0]/
-#                               ds_water_res_2025.max()) * 100                 #2025 as benchmark
+ds_water_res.loc[ds_water_res <= 0] = 0
+ds_water_res.loc[ds_water_res > 0] = (ds_water_res.loc[ds_water_res > 0]/
+                              ds_water_res_2025.max()) * 50                 #2025 as benchmark
 
 ds_water.loc[ds_water <= 0] = 0
 ds_water.loc[ds_water > 0] = (ds_water.loc[ds_water > 0]/
-                              ds_water_ges_2025.max()) * 100                 #2025 as benchmark
+                              ds_water_ges_2025.max()) * 50                 #2025 as benchmark
 
-ds_water_50_50 = ds_water                       # ds_water_50_50 = ds_water + ds_water_res
+ds_water_50_50 = ds_water + ds_water_res
 
-# V1/V2 With/Without cost
-# Cost sites are always 100
-# array_water = np.array([])
-# for i in range(len(gdf_current_pot)):
-#     cell = gdf_current_pot.geometry[i]
-#     cell_intersection = cell.intersects(gdf_coast.geometry)
+    # Cost = 100, negativ values = 0, positiv values min-max scale
+array_water = np.array([])
+for i in range(len(gdf_current_pot)):
+    cell = gdf_current_pot.geometry[i]
+    cell_intersection = cell.intersects(gdf_coast.geometry)
     
-#     if any(cell_intersection):
-#         score = 100
-#     else:
-#         score = ds_water_50_50[i]
+    if any(cell_intersection):
+        score = 100
+    else:
+        score = ds_water_50_50[i]
 
-#     array_water = np.append(array_water, score)
+    array_water = np.append(array_water, score)
 
-# # V3 Min-Max skale
-
-# ds_water        = ((df_water_cell_2050 - df_water_cell_2050.min())/
-#                    (ds_water_ges_2025.max()-df_water_cell_2050.min()))*100   #2025 as benchmark
-# ds_water_res    = ((ds_water_res_2050 - ds_water_res_2050.min())/
-#                    (ds_water_res_2025.max()-ds_water_res_2050.min()))*100    #2025 as benchmark
-
-# ds_water_50_50 = ds_water            #ds_water_50_50 = ds_water + ds_water_res
-
+#Replace old column with new one
 weight_water = 0.3399
-# gdf_current_pot['water aval'] = array_water * weight_water
-gdf_current_pot['water aval'] = ds_water_50_50 * weight_water
+gdf_current_pot['water aval'] = array_water * weight_water
 gdf_current_pot['sum'] = gdf_current_pot[['avg_pv_yea','avg_windpo', 
                                                      'water aval', 'industrial',
                                                      'accessibil', 'agricultur',
