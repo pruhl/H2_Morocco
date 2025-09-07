@@ -2,12 +2,15 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import geopandas as gpd
 import contextily as cx
+import numpy as np
+import matplotlib.colors as mcolors
 
 # Min-Max_scale-funtion
 def min_max_scale(df):
     return (df - df.min())/(df.max()-df.min())
 
 # Grid morocco
+gdf_morocco_boundary    = gpd.read_file(r"C:\Users\psclr\Documents\02 Master\Masterprojekt\QGIS\Daten\morocco_Morocco_Country_Boundary.shp").to_crs("EPSG:32629")
 gdf_mca_morocco_2025 = gpd.read_file('Grid_morocco/grid_morocco_clear.shp').to_crs("EPSG:32629")
 gdf_mca_morocco_2050 = gdf_mca_morocco_2025.copy()
 gdf_water_50_50_2050    = gpd.read_file('Maps/mca_h2_morocco_2050_water_50_50.shp')
@@ -95,11 +98,12 @@ df_mca_morocco.name = 'MCA_Morocco'
 
 gdf_mca_morocco_2025['Hydrogen_potential'] = df_mca_morocco
 
-theme_rating = 'turbo_r'
-theme_diff   = 'viridis'
+theme_rating = 'jet_r'
+theme_diff   = 'OrRd_r'
 
 # Map MCA 2025
 fig, ax = plt.subplots(figsize=(15, 10))
+gdf_morocco_boundary.plot(ax=ax, edgecolor='black', facecolor="none", linewidth=1)
 gdf_mca_morocco_2025.plot(ax=ax, cmap = theme_rating, column= 'Hydrogen_potential', legend=True, legend_kwds={"label": "Relativ hydrogen potential", "orientation": "vertical"})
 cx.add_basemap(ax, crs=gdf_mca_morocco_2025.crs, source=cx.providers.CartoDB.Positron)
 # cx.add_basemap(ax, crs=gdf_morocco_boundary.crs, source=cx.providers.OpenStreetMap.HOT)
@@ -113,6 +117,7 @@ plt.show()
 
 # Map MCA 2050
 fig, ax = plt.subplots(figsize=(15, 10))
+gdf_morocco_boundary.plot(ax=ax, edgecolor='black', facecolor="none", linewidth=1)
 gdf_water_50_50_2050.plot(ax=ax, cmap = theme_rating, column= 'sum', legend=True, legend_kwds={"label": "Relativ hydrogen potential", "orientation": "vertical"})
 cx.add_basemap(ax, crs=gdf_mca_morocco_2025.crs, source=cx.providers.CartoDB.Positron)
 # cx.add_basemap(ax, crs=gdf_morocco_boundary.crs, source=cx.providers.OpenStreetMap.HOT)
@@ -128,9 +133,17 @@ plt.show()
 gdf_water_50_50_diff = gpd.GeoDataFrame(geometry=gdf_water_50_50_2050.geometry, crs = gdf_water_50_50_2050.crs,
                                                data = gdf_water_50_50_2050['sum'] - gdf_mca_morocco_2025['Hydrogen_potential'])
 
+cmap = plt.get_cmap(theme_diff)
+vals = np.linspace(0, 1, cmap.N)
+colors = cmap(vals)
+alpha = np.where(vals > 0.99, 0, 1)
+colors[:, -1] = alpha
+transparent_cmap = mcolors.ListedColormap(colors)
+
 # Map MCA diff
 fig, ax = plt.subplots(figsize=(15, 10))
-gdf_water_50_50_diff.plot(ax=ax, cmap = theme_diff, column= 0, legend=True, legend_kwds={"label": "Relativ change in hydrogen potential", "orientation": "vertical"})
+gdf_morocco_boundary.plot(ax=ax, edgecolor='black', facecolor="none", linewidth=1)
+gdf_water_50_50_diff.plot(ax=ax,vmax = 0, cmap = transparent_cmap, column= 0, legend=True, legend_kwds={"label": "Relativ change in hydrogen potential", "orientation": "vertical"})
 cx.add_basemap(ax, crs=gdf_mca_morocco_2025.crs, source=cx.providers.CartoDB.Positron)
 # cx.add_basemap(ax, crs=gdf_morocco_boundary.crs, source=cx.providers.OpenStreetMap.HOT)
 plt.title('Change in hydrogen potential of Morocco', fontsize = 15)

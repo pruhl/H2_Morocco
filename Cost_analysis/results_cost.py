@@ -44,5 +44,5 @@ cx.add_basemap(ax, crs=gdf_morocco_boundary.crs, source=cx.providers.CartoDB.Pos
 plt.title('Ports of Morocco for energy trafic and industrial applications', fontsize = 15)
 plt.legend(loc='upper left', fontsize=12)
 plt.axis('off')
-plt.savefig("ports_morocco.svg", format="svg", dpi=300)
+plt.savefig("ports_morocco.pdf", format="pdf", dpi=300)
 plt.show()
