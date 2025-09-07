@@ -28,16 +28,6 @@ for i in range(len(gdf_current_potential)):
 
     array_agriculture = np.append(array_agriculture, area/cell.area)
 
-array_agriculture -= array_agriculture.max()
-array_agriculture = (array_agriculture/array_agriculture.min())*100
+df_agriculture = pd.DataFrame(data = array_agriculture)
 
-#Replace old column with new one
-weight_agri = 0.0194
-gdf_current_potential['agricultur'] = array_agriculture * weight_agri
-gdf_current_potential['sum'] = gdf_current_potential[['avg_pv_yea','avg_windpo', 
-                                                     'water aval', 'industrial',
-                                                     'accessibil', 'agricultur',
-                                                     'non confli', 'urban_zone',
-                                                     'rural_zone']].sum(axis=1) * gdf_current_potential['nogo_zones']
-
-gdf_current_potential.to_file('Maps/mca_h2_morocco_2050.shp', driver='ESRI Shapefile')
+df_agriculture.to_csv('Data/results_agriculture.csv', index=False)

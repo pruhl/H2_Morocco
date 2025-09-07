@@ -23,13 +23,4 @@ ds_ranks = ds_ratio_distance.loc[kriterium].rank().astype(int)-1
 ds_ranks = (ds_ranks - 1) / (len(ds_ranks) - 1) * 100
 ds_ratio_distance.loc[kriterium] = ds_ranks
 
-#Replace old column with new one
-weight_non_conflict = 0.1663
-gdf_current_potential['non confli'] = ds_ratio_distance * weight_non_conflict
-gdf_current_potential['sum'] = gdf_current_potential[['avg_pv_yea','avg_windpo', 
-                                                     'water aval', 'industrial',
-                                                     'accessibil', 'agricultur',
-                                                     'non confli', 'urban_zone',
-                                                     'rural_zone']].sum(axis=1) * gdf_current_potential['nogo_zones']
-
-gdf_current_potential.to_file('Maps/mca_h2_morocco_2025.shp', driver='ESRI Shapefile')
+ds_ratio_distance.to_csv('Data/non_conflict_areas.csv', index=False)

@@ -42,12 +42,6 @@ for i in range(len(gdf_current_potential)):
 
     array_water = np.append(array_water, score)
 
-#Replace old column with new one
-weight_water = 0.3399
-gdf_current_potential['water aval'] = array_water * weight_water
-gdf_current_potential['sum'] = gdf_current_potential[['avg_pv_yea','avg_windpo', 
-                                                     'water aval', 'industrial',
-                                                     'accessibil', 'agricultur',
-                                                     'non confli', 'urban_zone',
-                                                     'rural_zone']].sum(axis=1) * gdf_current_potential['nogo_zones']
-gdf_current_potential.to_file('Maps/mca_h2_morocco_2025_water_res_V2.shp', driver='ESRI Shapefile')
+df_water = pd.DataFrame(data = array_water)
+
+df_water.to_csv('Data/results_water_res_availabil.csv', index=False)

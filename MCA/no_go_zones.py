@@ -1,5 +1,6 @@
 import geopandas as gpd
 import numpy as np
+import pandas as pd
 
 from custom import list_index
 
@@ -34,12 +35,8 @@ for i in range(len(gdf_current_potential)):
 
     array_nogo = np.append(array_nogo, a)
 
-#Replace old column with new one
-gdf_current_potential['nogo_zones'] = np.minimum(array_nogo, gdf_topo_utm29n['NoGos'])
-gdf_current_potential['sum'] = gdf_current_potential[['avg_pv_yea','avg_windpo', 
-                                                     'water aval', 'industrial',
-                                                     'accessibil', 'agricultur',
-                                                     'non confli', 'urban_zone',
-                                                     'rural_zone']].sum(axis=1) * gdf_current_potential['nogo_zones']
+array_nogo = np.minimum(array_nogo, gdf_topo_utm29n['NoGos'])
 
-gdf_current_potential.to_file('Maps/mca_h2_morocco_2025.shp', driver='ESRI Shapefile')
+df_nogo_zones = pd.DataFrame(data = array_nogo)
+
+df_nogo_zones.to_csv('Data/results_nogo_zones.csv', index=False)

@@ -1,5 +1,6 @@
 import geopandas as gpd
 import numpy as np
+import pandas as pd
 
 from custom import list_index
 
@@ -21,16 +22,6 @@ for i in range(len(gdf_current_potential)):
 
     array_pv_yeald = np.append(array_pv_yeald, pv_yeald)
 
-array_evaluation_pv = (array_pv_yeald / 
-                     array_pv_yeald.max()) * 100
+df_pv_yeald = pd.DataFrame(data = array_pv_yeald)
 
-#Replace old column with new one
-weight_pv = 0.0557
-gdf_current_potential['avg_pv_yea'] = array_evaluation_pv * weight_pv
-gdf_current_potential['sum'] = gdf_current_potential[['avg_pv_yea','avg_windpo', 
-                                                     'water aval', 'industrial',
-                                                     'accessibil', 'agricultur',
-                                                     'non confli', 'urban_zone',
-                                                     'rural_zone']].sum(axis=1) * gdf_current_potential['nogo_zones']
-
-gdf_current_potential.to_file('Maps/mca_h2_morocco_2025.shp', driver='ESRI Shapefile')
+df_pv_yeald.to_csv('Data/results_pv_yeald.csv', index=False)

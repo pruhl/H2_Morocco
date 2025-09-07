@@ -1,5 +1,6 @@
 import geopandas as gpd
 import numpy as np
+import pandas as pd
 
 from custom import list_index
 
@@ -21,16 +22,6 @@ for i in range(len(gdf_current_potential)):
     
     array_wind_power = np.append(array_wind_power, wind_power)
 
-array_evaluation_wind = (array_wind_power / 
-                     array_wind_power.max()) * 100
+df_wind_flh = pd.DataFrame(data = array_wind_power)
 
-#Replace old column with new one
-weight_wind = 0.1113
-gdf_current_potential['avg_windpo'] = array_evaluation_wind * weight_wind
-gdf_current_potential['sum'] = gdf_current_potential[['avg_pv_yea','avg_windpo', 
-                                                     'water aval', 'industrial',
-                                                     'accessibil', 'agricultur',
-                                                     'non confli', 'urban_zone',
-                                                     'rural_zone']].sum(axis=1) * gdf_current_potential['nogo_zones']
-
-gdf_current_potential.to_file('Maps/mca_h2_morocco_2025.shp', driver='ESRI Shapefile')
+df_wind_flh.to_csv('Data/results_wind_flh.csv', index=False)

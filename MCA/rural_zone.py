@@ -31,15 +31,6 @@ for i in range(len(gdf_current_potential)):
     area = gdf_landuse_rural.loc[list_index_intersection].intersection(cell).area.sum()
     array_rural = np.append(array_rural, area/cell.area)
 
-array_rural = (array_rural/array_rural.max())*100
+df_rural = pd.DataFrame(data = array_rural)
 
-#Replace old column with new one
-weight_rural = 0.0496
-gdf_current_potential['rural_zone'] = array_rural * weight_rural
-gdf_current_potential['sum'] = gdf_current_potential[['avg_pv_yea','avg_windpo', 
-                                                     'water aval', 'industrial',
-                                                     'accessibil', 'agricultur',
-                                                     'non confli', 'urban_zone',
-                                                     'rural_zone']].sum(axis=1) * gdf_current_potential['nogo_zones']
-
-gdf_current_potential.to_file('Maps/mca_h2_morocco_2050.shp', driver='ESRI Shapefile')
+df_rural.to_csv('Data/results_rural.csv', index=False)
