@@ -65,5 +65,5 @@ cx.add_basemap(ax, crs=gdf_roads_railsways.crs, source=cx.providers.CartoDB.Posi
 plt.title('Infrastructure Morocco', fontsize = 20)
 plt.axis('off')
 plt.legend(loc = 'lower right', fontsize = 12)
-# plt.savefig("Maps/morocco_infrastructure.pdf", format="pdf", dpi=300)
+plt.savefig("Maps/morocco_infrastructure.pdf", format="pdf", dpi=300)
 plt.show()
