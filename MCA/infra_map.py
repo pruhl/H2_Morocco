@@ -55,9 +55,9 @@ gdf_morocco_boundary.plot(ax=ax, edgecolor='black', facecolor="none", linewidth=
     # Roads and Railways
 for track_class in classes:
     if track_class == 'railway':
-        gdf_roads_railsways[gdf_roads_railsways['fclass'] == track_class].plot(ax=ax, label='Roads and railways',linewidth=0.2, color = np.random.rand(3,)) 
+        gdf_roads_railsways[gdf_roads_railsways['fclass'] == track_class].plot(ax=ax, label='Roads and railways',linewidth=0.1, color = np.random.rand(3,)) 
     else:
-        gdf_roads_railsways[gdf_roads_railsways['fclass'] == track_class].plot(ax=ax, linewidth=0.2, color = np.random.rand(3,))
+        gdf_roads_railsways[gdf_roads_railsways['fclass'] == track_class].plot(ax=ax, linewidth=0.1, color = np.random.rand(3,))
 # gdf_roads_railsways.plot(ax=ax, linewidth=0.2, label= 'Roads and railways', color = 'orange')
 gdf_ports_2025.plot(ax=ax, color='blue', marker='o', markersize=50, label='Current ports of Morocco')
 gdf_ports_new.plot(ax=ax, color='red', marker='o', markersize=50, label='New ports of Morocco')
