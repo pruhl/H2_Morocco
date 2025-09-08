@@ -1,0 +1,40 @@
+import pandas as pd
+import matplotlib.pyplot as plt
+import geopandas as gpd
+import contextily as cx
+import numpy as np
+import matplotlib.colors as mcolors
+import matplotlib.patches as mpatches
+
+gdf_morocco_boundary    = gpd.read_file(r"C:\Users\psclr\Documents\02 Master\Masterprojekt\QGIS\Daten\morocco_Morocco_Country_Boundary.shp").to_crs("EPSG:32629")
+# Data 
+###
+gdf_landuse_utm29n = gpd.read_file(r'C:\Users\psclr\Documents\02 Master\Masterprojekt\QGIS\Daten\Landuse\gis_osm_landuse_a_free_1.shp').to_crs("EPSG:32629")
+
+    # NO-GO Zones: Military, Nature Reserve, Recreation Ground
+gdf_nogo_zones = gdf_landuse_utm29n[gdf_landuse_utm29n['fclass'].isin(['military', 'nature_reserve', 'recreation_ground'])]
+gdf_nogo_zones.reset_index(drop=True, inplace=True)
+gdf_nogo_zones.index = range(len(gdf_nogo_zones))
+###
+gdf_topo_utm29n = gpd.read_file('Data/ToPo_1500.shp').to_crs("EPSG:32629")   #Already 1 or 0, done in QGIS with grid-statistics
+
+
+# Map MCA diff
+fig, ax = plt.subplots(figsize=(15, 10))
+gdf_morocco_boundary.plot(ax=ax, edgecolor='black', facecolor="none", linewidth=1)
+gdf_nogo_zones[gdf_nogo_zones['fclass'] == 'military'].plot(ax=ax, color='red', label='Military area')
+gdf_nogo_zones[gdf_nogo_zones['fclass'] == 'nature_reserve'].plot(ax=ax, color='green', label='Nature reserve')
+gdf_nogo_zones[gdf_nogo_zones['fclass'] == 'recreation_ground'].plot(ax=ax, color='blue', label='Recreation ground')
+gdf_topo_utm29n[gdf_topo_utm29n['NoGos'] == 0].plot(ax=ax, color='grey', label='Steep slope area')
+cx.add_basemap(ax, crs=gdf_morocco_boundary.crs, source=cx.providers.CartoDB.Positron)
+plt.title('No-Go Areas Morocco', fontsize = 15)
+plt.axis('off')
+legend_handles = [
+    mpatches.Patch(color='red', label='Military area'),
+    mpatches.Patch(color='green', label='Nature reserve'),
+    mpatches.Patch(color='blue', label='Recreation ground'),
+    mpatches.Patch(color='grey', label='Steep slope area')
+]
+plt.legend(handles=legend_handles, loc='lower right', fontsize=12)
+# plt.savefig("mca_morocco.svg", format="svg", dpi=300)
+plt.show()
