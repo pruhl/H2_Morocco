@@ -5,41 +5,66 @@ import numpy as np
 # Data
     # Source: FAO, via: https://data.apps.fao.org/catalog/dataset/fad3f475-8973-463f-b56a-e6b6535c1db5  --> Morocco
     # Source: FAO, via: https://data.apps.fao.org/catalog/iso/75aaf5c5-d579-425a-97fb-aa4580536df2      --> Western Sahara
-gdf_landuse_mar         = gpd.read_file(r'C:\Users\psclr\Downloads\geonetwork_landcover_mar_gc_adg\mar_gc_adg.shp').to_crs("EPSG:32629") 
-gdf_landuse_wsa         = gpd.read_file(r'C:\Users\psclr\Downloads\geonetwork_landcover_wsa_gc_adg\wsa_gc_adg.shp').to_crs("EPSG:32629")
+gdf_landuse_mar         = gpd.read_file('Data/geonetwork_landcover_mar_gc_adg/mar_gc_adg.shp').to_crs("EPSG:32629") 
+gdf_landuse_wsa         = gpd.read_file('Data/geonetwork_landcover_wsa_gc_adg/wsa_gc_adg.shp').to_crs("EPSG:32629")
 gdf_landuse_concat      = gpd.GeoDataFrame(pd.concat([gdf_landuse_mar, gdf_landuse_wsa]))
 
 gdf_landuse_urban       = gdf_landuse_concat[gdf_landuse_concat['GRIDCODE'].isin([190])]
 
 gdf_morocco_boundary    = gpd.read_file(r"C:\Users\psclr\Documents\02 Master\Masterprojekt\QGIS\Daten\morocco_Morocco_Country_Boundary.shp").to_crs("EPSG:32629")
 
+gdf_morocco_regions     = gpd.read_file(r"C:\Users\psclr\Documents\02 Master\Masterprojekt\QGIS\Daten\Regions.shp").to_crs("EPSG:32629")
+
 # Urbanisation
-# Urbanisationrates: 
+# Urbanisationrates:
+dict_urbanisation_rates = {'Béni Mellal-Khénifra': 1.79,
+                           'Drâa-Tafilalet': 1.84,
+                           'Eddakhla-Oued Eddahab': 2.4, 
+                           'Fès-Meknès': 1.93,
+                           'Grand Casablanca-Settat': 1.13,
+                           'Guelmim-Oued Noun': 1.39,
+                           'Laayoune-Sakia El Hamra': 1.55,
+                           'Marrakech-Safi': 1.23,
+                           'Oriental': 1.36,
+                           'Rabat-Salé-Kénitra': 1.39,
+                           'Souss-Massa': 1.27,
+                           'Tanger-Tetouan-Al Hoceima': 1.44}
 # Source: "Urban Sustainability Development in Morocco, a Review", via: https://www.mdpi.com/2413-8851/8/2/28
-urbanisation = 1.5
-goal = gdf_landuse_urban.area.sum() * urbanisation
-s = np.sqrt(urbanisation)  # Linear scaling
 
-# Scale of urbanareas
-gdf_urban = gdf_landuse_urban.copy()
-gdf_urban.geometry = gdf_urban.geometry.scale(
-    xfact=s, 
-    yfact=s, 
-    origin='centroid')
-
-curent_urban_area = gpd.clip(gdf_urban, gdf_morocco_boundary) # Boundary of morocco
+gdf_new_urban_areas = gpd.GeoDataFrame(columns=gdf_landuse_urban.columns, crs=gdf_landuse_urban.crs)
 
 delta = 0.01    #1% difference between benchmark and real urbanisation
-while (goal - curent_urban_area.area.sum())/goal > delta:
-    diff = (goal - curent_urban_area.area.sum())/goal
-    s = np.sqrt(1 + diff)
-    curent_urban_area.geometry = curent_urban_area.geometry.scale(xfact=s, yfact=s, origin='centroid')
-    curent_urban_area = gpd.clip(curent_urban_area, gdf_morocco_boundary)
-    if (goal - curent_urban_area.area.sum())/goal < delta:
-        break
+for region in gdf_morocco_regions['Nom_Region']:
+    urbanisation = dict_urbanisation_rates[region]
+    gdf_landuse_urban_region = gpd.clip(gdf_landuse_urban, gdf_morocco_regions[gdf_morocco_regions['Nom_Region'] == region])
+    if gdf_landuse_urban_region.area.sum() == 0:
+        continue
+    goal = gdf_landuse_urban_region.area.sum() * urbanisation
+    s = np.sqrt(urbanisation)  # Linear scaling
 
-gdf_landuse_concat[gdf_landuse_concat['GRIDCODE'].isin([190])] = curent_urban_area
+    # Scale of urbanareas
+    gdf_urban = gdf_landuse_urban_region.copy()
+    gdf_urban.geometry = gdf_urban.geometry.scale(
+        xfact=s, 
+        yfact=s, 
+        origin='centroid')
+    
+    curent_urban_area = gpd.clip(gdf_urban, gdf_morocco_regions[gdf_morocco_regions['Nom_Region'] == region]) # Boundary of region
 
-gdf_landuse_concat[gdf_landuse_concat['GRIDCODE'] != 190].overlay(gdf_landuse_concat[gdf_landuse_concat['GRIDCODE'].isin([190])], how = 'difference')
+    while (goal - curent_urban_area.area.sum())/goal > delta:
+        diff = (goal - curent_urban_area.area.sum())/goal
+        s = np.sqrt(1 + diff)
+        curent_urban_area.geometry = curent_urban_area.geometry.scale(xfact=s, yfact=s, origin='centroid')
+        curent_urban_area = gpd.clip(curent_urban_area, gdf_morocco_regions[gdf_morocco_regions['Nom_Region'] == region])
+        if (goal - curent_urban_area.area.sum())/goal < delta:
+            break
 
-gdf_landuse_concat.to_file('Data/morocco_landuse_2050.shp', driver='ESRI Shapefile')
+    gdf_new_urban_areas = pd.concat([gdf_new_urban_areas, curent_urban_area])
+
+gdf_new = gdf_landuse_concat[gdf_landuse_concat['GRIDCODE'] != 190].overlay(gdf_new_urban_areas, how = 'difference')
+
+gdf_new_landuse = pd.concat([gdf_new, gdf_new_urban_areas])
+
+gdf_new_landuse = gpd.GeoDataFrame(gdf_new_landuse, crs=gdf_landuse_concat.crs, geometry='geometry')
+
+gdf_new_landuse.to_file('Data/morocco_landuse_2050.shp', driver='ESRI Shapefile')
