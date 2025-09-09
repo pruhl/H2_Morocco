@@ -13,8 +13,6 @@ def min_max_scale(df):
 gdf_morocco_boundary    = gpd.read_file(r"C:\Users\psclr\Documents\02 Master\Masterprojekt\QGIS\Daten\morocco_Morocco_Country_Boundary.shp").to_crs("EPSG:32629")
 gdf_mca_morocco_2025 = gpd.read_file('Grid_morocco/grid_morocco_clear.shp').to_crs("EPSG:32629")
 gdf_mca_morocco_2050 = gdf_mca_morocco_2025.copy()
-gdf_water_50_50_2050    = gpd.read_file('Maps/mca_h2_morocco_2050_water_50_50.shp')
-gdf_water_50_50         = gpd.read_file('Maps/mca_h2_morocco_2025_water_50_50.shp')
 
 # weights
 dict_weights_category = {'avg_pv_yeald': 0.0557, 
@@ -81,6 +79,7 @@ df_industrie = min_max_scale(df_industrie)*100
     # Rural areas
 df_rural = min_max_scale(df_rural)*100
 
+# Results 2025
 dict_results = {'avg_pv_yeald': df_pv_yeald.values.flatten(), 
                          'avg_windpower': df_wind_flh.values.flatten(), 
                          'accessibility': ds_accessibility_sum.values.flatten(),
@@ -98,6 +97,26 @@ df_mca_morocco.name = 'MCA_Morocco'
 
 gdf_mca_morocco_2025['Hydrogen_potential'] = df_mca_morocco
 
+# Results 2050
+dict_results_2050 = {'avg_pv_yeald': df_pv_yeald.values.flatten(), 
+                         'avg_windpower': df_wind_flh.values.flatten(), 
+                         'accessibility': ds_accessibility_sum.values.flatten(),
+                         'agricultural_land_share': df_agriculture_2050.values.flatten(),
+                         'urban_zone_share': df_urban_2050.values.flatten(),
+                         'industrial_zone_share': df_industrie.values.flatten(),
+                         'rural_zone_share': df_rural_2050.values.flatten(),
+                         'water_avalibility': df_water_2050.values.flatten(),
+                         'non_conflict_areas': df_non_conflict_areas.values.flatten()}
+df_results_2050 = pd.DataFrame(dict_results_2050)
+
+df_weighted_results_2050 = df_results_2050*dict_weights_category
+df_mca_morocco_2050 = df_weighted_results_2050.sum(axis = 1) * df_nogo_zones['NoGos']
+df_mca_morocco_2050.name = 'MCA_Morocco'
+
+gdf_mca_morocco_2050['Hydrogen_potential'] = df_mca_morocco_2050
+
+### MAPS ###
+
 theme_rating = 'jet_r'
 theme_diff   = 'OrRd_r'
 
@@ -106,32 +125,31 @@ fig, ax = plt.subplots(figsize=(15, 10))
 gdf_morocco_boundary.plot(ax=ax, edgecolor='black', facecolor="none", linewidth=1)
 gdf_mca_morocco_2025.plot(ax=ax, cmap = theme_rating, column= 'Hydrogen_potential', legend=True, legend_kwds={"label": "Relativ hydrogen potential", "orientation": "vertical"})
 cx.add_basemap(ax, crs=gdf_mca_morocco_2025.crs, source=cx.providers.CartoDB.Positron)
-# cx.add_basemap(ax, crs=gdf_morocco_boundary.crs, source=cx.providers.OpenStreetMap.HOT)
 plt.title('Hydrogen potential map of Morocco', fontsize = 15)
 plt.axis('off')
 cbar_ax = fig.axes[-1]
 cbar_ax.tick_params(labelsize=12)
 cbar_ax.yaxis.label.set_size(12)
-# plt.savefig("mca_morocco.svg", format="svg", dpi=300)
+# plt.savefig("Maps/mca_morocco.pdf", format="pdf", dpi=300)
 plt.show()
 
 # Map MCA 2050
 fig, ax = plt.subplots(figsize=(15, 10))
 gdf_morocco_boundary.plot(ax=ax, edgecolor='black', facecolor="none", linewidth=1)
-gdf_water_50_50_2050.plot(ax=ax, cmap = theme_rating, column= 'sum', legend=True, legend_kwds={"label": "Relativ hydrogen potential", "orientation": "vertical"})
-cx.add_basemap(ax, crs=gdf_mca_morocco_2025.crs, source=cx.providers.CartoDB.Positron)
+gdf_mca_morocco_2050.plot(ax=ax, cmap = theme_rating, column= 'sum', legend=True, legend_kwds={"label": "Relativ hydrogen potential", "orientation": "vertical"})
+cx.add_basemap(ax, crs=gdf_mca_morocco_2050.crs, source=cx.providers.CartoDB.Positron)
 # cx.add_basemap(ax, crs=gdf_morocco_boundary.crs, source=cx.providers.OpenStreetMap.HOT)
 plt.title('Hydrogen potential map of Morocco', fontsize = 15)
 plt.axis('off')
 cbar_ax = fig.axes[-1]
 cbar_ax.tick_params(labelsize=12)
 cbar_ax.yaxis.label.set_size(12)
-# plt.savefig("mca_morocco.svg", format="svg", dpi=300)
+# plt.savefig("Maps/mca_morocco_2050.pdf", format="pdf", dpi=300)
 plt.show()
 
     #Diffs
-gdf_water_50_50_diff = gpd.GeoDataFrame(geometry=gdf_water_50_50_2050.geometry, crs = gdf_water_50_50_2050.crs,
-                                               data = gdf_water_50_50_2050['sum'] - gdf_mca_morocco_2025['Hydrogen_potential'])
+gdf_mca_morocco_diff = gpd.GeoDataFrame(geometry=gdf_mca_morocco_2025.geometry, crs = gdf_mca_morocco_2025.crs,
+                                               data = gdf_mca_morocco_2050['Hydrogen_potential'] - gdf_mca_morocco_2025['Hydrogen_potential'])
 
 cmap = plt.get_cmap(theme_diff)
 vals = np.linspace(0, 1, cmap.N)
@@ -143,13 +161,12 @@ transparent_cmap = mcolors.ListedColormap(colors)
 # Map MCA diff
 fig, ax = plt.subplots(figsize=(15, 10))
 gdf_morocco_boundary.plot(ax=ax, edgecolor='black', facecolor="none", linewidth=1)
-gdf_water_50_50_diff.plot(ax=ax,vmax = 0, cmap = transparent_cmap, column= 0, legend=True, legend_kwds={"label": "Relativ change in hydrogen potential", "orientation": "vertical"})
+gdf_mca_morocco_diff.plot(ax=ax,vmax = 0, cmap = transparent_cmap, column= 0, legend=True, legend_kwds={"label": "Relativ change in hydrogen potential", "orientation": "vertical"})
 cx.add_basemap(ax, crs=gdf_mca_morocco_2025.crs, source=cx.providers.CartoDB.Positron)
-# cx.add_basemap(ax, crs=gdf_morocco_boundary.crs, source=cx.providers.OpenStreetMap.HOT)
 plt.title('Change in hydrogen potential of Morocco', fontsize = 15)
 plt.axis('off')
 cbar_ax = fig.axes[-1]
 cbar_ax.tick_params(labelsize=12)
 cbar_ax.yaxis.label.set_size(12)
-# plt.savefig("mca_morocco.svg", format="svg", dpi=300)
+# plt.savefig("Maps/mca_morocco_diff.pdf", format="pdf", dpi=300)
 plt.show()
