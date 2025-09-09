@@ -31,13 +31,13 @@ fig, ax = plt.subplots(figsize=(15, 10))
 gdf_groundwater.plot(ax = ax, color='steelblue',alpha = 0.6, label='Groundwater potential')
 gdf_morocco_boundary.plot(ax=ax, edgecolor='black', facecolor="none", linewidth=1)
 cx.add_basemap(ax, crs=gdf_morocco_boundary.crs, source=cx.providers.CartoDB.Positron)
-plt.title('Groundwater Morocco', fontsize = 20)
 plt.axis('off')
 legend_handles = [
     mpatches.Patch(color='steelblue', label='Aquifer Productivity \nbetween moderate and very high'),
 ]
 plt.legend(handles=legend_handles, loc='lower right', fontsize=12)
-plt.savefig("Maps/morocco_groundwater.pdf", format="pdf", dpi=300)
+plt.tight_layout()
+plt.savefig("Maps/morocco_groundwater.pdf", format="pdf", dpi=300, bbox_inches='tight', pad_inches=0)
 plt.show()
 
 # Map Surface Water
@@ -51,9 +51,9 @@ fig, ax = plt.subplots(figsize=(15, 10))
 gdf_grid.plot(ax = ax, column='Surface Water', cmap = new_cmap, label='Surface Water potential',legend = True, legend_kwds={"label": "Surface Water Availability [MCM]", "orientation": "vertical"})
 gdf_morocco_boundary.plot(ax=ax, edgecolor='black', facecolor="none", linewidth=1)
 cx.add_basemap(ax, crs=gdf_morocco_boundary.crs, source=cx.providers.CartoDB.Positron)
-plt.title('Availability of Surface Water Morocco', fontsize = 20)
 plt.axis('off')
-plt.savefig("Maps/morocco_surfacewater.pdf", format="pdf", dpi=300)
+plt.tight_layout()
+plt.savefig("Maps/morocco_surfacewater.pdf", format="pdf", dpi=300, bbox_inches='tight', pad_inches=0)
 plt.show()
 
 # Map flow direction
@@ -61,12 +61,12 @@ fig, ax = plt.subplots(figsize=(15, 10))
 gdf_water_direction.plot(ax = ax, column='_sum', cmap = 'Blues', legend=True, legend_kwds={"label": "Number of cells flowing into one cell", "orientation": "vertical"})
 gdf_morocco_boundary.plot(ax=ax, edgecolor='black', facecolor="none", linewidth=1)
 cx.add_basemap(ax, crs=gdf_morocco_boundary.crs, source=cx.providers.CartoDB.Positron)
-plt.title('Flow direction Morocco', fontsize = 20)
 plt.axis('off')
 cbar_ax = fig.axes[-1]
 cbar_ax.tick_params(labelsize=12)
 cbar_ax.yaxis.label.set_size(14)
-plt.savefig("Maps/morocco_flow_direction.pdf", format="pdf", dpi=300)
+plt.tight_layout()
+plt.savefig("Maps/morocco_flow_direction.pdf", format="pdf", dpi=300, bbox_inches='tight', pad_inches=0)
 plt.show()
 
 # Map Watersheds
@@ -74,9 +74,9 @@ fig, ax = plt.subplots(figsize=(15, 10))
 gdf_watershead_morocco.plot(ax = ax, column='name',alpha=0.5,edgecolor='black', cmap = 'Paired', legend=True, legend_kwds={'loc': 'lower right'})
 gdf_morocco_boundary.plot(ax=ax, edgecolor='black', facecolor="none", linewidth=1)
 cx.add_basemap(ax, crs=gdf_morocco_boundary.crs, source=cx.providers.CartoDB.Positron)
-plt.title('Watersheds Morocco', fontsize = 20)
 plt.axis('off')
-plt.savefig("Maps/morocco_watersheds.pdf", format="pdf", dpi=300)
+plt.tight_layout()
+plt.savefig("Maps/morocco_watersheds.pdf", format="pdf", dpi=300, bbox_inches='tight', pad_inches=0)
 plt.show()
 
 # Map CWB
@@ -84,10 +84,10 @@ fig, ax = plt.subplots(figsize=(15, 10))
 gdf_cwb.plot(ax = ax, column='CWB',alpha=0.9, cmap = 'Blues', legend=True, legend_kwds={"label": "Climate Water Balance [MCM]", "orientation": "vertical"})
 gdf_morocco_boundary.plot(ax=ax, edgecolor='black', facecolor="none", linewidth=1)
 cx.add_basemap(ax, crs=gdf_morocco_boundary.crs, source=cx.providers.CartoDB.Positron)
-plt.title('Climate Water Balance Morocco between 2025 and 2050', fontsize = 20)
 plt.axis('off')
 cbar_ax = fig.axes[-1]
 cbar_ax.tick_params(labelsize=12)
 cbar_ax.yaxis.label.set_size(14)
-plt.savefig("Maps/morocco_cwb.pdf", format="pdf", dpi=300)
+plt.tight_layout()
+plt.savefig("Maps/morocco_cwb.pdf", format="pdf", dpi=300, bbox_inches='tight', pad_inches=0)
 plt.show()

@@ -27,7 +27,6 @@ gdf_nogo_zones[gdf_nogo_zones['fclass'] == 'military'].plot(ax=ax, color='red', 
 gdf_nogo_zones[gdf_nogo_zones['fclass'] == 'nature_reserve'].plot(ax=ax, color='green', label='Nature reserve')
 gdf_nogo_zones[gdf_nogo_zones['fclass'] == 'recreation_ground'].plot(ax=ax, color='blue', label='Recreation ground')
 cx.add_basemap(ax, crs=gdf_morocco_boundary.crs, source=cx.providers.CartoDB.Positron)
-plt.title('No-Go areas Morocco', fontsize = 20)
 plt.axis('off')
 legend_handles = [
     mpatches.Patch(color='red', label='Military area'),
@@ -36,5 +35,6 @@ legend_handles = [
     mpatches.Patch(color='grey', label='Steep slope area')
 ]
 plt.legend(handles=legend_handles, loc='lower right', fontsize=12)
-plt.savefig("Maps/morocco_nogos.pdf", format="pdf", dpi=300)
+plt.tight_layout()
+plt.savefig("Maps/morocco_nogos.pdf", format="pdf", dpi=300, bbox_inches='tight', pad_inches=0)
 plt.show()
