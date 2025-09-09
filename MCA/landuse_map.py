@@ -33,7 +33,6 @@ gdf_landuse_urban.plot(ax = ax, color='b', label='Urban land')
 gdf_industrie_morocco.plot(ax = ax, color='red', label='Industrial area', markersize=100)
 gdf_morocco_boundary.plot(ax=ax, edgecolor='black', facecolor="none", linewidth=1)
 cx.add_basemap(ax, crs=gdf_morocco_boundary.crs, source=cx.providers.CartoDB.Positron)
-plt.title('Landuse Morocco', fontsize = 20)
 plt.axis('off')
 legend_handles = [
     mpatches.Patch(color='lightgreen', label='Agricultural land'),
@@ -42,5 +41,5 @@ legend_handles = [
     mpatches.Patch(color='red', label='Industrial area')]
 plt.legend(handles=legend_handles, loc='lower right', fontsize=12)
 plt.tight_layout()
-plt.savefig("Maps/morocco_landuse.pdf", format="pdf", dpi=300)
+plt.savefig("Maps/morocco_landuse.pdf", format="pdf", dpi=300, bbox_inches='tight', pad_inches=0)
 plt.show()
