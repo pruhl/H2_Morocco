@@ -67,4 +67,6 @@ gdf_new_landuse = pd.concat([gdf_new, gdf_new_urban_areas])
 
 gdf_new_landuse = gpd.GeoDataFrame(gdf_new_landuse, crs=gdf_landuse_concat.crs, geometry='geometry')
 
+gdf_new_landuse['GRIDCODE'] = gdf_new_landuse['GRIDCODE'].astype(int)
+
 gdf_new_landuse.to_file('Data/morocco_landuse_2050.shp', driver='ESRI Shapefile')

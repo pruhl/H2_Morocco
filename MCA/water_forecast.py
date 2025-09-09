@@ -2,7 +2,7 @@ import geopandas as gpd
 import pandas as pd
 import numpy as np
 
-gdf_current_pot     = gpd.read_file('Maps/mca_h2_morocco_2050.shp')
+gdf_grid = gpd.read_file('Grid_morocco/grid_morocco_clear.shp')
 
 # Precipitation and PET data
 # Source: Future projection of droughts in Morocco and potential impact on agriculture (PDF in Teams)
@@ -34,11 +34,11 @@ water_supply_2050   = 8535                  #MCM
 water_loss_2050     = water_supply_2025 - water_supply_2050 #MCM, is positiv but loss --> x MCM water of loss > 1 --> water withdrawl
 
 list_cwb_cell       = [] 
-for i in range(len(gdf_current_pot)):
+for i in range(len(gdf_grid)):
     cwb_cell = 0
     for j in range(len(gdf_cwb)):
-        if gdf_current_pot.geometry[i].intersects(gdf_cwb.geometry[j]):
-            area_cell_in_gdf_cwb    = (gdf_current_pot.geometry[i].intersection(gdf_cwb.geometry[j])).area
+        if gdf_grid.geometry[i].intersects(gdf_cwb.geometry[j]):
+            area_cell_in_gdf_cwb    = (gdf_grid.geometry[i].intersection(gdf_cwb.geometry[j])).area
             cwb_cell                += gdf_cwb.at[j,'CWB'] * area_cell_in_gdf_cwb   #Is always negativ mm*m^2
         if j == len(gdf_cwb)-1:
             list_cwb_cell.append(cwb_cell)
@@ -56,22 +56,22 @@ ds_water_res_2050 = (- df_water_consumption_2050['Water_Consumption[BCM]'] * 10*
 
 # 50/50 between Wateravailability and Wateravailability residual
 ds_water_res = ds_water_res_2050.copy()
-ds_water = df_water_cell_2050.copy()
+ds_water_avail = df_water_cell_2050.copy()
 
 ds_water_res.loc[ds_water_res <= 0] = 0
-ds_water_res.loc[ds_water_res > 0] = (ds_water_res.loc[ds_water_res > 0]/
-                              ds_water_res_2025.max()) * 50                 #2025 as benchmark
+ds_water_res.loc[ds_water_res > 0] = ((ds_water_res.loc[ds_water_res > 0] - ds_water_res.loc[ds_water_res > 0].min())/
+                              (ds_water_res_2025.max() - ds_water_res.loc[ds_water_res > 0].min())) * 50                 #2025 as benchmark
 
-ds_water.loc[ds_water <= 0] = 0
-ds_water.loc[ds_water > 0] = (ds_water.loc[ds_water > 0]/
-                              ds_water_ges_2025.max()) * 50                 #2025 as benchmark
+ds_water_avail.loc[ds_water_avail <= 0] = 0
+ds_water_avail.loc[ds_water_avail > 0] = ((ds_water_avail.loc[ds_water_avail > 0] - ds_water_avail.loc[ds_water_avail > 0].min())/
+                              (ds_water_ges_2025.max() - ds_water_avail.loc[ds_water_avail > 0].min())) * 50                 #2025 as benchmark
 
-ds_water_50_50 = ds_water + ds_water_res
+ds_water_50_50 = ds_water_avail + ds_water_res
 
     # Cost = 100, negativ values = 0, positiv values min-max scale
 array_water = np.array([])
-for i in range(len(gdf_current_pot)):
-    cell = gdf_current_pot.geometry[i]
+for i in range(len(gdf_grid)):
+    cell = gdf_grid.geometry[i]
     cell_intersection = cell.intersects(gdf_coast.geometry)
     
     if any(cell_intersection):
@@ -81,12 +81,6 @@ for i in range(len(gdf_current_pot)):
 
     array_water = np.append(array_water, score)
 
-#Replace old column with new one
-weight_water = 0.3399
-gdf_current_pot['water aval'] = array_water * weight_water
-gdf_current_pot['sum'] = gdf_current_pot[['avg_pv_yea','avg_windpo', 
-                                                     'water aval', 'industrial',
-                                                     'accessibil', 'agricultur',
-                                                     'non confli', 'urban_zone',
-                                                     'rural_zone']].sum(axis=1) * gdf_current_pot['nogo_zones']
-gdf_current_pot.to_file('Maps/mca_h2_morocco_2050_water_available_V2.shp', driver='ESRI Shapefile')
+df_water = pd.DataFrame(data = array_water)
+
+df_water.to_csv('Data/results_water_res_availabil_2050.csv', index=False)
