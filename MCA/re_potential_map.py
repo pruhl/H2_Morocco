@@ -1,7 +1,6 @@
 import geopandas as gpd
 import matplotlib.pyplot as plt
 import contextily as cx
-import numpy as np
 import pandas as pd
 
 # Data

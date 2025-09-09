@@ -1,9 +1,6 @@
-import pandas as pd
 import matplotlib.pyplot as plt
 import geopandas as gpd
 import contextily as cx
-import numpy as np
-import matplotlib.colors as mcolors
 import matplotlib.patches as mpatches
 
 gdf_morocco_boundary    = gpd.read_file(r"C:\Users\psclr\Documents\02 Master\Masterprojekt\QGIS\Daten\morocco_Morocco_Country_Boundary.shp").to_crs("EPSG:32629")

@@ -3,7 +3,6 @@ import matplotlib.pyplot as plt
 import geopandas as gpd
 import contextily as cx
 import numpy as np
-import matplotlib.colors as mcolors
 import matplotlib.patches as mpatches
 from matplotlib.colors import LinearSegmentedColormap
 

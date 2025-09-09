@@ -1,6 +1,5 @@
 import geopandas as gpd
 import pandas as pd
-import numpy as np
 
 from custom import list_index
 
