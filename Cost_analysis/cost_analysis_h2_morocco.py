@@ -144,13 +144,13 @@ gdf_re_data['Cost_re_2050 [EUR/a]']     = annual_cost_pv_2050 + annual_cost_wind
 
 #Grid Cost
     # 2025
-capex_dc_line_2025          = 1500000                                       # €/km/MW Source: https://www.netzentwicklungsplan.de/sites/default/files/paragraphs-files/Kostenschaetzungen_NEP_2030_2_Entwurf.pdf
+capex_dc_line_2025          = 1500000/4000                                  # €/km/MW Source: https://www.netzentwicklungsplan.de/sites/default/files/paragraphs-files/Kostenschaetzungen_NEP_2030_2_Entwurf.pdf
 capex_converter_2025        = 200000                                        # €/MW Source: https://www.netzentwicklungsplan.de/sites/default/files/paragraphs-files/Kostenschaetzungen_NEP_2030_2_Entwurf.pdf
 lifetime_dc                 = 40                                            # years Source: https://plus.netzausbau.de/N2000/DE/Technik/Freileitungen/freileitungen-node.html
-opex_dc_line_2025           = 0.01 * capex_dc_line_2025 #* p_nom_el         # €/km/a
+opex_dc_line_2025           = 0.01 * capex_dc_line_2025 * p_nom_el          # €/km/a
 opex_converter_2025         = 0.01 * capex_converter_2025 * p_nom_el * 2    # €/a
 annuity_dc_line_2025        = (((1 + r) ** lifetime_dc * r) 
-                                / ((1 + r) ** lifetime_dc - 1)) * capex_dc_line_2025 #* p_nom_el            # €/km/a
+                                / ((1 + r) ** lifetime_dc - 1)) * capex_dc_line_2025 * p_nom_el            # €/km/a
 annuity_converrter_2025     = (((1 + r) ** lifetime_dc * r) 
                                 / ((1 + r) ** lifetime_dc - 1)) * p_nom_el * 2 * capex_converter_2025       # €/a
 annual_cost_converter_2025  = annuity_converrter_2025 + opex_converter_2025                                 # €/a
@@ -159,12 +159,12 @@ annual_cost_dc_line_2025    = annuity_dc_line_2025 + opex_dc_line_2025          
 df_dc_cost_cells_2025 = df_distance_cells.where(df_distance_cells.isnull(), df_distance_cells * annual_cost_dc_line_2025 + annual_cost_converter_2025) 
 
     # 2050
-capex_dc_line_2050          = 2000000                                       # €/km/MW Source: https://www.netzentwicklungsplan.de/sites/default/files/2023-02/NEP_2035_2021_1_Entwurf_Kostenschaetzungen_0.pdf
+capex_dc_line_2050          = 2000000/4000                                  # €/km/MW Source: https://www.netzentwicklungsplan.de/sites/default/files/2023-02/NEP_2035_2021_1_Entwurf_Kostenschaetzungen_0.pdf
 capex_converter_2050        = 300000                                        # €/MW Source: https://www.netzentwicklungsplan.de/sites/default/files/2023-02/NEP_2035_2021_1_Entwurf_Kostenschaetzungen_0.pdf
-opex_dc_line_2050           = 0.01 * capex_dc_line_2050 #* p_nom_el          # €/km/a
+opex_dc_line_2050           = 0.01 * capex_dc_line_2050 * p_nom_el         # €/km/a
 opex_converter_2050         = 0.01 * capex_converter_2050 * p_nom_el * 2    # €/a
 annuity_dc_line_2050        = (((1 + r) ** lifetime_dc * r) 
-                                / ((1 + r) ** lifetime_dc - 1)) * capex_dc_line_2050 #* p_nom_el             # €/km/a
+                                / ((1 + r) ** lifetime_dc - 1)) * capex_dc_line_2050 * p_nom_el             # €/km/a
 annuity_converrter_2050     = (((1 + r) ** lifetime_dc * r) 
                                 / ((1 + r) ** lifetime_dc - 1)) * p_nom_el * 2 * capex_converter_2050       # €/a
 annual_cost_converter_2050  = annuity_converrter_2050 + opex_converter_2050                                 # €/a

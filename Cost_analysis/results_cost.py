@@ -4,45 +4,82 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import contextily as cx
 
-# Comparison of ports in 2025 and 2050
-gdf_morocco_boundary    = gpd.read_file(r"C:\Users\psclr\Documents\02 Master\Masterprojekt\QGIS\Daten\morocco_Morocco_Country_Boundary.shp").to_crs("EPSG:32629")
-gdf_ports_2025 = gpd.read_file('Data/industrial_ports_morocco_2025.shp').to_crs("EPSG:32629")
-gdf_ports_2050 = gpd.read_file('Data/industrial_ports_morocco_2050.shp').to_crs("EPSG:32629")
-ports_2025 = set(gdf_ports_2025['name'])
-ports_2050 = set(gdf_ports_2050['name'])
-new_ports = ports_2050 - ports_2025
-gdf_ports_new = gdf_ports_2050[gdf_ports_2050['name'].isin(new_ports)]
 
-fig, ax = plt.subplots(figsize=(10, 10))
-# Für jeden Punkt Namen als Text hinzufügen
-y_offset = 10000
-x_offset = -20000
-for idx, row in gdf_ports_2050.iterrows():
-    x = row.geometry.x  # x-Koordinate
-    y = row.geometry.y  # y-Koordinate
-    name = row['name']  # Name aus Spalte 'name'
-    if name in new_ports:
-        if name == 'Mohammedia':
-            ax.text(x + x_offset, y + y_offset*3, name, fontsize=10, color='red', 
-                    ha='right', va='bottom')
-        else:
-            ax.text(x + x_offset, y + y_offset, name, fontsize=10, color='red', 
-                ha='right', va='bottom')
-    else:
-        if name in ['Tanger Med', 'Tanger Ville']:
-            if name == 'Tanger Med':
-                ax.text(x + x_offset, y + y_offset, 'Tanger', fontsize=10, color='blue', 
-                    ha='right', va='bottom')
-        else:
-            ax.text(x + x_offset, y + y_offset, name, fontsize=10, color='blue', 
-                ha='right', va='bottom')
+gdf_morocco_boundary    = gpd.read_file(r"C:\Users\psclr\Documents\02 Master\Masterprojekt\QGIS\Daten\morocco_Morocco_Country_Boundary.shp").to_crs("EPSG:32629")
+gdf_grid_morocco        = gpd.read_file('Data/grid_morocco_clear.shp').to_crs("EPSG:32629")
+
+df_res_2025             = pd.read_csv('Data/results_cost_2025.csv')
+df_res_2050             = pd.read_csv('Data/results_cost_2050.csv')
+
+theme_rating = 'jet'
+theme_diff   = 'OrRd_r'
+
+# Costs 2025
+fig, ax = plt.subplots(figsize=(15, 10))
 gdf_morocco_boundary.plot(ax=ax, edgecolor='black', facecolor="none", linewidth=2)
-gdf_ports_2025.plot(ax=ax, color='blue', marker='o', markersize=50, label='Current Ports Morocco')
-gdf_ports_new.plot(ax=ax, color='red', marker='o', markersize=50, label='New Ports Morocco')
+gdf_grid_morocco.plot(ax=ax, cmap=theme_rating, column=df_res_2025['H2_Price_2025 [EUR/MWh_h2]'], legend=True, legend_kwds={"label": "[EUR/MWh_h2]", "orientation": "vertical"})
 cx.add_basemap(ax, crs=gdf_morocco_boundary.crs, source=cx.providers.CartoDB.Positron)
-# cx.add_basemap(ax, crs=gdf_morocco_boundary.crs, source=cx.providers.OpenStreetMap.HOT)
-plt.title('Ports of Morocco for energy trafic and industrial applications', fontsize = 15)
-plt.legend(loc='upper left', fontsize=12)
 plt.axis('off')
-plt.savefig("ports_morocco.pdf", format="pdf", dpi=300)
+cbar_ax = fig.axes[-1]
+cbar_ax.tick_params(labelsize=14)
+cbar_ax.yaxis.label.set_size(14)
+plt.savefig("Maps/cost_map_2025.png", format="png", dpi=300, bbox_inches='tight', pad_inches=0)
+plt.show()
+
+# Costs 2050
+fig, ax = plt.subplots(figsize=(15, 10))
+gdf_morocco_boundary.plot(ax=ax, edgecolor='black', facecolor="none", linewidth=2)
+gdf_grid_morocco.plot(ax=ax, cmap=theme_rating, column=df_res_2050['H2_Price_2050 [EUR/MWh_h2]'], legend=True, legend_kwds={"label": "[EUR/MWh_h2]", "orientation": "vertical"})
+cx.add_basemap(ax, crs=gdf_morocco_boundary.crs, source=cx.providers.CartoDB.Positron)
+plt.axis('off')
+cbar_ax = fig.axes[-1]
+cbar_ax.tick_params(labelsize=14)
+cbar_ax.yaxis.label.set_size(14)
+plt.savefig("Maps/cost_map_2050.png", format="png", dpi=300, bbox_inches='tight', pad_inches=0)
+plt.show()
+
+# Kostenanteile
+labels = ['Electrolyzer', 'Electricity Cost', 'Grid Cost', 'Pipeline Cost', 'Water Cost']
+costs_2025 = [df_res_2025['Electrolyzer_cost [EUR/MWh_h2]'].mean(), df_res_2025['RE_cost [EUR/MWh_h2]'].mean(), df_res_2025['Distribution_cost [EUR/MWh_h2]'].mean(), df_res_2025['Pipeline_cost [EUR/MWh_h2]'].mean(), df_res_2025['Water_cost [EUR/MWh_h2]'].mean()]
+costs_2050 = [df_res_2050['Electrolyzer_cost [EUR/MWh_h2]'].mean(), df_res_2050['RE_cost [EUR/MWh_h2]'].mean(), df_res_2050['Distribution_cost [EUR/MWh_h2]'].mean(), df_res_2050['Pipeline_cost [EUR/MWh_h2]'].mean(), df_res_2050['Water_cost [EUR/MWh_h2]'].mean()]
+x = np.arange(len(labels))  # the label locations
+width = 0.35  # the width of the bars
+fig, ax = plt.subplots(figsize=(10, 6))
+rects1 = ax.bar(x - width/2, costs_2025, width, label='2025', color='skyblue')
+rects2 = ax.bar(x + width/2, costs_2050, width, label='2050', color='orange')
+# Add some text for labels, title and custom x-axis tick labels, etc.
+ax.set_ylabel('Cost [EUR/MWh_h2]')
+ax.set_title('Average Cost Components for Green Hydrogen Production in Morocco')
+ax.set_xticks(x)
+ax.set_xticklabels(labels, rotation=45, ha='right')
+ax.legend()
+ax.bar_label(rects1, padding=3)
+ax.bar_label(rects2, padding=3)
+fig.tight_layout()
+plt.savefig("Maps/bar_cost_components_morocco_seperate.png", format="png", bbox_inches='tight', pad_inches=0)
+plt.show()
+
+# Gestapeltes Säulendiagramm
+x = np.arange(2)  # 2025 und 2050
+width = 0.6
+
+fig, ax = plt.subplots(figsize=(8, 6))
+
+bottom = np.zeros(2)
+bars = []
+colors = plt.cm.tab20.colors  # 20 verschiedene Farben
+
+for i, label in enumerate(labels):
+    values = [costs_2025[i], costs_2050[i]]
+    bar = ax.bar(x, values, width, bottom=bottom, color=colors[i])
+    bars.append(bar)
+    bottom += values
+
+ax.set_xticks(x)
+ax.set_xticklabels(['2025', '2050'])
+ax.set_ylabel('Cost [EUR/MWh_h2]')
+ax.set_title('Cost Components for Green Hydrogen Production in Morocco')
+ax.legend([b[0] for b in bars], labels, bbox_to_anchor=(1.05, 1), loc='upper left')
+fig.tight_layout()
+plt.savefig("Maps/bar_cost_components_morocco.png", format="png", bbox_inches='tight', pad_inches=0)
 plt.show()
