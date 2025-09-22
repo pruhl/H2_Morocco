@@ -33,5 +33,5 @@ legend_handles = [
 ]
 plt.legend(handles=legend_handles, loc='lower right', fontsize=12)
 plt.tight_layout()
-plt.savefig("Maps/morocco_nogos.pdf", format="pdf", dpi=300, bbox_inches='tight', pad_inches=0)
+plt.savefig("Maps/morocco_nogos.png", format="png", dpi=300, bbox_inches='tight', pad_inches=0)
 plt.show()

@@ -16,7 +16,7 @@ gdf_groundwater_morocco_concat = pd.concat([gdf_groundwater_morocco_utm29n, gdf_
 gdf_groundwater = gdf_groundwater_morocco_concat[gdf_groundwater_morocco_concat['MorHGComb'].isin(['CSIF-M/H', 'CSFK-H/VH', 'U-L/H'])]
 
 gdf_grid = gpd.read_file('Grid_morocco/grid_morocco_clear.shp')
-df_sw = pd.read_csv('Data/water_availability_sw_2050.csv')
+df_sw = pd.read_csv('Data/water_availability_sw.csv')
 gdf_grid['Surface Water'] = df_sw['water_availability_sw[MCM]']
 
 gdf_water_direction = gpd.read_file('Data/flow_direction_grid.shp')
@@ -32,11 +32,11 @@ gdf_morocco_boundary.plot(ax=ax, edgecolor='black', facecolor="none", linewidth=
 cx.add_basemap(ax, crs=gdf_morocco_boundary.crs, source=cx.providers.CartoDB.Positron)
 plt.axis('off')
 legend_handles = [
-    mpatches.Patch(color='steelblue', label='Aquifer Productivity \nbetween moderate and very high'),
+    mpatches.Patch(color='steelblue', label='Aquifer productivity \nbetween moderate and very high'),
 ]
 plt.legend(handles=legend_handles, loc='lower right', fontsize=12)
 plt.tight_layout()
-plt.savefig("Maps/morocco_groundwater.pdf", format="pdf", dpi=300, bbox_inches='tight', pad_inches=0)
+plt.savefig("Maps/morocco_groundwater.png", format="png", dpi=300, bbox_inches='tight', pad_inches=0)
 plt.show()
 
 # Map Surface Water
@@ -52,7 +52,7 @@ gdf_morocco_boundary.plot(ax=ax, edgecolor='black', facecolor="none", linewidth=
 cx.add_basemap(ax, crs=gdf_morocco_boundary.crs, source=cx.providers.CartoDB.Positron)
 plt.axis('off')
 plt.tight_layout()
-plt.savefig("Maps/morocco_surfacewater.pdf", format="pdf", dpi=300, bbox_inches='tight', pad_inches=0)
+plt.savefig("Maps/morocco_surfacewater.png", format="png", dpi=300, bbox_inches='tight', pad_inches=0)
 plt.show()
 
 # Map flow direction
@@ -65,7 +65,7 @@ cbar_ax = fig.axes[-1]
 cbar_ax.tick_params(labelsize=12)
 cbar_ax.yaxis.label.set_size(14)
 plt.tight_layout()
-plt.savefig("Maps/morocco_flow_direction.pdf", format="pdf", dpi=300, bbox_inches='tight', pad_inches=0)
+plt.savefig("Maps/morocco_flow_direction.png", format="png", dpi=300, bbox_inches='tight', pad_inches=0)
 plt.show()
 
 # Map Watersheds
@@ -75,7 +75,7 @@ gdf_morocco_boundary.plot(ax=ax, edgecolor='black', facecolor="none", linewidth=
 cx.add_basemap(ax, crs=gdf_morocco_boundary.crs, source=cx.providers.CartoDB.Positron)
 plt.axis('off')
 plt.tight_layout()
-plt.savefig("Maps/morocco_watersheds.pdf", format="pdf", dpi=300, bbox_inches='tight', pad_inches=0)
+plt.savefig("Maps/morocco_watersheds.png", format="png", dpi=300, bbox_inches='tight', pad_inches=0)
 plt.show()
 
 # Map CWB
@@ -88,5 +88,5 @@ cbar_ax = fig.axes[-1]
 cbar_ax.tick_params(labelsize=12)
 cbar_ax.yaxis.label.set_size(14)
 plt.tight_layout()
-plt.savefig("Maps/morocco_cwb.pdf", format="pdf", dpi=300, bbox_inches='tight', pad_inches=0)
+plt.savefig("Maps/morocco_cwb.png", format="png", dpi=300, bbox_inches='tight', pad_inches=0)
 plt.show()
