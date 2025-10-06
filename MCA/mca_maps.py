@@ -142,9 +142,9 @@ cx.add_basemap(ax, crs=gdf_mca_morocco_2025.crs, source=cx.providers.CartoDB.Pos
 plt.axis('off')
 cbar_ax = fig.axes[-1]
 cbar_ax.tick_params(labelsize=14)
-cbar_ax.yaxis.label.set_size(14)
+cbar_ax.yaxis.label.set_size(20)
 plt.tight_layout()
-plt.savefig("Maps/mca_morocco_2025.png", format="png", dpi=300, bbox_inches='tight', pad_inches=0)
+plt.savefig("Maps/mca_morocco_2025.pdf", format="pdf", dpi=300, bbox_inches='tight', pad_inches=0)
 plt.show()
 
 # Map MCA 2050
@@ -155,9 +155,9 @@ cx.add_basemap(ax, crs=gdf_mca_morocco_2050.crs, source=cx.providers.CartoDB.Pos
 plt.axis('off')
 cbar_ax = fig.axes[-1]
 cbar_ax.tick_params(labelsize=14)
-cbar_ax.yaxis.label.set_size(14)
+cbar_ax.yaxis.label.set_size(20)
 plt.tight_layout()
-plt.savefig("Maps/mca_morocco_2050.png", format="png", dpi=300, bbox_inches='tight', pad_inches=0)
+plt.savefig("Maps/mca_morocco_2050.pdf", format="pdf", dpi=300, bbox_inches='tight', pad_inches=0)
 plt.show()
 
     #Difference
@@ -175,7 +175,54 @@ cx.add_basemap(ax, crs=gdf_mca_morocco_2025.crs, source=cx.providers.CartoDB.Pos
 plt.axis('off')
 cbar_ax = fig.axes[-1]
 cbar_ax.tick_params(labelsize=14)
-cbar_ax.yaxis.label.set_size(14)
+cbar_ax.yaxis.label.set_size(20)
 plt.tight_layout()
-plt.savefig("Maps/mca_morocco_diff.png", format="png", dpi=300, bbox_inches='tight', pad_inches=0)
+plt.savefig("Maps/mca_morocco_diff.pdf", format="pdf", dpi=300, bbox_inches='tight', pad_inches=0)
+plt.show()
+
+# Pie chart of weights
+labels =[
+    'Ground Water Availability',
+    'Surface Water Availability',
+    'Sociopolitical Stability',
+    'Industrial Zone Share',
+    'Wind Energy Yield',
+    'Accessibility',
+    'PV Yield',
+    'Rural Zone Share',
+    'Agricultural Land Share',
+    'Urban Zone Share'
+]
+sizes = [16.99, 16.99, 16.63, 16, 11.13, 8.31, 5.57, 4.96, 1.94, 1.48]
+colors = ['deepskyblue', 'lightskyblue', 'lightcoral', 
+          'orange', 'limegreen', 'plum', 
+          'yellow', 'sandybrown', 
+          'green', 'gray']
+
+fig, ax = plt.subplots(figsize=(10, 6))
+wedges, texts, autotexts = ax.pie(
+    sizes,
+    labels=None,  # Keine Labels an den Tortenstücken
+    colors=colors,
+    startangle=90,
+    autopct='%1.2f%%',
+    counterclock=False
+)
+ax.axis('equal')
+ax.legend(wedges, labels, title="Criteria", bbox_to_anchor=(1, 0.5), loc="center left", 
+          fontsize=14, title_fontsize=16)
+plt.subplots_adjust(left=0.05, right=0.75)
+
+# Verschiebe die Prozentzahlen für Agriculture (8) und Urban (9)
+for i, autotext in enumerate(autotexts):
+    if i == 8:
+        autotext.set_position((1.2 * autotext.get_position()[0], 1.2 * autotext.get_position()[1]))
+    if i == 9:
+        autotext.set_position((1.3 * autotext.get_position()[0], 1.3 * autotext.get_position()[1]))
+
+for autotext in autotexts:
+    autotext.set_fontsize(12)  # z.B. 16, nach Wunsch anpassen
+
+plt.tight_layout()
+plt.savefig("Maps/pie_chart_weights.pdf", format="pdf", dpi=300, bbox_inches='tight', pad_inches=0)
 plt.show()
