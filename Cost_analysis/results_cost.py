@@ -30,7 +30,7 @@ plt.axis('off')
 cbar_ax = fig.axes[-1]
 cbar_ax.tick_params(labelsize=14)
 cbar_ax.yaxis.label.set_size(20)
-plt.savefig("Maps/cost_map_2025.pdf", format="pdf", dpi=300, bbox_inches='tight', pad_inches=0)
+plt.savefig("Maps/cost_map_2025.pdf", format="pdf", bbox_inches='tight', pad_inches=0)
 plt.show()
 
 # Costs 2050
@@ -42,7 +42,7 @@ plt.axis('off')
 cbar_ax = fig.axes[-1]
 cbar_ax.tick_params(labelsize=14)
 cbar_ax.yaxis.label.set_size(20)
-plt.savefig("Maps/cost_map_2050.pdf", format="pdf", dpi=300, bbox_inches='tight', pad_inches=0)
+plt.savefig("Maps/cost_map_2050.pdf", format="pdf", bbox_inches='tight', pad_inches=0)
 plt.show()
 
 # Kostenanteile
