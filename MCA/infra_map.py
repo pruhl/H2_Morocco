@@ -59,10 +59,10 @@ for track_class in classes:
     else:
         gdf_roads_railsways[gdf_roads_railsways['fclass'] == track_class].plot(ax=ax, linewidth=0.1, color = np.random.rand(3,))
 gdf_ports_2025.plot(ax=ax, color='blue', marker='o', markersize=50, label='Current ports of Morocco')
-gdf_ports_new.plot(ax=ax, color='red', marker='o', markersize=50, label='New ports of Morocco')
+gdf_ports_new.plot(ax=ax, color='red', marker='o', markersize=50, label='Future ports of Morocco')
 cx.add_basemap(ax, crs=gdf_roads_railsways.crs, source=cx.providers.CartoDB.Positron)
 plt.axis('off')
 plt.legend(loc = 'lower right', fontsize = 12)
 plt.tight_layout()
-plt.savefig("Maps/morocco_infrastructure.png", format="png", dpi=300, bbox_inches='tight', pad_inches=0)
+plt.savefig("Maps/morocco_infrastructure.eps", format="eps", bbox_inches='tight', pad_inches=0)
 plt.show()

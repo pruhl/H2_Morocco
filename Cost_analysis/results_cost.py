@@ -24,7 +24,7 @@ gdf_north = gdf_grid_morocco[gdf_grid_morocco.geometry.centroid.y >= y_limit]
 # Costs 2025
 fig, ax = plt.subplots(figsize=(15, 10))
 gdf_morocco_boundary.plot(ax=ax, edgecolor='black', facecolor="none", linewidth=2)
-gdf_grid_morocco.plot(ax=ax, cmap=theme_rating, column=df_res_2025['H2_Price_2025 [EUR/MWh_h2]'], legend=True, legend_kwds={"label": "[EUR/MWh_h2]", "orientation": "vertical"})
+gdf_grid_morocco.plot(ax=ax, cmap=theme_rating, column=df_res_2025['H2_Price_2025 [EUR/MWh_h2]'], legend=True, legend_kwds={"label": r"$\mathrm{[€/MWh_{H_2}]}$", "orientation": "vertical"})
 cx.add_basemap(ax, crs=gdf_morocco_boundary.crs, source=cx.providers.CartoDB.Positron)
 plt.axis('off')
 cbar_ax = fig.axes[-1]
@@ -36,7 +36,7 @@ plt.show()
 # Costs 2050
 fig, ax = plt.subplots(figsize=(15, 10))
 gdf_morocco_boundary.plot(ax=ax, edgecolor='black', facecolor="none", linewidth=2)
-gdf_grid_morocco.plot(ax=ax, cmap=theme_rating, column=df_res_2050['H2_Price_2050 [EUR/MWh_h2]'], legend=True, legend_kwds={"label": "[EUR/MWh_h2]", "orientation": "vertical"})
+gdf_grid_morocco.plot(ax=ax, cmap=theme_rating, column=df_res_2050['H2_Price_2050 [EUR/MWh_h2]'], legend=True, legend_kwds={"label": r"$\mathrm{[€/MWh_{H_2}]}$", "orientation": "vertical"})
 cx.add_basemap(ax, crs=gdf_morocco_boundary.crs, source=cx.providers.CartoDB.Positron)
 plt.axis('off')
 cbar_ax = fig.axes[-1]
@@ -55,8 +55,7 @@ fig, ax = plt.subplots(figsize=(10, 6))
 rects1 = ax.bar(x - width/2, costs_2025, width, label='2025', color='skyblue')
 rects2 = ax.bar(x + width/2, costs_2050, width, label='2050', color='orange')
 # Add some text for labels, title and custom x-axis tick labels, etc.
-ax.set_ylabel('Cost [EUR/MWh_h2]')
-ax.set_title('Average Cost Components for Green Hydrogen Production in Morocco')
+ax.set_ylabel(r'Cost $\mathrm{[€/MWh_{H_2}]}$')
 ax.set_xticks(x)
 ax.set_xticklabels(labels, rotation=45, ha='right')
 ax.legend()
@@ -84,77 +83,8 @@ for i, label in enumerate(labels):
 
 ax.set_xticks(x)
 ax.set_xticklabels(['2025', '2050'])
-ax.set_ylabel('Cost [EUR/MWh_h2]')
-ax.set_title('Cost Components for Green Hydrogen Production in Morocco')
+ax.set_ylabel(r'Cost $\mathrm{[€/MWh_{H_2}]}$')
 ax.legend([b[0] for b in bars], labels, bbox_to_anchor=(1.05, 1), loc='upper left')
 fig.tight_layout()
 plt.savefig("Maps/bar_cost_components_morocco.pdf", format="pdf", bbox_inches='tight', pad_inches=0)
-plt.show()
-
-# IDs der nördlichen und südlichen Zellen
-north_idx = gdf_north.index
-south_idx = gdf_south.index
-
-labels = ['Electrolyzer', 'Electricity Cost', 'Grid Cost', 'Pipeline Cost', 'Water Cost']
-
-# 2025
-costs_north_2025 = [
-    df_res_2025.loc[north_idx, 'Electrolyzer_cost [EUR/MWh_h2]'].mean(),
-    df_res_2025.loc[north_idx, 'RE_cost [EUR/MWh_h2]'].mean(),
-    df_res_2025.loc[north_idx, 'Distribution_cost [EUR/MWh_h2]'].mean(),
-    df_res_2025.loc[north_idx, 'Pipeline_cost [EUR/MWh_h2]'].mean(),
-    df_res_2025.loc[north_idx, 'Water_cost [EUR/MWh_h2]'].mean()
-]
-costs_south_2025 = [
-    df_res_2025.loc[south_idx, 'Electrolyzer_cost [EUR/MWh_h2]'].mean(),
-    df_res_2025.loc[south_idx, 'RE_cost [EUR/MWh_h2]'].mean(),
-    df_res_2025.loc[south_idx, 'Distribution_cost [EUR/MWh_h2]'].mean(),
-    df_res_2025.loc[south_idx, 'Pipeline_cost [EUR/MWh_h2]'].mean(),
-    df_res_2025.loc[south_idx, 'Water_cost [EUR/MWh_h2]'].mean()
-]
-
-x = np.arange(len(labels))
-width = 0.35
-fig, ax = plt.subplots(figsize=(10, 6))
-rects1 = ax.bar(x - width/2, costs_north_2025, width, label='Norden', color='royalblue')
-rects2 = ax.bar(x + width/2, costs_south_2025, width, label='Süden', color='darkorange')
-ax.set_ylabel('Cost [EUR/MWh_h2]')
-ax.set_title('Cost share 2025: north and south')
-ax.set_xticks(x)
-ax.set_xticklabels(labels, rotation=45, ha='right')
-ax.legend()
-ax.bar_label(rects1, padding=3)
-ax.bar_label(rects2, padding=3)
-fig.tight_layout()
-plt.savefig("Maps/bar_cost_components_north_vs_south_2025.pdf", format="pdf", bbox_inches='tight', pad_inches=0)
-plt.show()
-
-# 2050
-costs_north_2050 = [
-    df_res_2050.loc[north_idx, 'Electrolyzer_cost [EUR/MWh_h2]'].mean(),
-    df_res_2050.loc[north_idx, 'RE_cost [EUR/MWh_h2]'].mean(),
-    df_res_2050.loc[north_idx, 'Distribution_cost [EUR/MWh_h2]'].mean(),
-    df_res_2050.loc[north_idx, 'Pipeline_cost [EUR/MWh_h2]'].mean(),
-    df_res_2050.loc[north_idx, 'Water_cost [EUR/MWh_h2]'].mean()
-]
-costs_south_2050 = [
-    df_res_2050.loc[south_idx, 'Electrolyzer_cost [EUR/MWh_h2]'].mean(),
-    df_res_2050.loc[south_idx, 'RE_cost [EUR/MWh_h2]'].mean(),
-    df_res_2050.loc[south_idx, 'Distribution_cost [EUR/MWh_h2]'].mean(),
-    df_res_2050.loc[south_idx, 'Pipeline_cost [EUR/MWh_h2]'].mean(),
-    df_res_2050.loc[south_idx, 'Water_cost [EUR/MWh_h2]'].mean()
-]
-
-fig, ax = plt.subplots(figsize=(10, 6))
-rects1 = ax.bar(x - width/2, costs_north_2050, width, label='Norden', color='royalblue')
-rects2 = ax.bar(x + width/2, costs_south_2050, width, label='Süden', color='darkorange')
-ax.set_ylabel('Cost [EUR/MWh_h2]')
-ax.set_title('Cost share 2050: north and south')
-ax.set_xticks(x)
-ax.set_xticklabels(labels, rotation=45, ha='right')
-ax.legend()
-ax.bar_label(rects1, padding=3)
-ax.bar_label(rects2, padding=3)
-fig.tight_layout()
-plt.savefig("Maps/bar_cost_components_north_vs_south_2050.pdf", format="pdf", bbox_inches='tight', pad_inches=0)
 plt.show()
