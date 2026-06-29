@@ -66,7 +66,7 @@ gdf_distance_ports_2050 = gpd.GeoDataFrame(geometry=gdf_grid_morocco.geometry, d
         # 2025
 p_nom_el            = 100                   # [MW]
 eff_el_2025         = 0.6                   # [–] # Source: https://www.irena.org/-/media/Files/IRENA/Agency/Publication/2020/Dec/IRENA_Green_hydrogen_cost_2020.pdf
-capex_el_2025       = 1000000               # [€/MW] # Source: https://www.irena.org/-/media/Files/IRENA/Agency/Publication/2020/Dec/IRENA_Green_hydrogen_cost_2020.pdf
+capex_el_2025       = 1037500               # [€/MW] # Source: https://www.irena.org/-/media/Files/IRENA/Agency/Publication/2020/Dec/IRENA_Green_hydrogen_cost_2020.pdf
 opex_el_2025        = 0.05 * capex_el_2025  # [€/MW/a] # Source: https://wupperinst.org/fileadmin/redaktion/downloads/projects/MENA-Fuels_Teilbericht_12_Handelsmodell.pdf
 r                   = 0.08                  # discount rate # Source: https://www.irena.org/-/media/Files/IRENA/Agency/Publication/2020/Dec/IRENA_Green_hydrogen_cost_2020.pdf
 lifetime_el_2025    = 10                    # [a] # Source: https://www.irena.org/-/media/Files/IRENA/Agency/Publication/2020/Dec/IRENA_Green_hydrogen_cost_2020.pdf
@@ -76,9 +76,9 @@ annuity_el_2025  = (((1 + r) ** lifetime_el_2025 * r)
 annual_cost_el_2025 = annuity_el_2025 + opex_el_2025 * p_nom_el                 # €/a
         # 2050
 eff_el_2050         = 0.8                   # [–] # Source: https://www.irena.org/-/media/Files/IRENA/Agency/Publication/2020/Dec/IRENA_Green_hydrogen_cost_2020.pdf
-capex_el_2050       = 200000                # [€/MW] # Source: https://www.irena.org/-/media/Files/IRENA/Agency/Publication/2020/Dec/IRENA_Green_hydrogen_cost_2020.pdf, 2050 dann 200€/kW
+capex_el_2050       = 105000                # [€/MW] # Source: https://www.irena.org/-/media/Files/IRENA/Agency/Publication/2020/Dec/IRENA_Green_hydrogen_cost_2020.pdf, 2050 dann 200€/kW
 opex_el_2050        = 0.05 * capex_el_2025  # [€/MW/a] # Source: https://wupperinst.org/fileadmin/redaktion/downloads/projects/MENA-Fuels_Teilbericht_12_Handelsmodell.pdf
-lifetime_el_2050    = 15                    # [a] # Source: https://www.irena.org/-/media/Files/IRENA/Agency/Publication/2020/Dec/IRENA_Green_hydrogen_cost_2020.pdf
+lifetime_el_2050    = 13                    # [a] # Source: https://www.irena.org/-/media/Files/IRENA/Agency/Publication/2020/Dec/IRENA_Green_hydrogen_cost_2020.pdf
 
 annuity_el_2050  = (((1 + r) ** lifetime_el_2050 * r)
                 / ((1 + r) ** lifetime_el_2050 - 1)) * p_nom_el * capex_el_2050    # €/a
@@ -101,7 +101,7 @@ spez_transport_costs    = 0.007     # €/m^3/km, Source: Techno-economic assess
 # PV Cost
 p_nom_pv  = gdf_re_data['PV']   # [MW]
     # 2025
-capex_pv_2025   = 691000                    # [€/MWp] Source: https://www.irena.org/-/media/Files/IRENA/Agency/Publication/2025/Jul/IRENA_TEC_RPGC_in_2024_2025.pdf
+capex_pv_2025   = 555000                    # [€/MWp] Source: https://www.irena.org/-/media/Files/IRENA/Agency/Publication/2025/Jul/IRENA_TEC_RPGC_in_2024_2025.pdf
 opex_pv_2025    = 0.02 * capex_pv_2025      # [€/MWp/a] Annahme
 lifetime_pv     = 25                        # [a] Annahme
 annuity_pv_2025 = (((1 + r) ** lifetime_pv * r) / 
@@ -109,7 +109,7 @@ annuity_pv_2025 = (((1 + r) ** lifetime_pv * r) /
 annual_cost_pv_2025 = annuity_pv_2025 + capex_pv_2025 * p_nom_pv  # €/a
 
     # 2050
-capex_pv_2050   = 423000                    # [€/MWp] Source: https://wupperinst.org/fileadmin/redaktion/downloads/projects/MENA-Fuels_Teilbericht_12_Handelsmodell.pdf
+capex_pv_2050   = 258000                    # [€/MWp] Source: https://wupperinst.org/fileadmin/redaktion/downloads/projects/MENA-Fuels_Teilbericht_12_Handelsmodell.pdf
 opex_pv_2050    = 0.02 * capex_pv_2050      # [€/MWp/a] Annahme
 annuity_pv_2050 = (((1 + r) ** lifetime_pv * r) / 
               ((1 + r) ** lifetime_pv - 1)) * p_nom_pv * capex_pv_2050 # €/a
@@ -118,7 +118,7 @@ annual_cost_pv_2050 = annuity_pv_2050 + capex_pv_2050 * p_nom_pv  # €/a
 # Wind Cost
 p_nom_wind = gdf_re_data['Wind']    # [MW]
     #2025
-capex_wind_2025     = 1041000                       # [€/MW] Source: https://www.irena.org/-/media/Files/IRENA/Agency/Publication/2025/Jul/IRENA_TEC_RPGC_in_2024_2025.pdf
+capex_wind_2025     = 949000                       # [€/MW] Source: https://www.irena.org/-/media/Files/IRENA/Agency/Publication/2025/Jul/IRENA_TEC_RPGC_in_2024_2025.pdf
 opex_wind_2025      = 0.02 * capex_wind_2025        # [€/MW] Annahme
 lifetime_wind       = 25                            # [a] Annahme
 annuity_wind_2025   = (((1 + r) ** lifetime_wind * r) / 
@@ -126,7 +126,7 @@ annuity_wind_2025   = (((1 + r) ** lifetime_wind * r) /
 annual_cost_wind_2025 = annuity_wind_2025 + opex_wind_2025 * p_nom_wind         # €/a
 
     # 2050
-capex_wind_2050 = 914000                            # [€/MW] Source: https://wupperinst.org/fileadmin/redaktion/downloads/projects/MENA-Fuels_Teilbericht_12_Handelsmodell.pdf
+capex_wind_2050 = 558000                            # [€/MW] Source: https://wupperinst.org/fileadmin/redaktion/downloads/projects/MENA-Fuels_Teilbericht_12_Handelsmodell.pdf
 opex_wind_2050 = 0.02 * capex_wind_2050             # [€/MW] Annahme
 annuity_wind_2050   = (((1 + r) ** lifetime_wind * r) / 
                 ((1 + r) ** lifetime_wind - 1)) * capex_wind_2050 * p_nom_wind  # €/a
@@ -144,8 +144,8 @@ gdf_re_data['Cost_re_2050 [EUR/a]']     = annual_cost_pv_2050 + annual_cost_wind
 
 #Grid Cost
     # 2025
-capex_dc_line_2025          = 1500000/4000                                  # €/km/MW Source: https://www.netzentwicklungsplan.de/sites/default/files/paragraphs-files/Kostenschaetzungen_NEP_2030_2_Entwurf.pdf
-capex_converter_2025        = 200000                                        # €/MW Source: https://www.netzentwicklungsplan.de/sites/default/files/paragraphs-files/Kostenschaetzungen_NEP_2030_2_Entwurf.pdf
+capex_dc_line_2025          = 1360000/4000                                  # €/km/MW Source: https://www.netzentwicklungsplan.de/sites/default/files/paragraphs-files/Kostenschaetzungen_NEP_2030_2_Entwurf.pdf
+capex_converter_2025        = 181000                                        # €/MW Source: https://www.netzentwicklungsplan.de/sites/default/files/paragraphs-files/Kostenschaetzungen_NEP_2030_2_Entwurf.pdf
 lifetime_dc                 = 40                                            # years Source: https://plus.netzausbau.de/N2000/DE/Technik/Freileitungen/freileitungen-node.html
 opex_dc_line_2025           = 0.01 * capex_dc_line_2025 * p_nom_el          # €/km/a
 opex_converter_2025         = 0.01 * capex_converter_2025 * p_nom_el * 2    # €/a
@@ -159,8 +159,8 @@ annual_cost_dc_line_2025    = annuity_dc_line_2025 + opex_dc_line_2025          
 df_dc_cost_cells_2025 = df_distance_cells.where(df_distance_cells.isnull(), df_distance_cells * annual_cost_dc_line_2025 + annual_cost_converter_2025) 
 
     # 2050
-capex_dc_line_2050          = 2000000/4000                                  # €/km/MW Source: https://www.netzentwicklungsplan.de/sites/default/files/2023-02/NEP_2035_2021_1_Entwurf_Kostenschaetzungen_0.pdf
-capex_converter_2050        = 300000                                        # €/MW Source: https://www.netzentwicklungsplan.de/sites/default/files/2023-02/NEP_2035_2021_1_Entwurf_Kostenschaetzungen_0.pdf
+capex_dc_line_2050          = 1640000/4000                                  # €/km/MW Source: https://www.netzentwicklungsplan.de/sites/default/files/2023-02/NEP_2035_2021_1_Entwurf_Kostenschaetzungen_0.pdf
+capex_converter_2050        = 246000                                        # €/MW Source: https://www.netzentwicklungsplan.de/sites/default/files/2023-02/NEP_2035_2021_1_Entwurf_Kostenschaetzungen_0.pdf
 opex_dc_line_2050           = 0.01 * capex_dc_line_2050 * p_nom_el         # €/km/a
 opex_converter_2050         = 0.01 * capex_converter_2050 * p_nom_el * 2    # €/a
 annuity_dc_line_2050        = (((1 + r) ** lifetime_dc * r) 
@@ -174,7 +174,7 @@ df_dc_cost_cells_2050 = df_distance_cells.where(df_distance_cells.isnull(), df_d
 
 #H2 Pipeline Cost
     # 2050
-capex_h2_pipe_2025  = 0.988 * 1000         # €/km/MW_h2 Source: https://www.sciencedirect.com/science/article/pii/S030626192300733X?ref=pdf_download&fr=RR-2&rr=97c7db524cd03633
+capex_h2_pipe_2025  = 1.17 * 1000         # €/km/MW_h2 Source: https://www.sciencedirect.com/science/article/pii/S030626192300733X?ref=pdf_download&fr=RR-2&rr=97c7db524cd03633
 h2_pipe_lifetime    = 40                        # years
 opex_h2_2025             = 0.01 * capex_h2_pipe_2025            # €//km/MW_h2/a
 annuity_h2_pipe_2025     = (((1 + r) ** h2_pipe_lifetime * r) 
@@ -184,7 +184,7 @@ annual_cost_h2_pipe_2025 = annuity_h2_pipe_2025 + opex_h2_2025 * p_nom_el * eff_
 df_h2_pipe_cost_cells_2025 = df_distance_ports_2025 * annual_cost_h2_pipe_2025
 
     # 2050
-capex_h2_pipe_2050  = 0.497 * 1000         # €/km/MW_h2 Source: https://www.sciencedirect.com/science/article/pii/S030626192300733X?ref=pdf_download&fr=RR-2&rr=97c7db524cd03633
+capex_h2_pipe_2050  = 0.57 * 1000         # €/km/MW_h2 Source: https://www.sciencedirect.com/science/article/pii/S030626192300733X?ref=pdf_download&fr=RR-2&rr=97c7db524cd03633
 opex_h2_2050        = 0.01 * capex_h2_pipe_2050      # €//km/MW_h2/a
 annuity_h2_pipe_2050     = (((1 + r) ** h2_pipe_lifetime * r) 
                        / ((1 + r) ** h2_pipe_lifetime - 1)) * p_nom_el * eff_el_2050 * capex_h2_pipe_2050   # €/km/a

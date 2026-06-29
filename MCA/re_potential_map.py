@@ -18,11 +18,11 @@ gdf_grid.plot(ax = ax, column='PV', cmap='turbo', legend=True, vmin=1000, legend
 cx.add_basemap(ax, crs=gdf_morocco_boundary.crs, source=cx.providers.CartoDB.Positron)
 plt.axis('off')
 cbar_ax = fig.axes[-1]
-cbar_ax.tick_params(labelsize=12)
-cbar_ax.yaxis.label.set_size(14)
-plt.title('Photovoltaic Potential (spez. yield) of Morocco', fontsize=16)
+cbar_ax.tick_params(labelsize=14)
+cbar_ax.yaxis.label.set_size(20)
 plt.tight_layout()
-plt.savefig("Maps/morocco_photovoltaic_potential_with_title.png", format="png", dpi=300, bbox_inches='tight', pad_inches=0)
+plt.savefig("Maps/morocco_photovoltaic_potential.png", format="png", dpi=300, bbox_inches='tight', pad_inches=0)
+plt.savefig("Maps/morocco_photovoltaic_potential.eps", format="eps", dpi=300, bbox_inches='tight', pad_inches=0)
 plt.show()
 
 # Map Wind
@@ -31,9 +31,9 @@ gdf_grid.plot(ax = ax, column='Wind', cmap='turbo', legend=True, legend_kwds={"l
 cx.add_basemap(ax, crs=gdf_morocco_boundary.crs, source=cx.providers.CartoDB.Positron)
 plt.axis('off')
 cbar_ax = fig.axes[-1]
-cbar_ax.tick_params(labelsize=12)
-cbar_ax.yaxis.label.set_size(14)
-plt.title('Wind Potential (FLH) of Morocco', fontsize=16)
+cbar_ax.tick_params(labelsize=14)
+cbar_ax.yaxis.label.set_size(20)
 plt.tight_layout()
-plt.savefig("Maps/morocco_wind_potential_with_title.png", format="png", dpi=300, bbox_inches='tight', pad_inches=0)
+plt.savefig("Maps/morocco_wind_potential.png", format="png", dpi=300, bbox_inches='tight', pad_inches=0)
+plt.savefig("Maps/morocco_wind_potential.eps", format="eps", dpi=300, bbox_inches='tight', pad_inches=0)
 plt.show()

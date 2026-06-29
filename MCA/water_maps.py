@@ -31,13 +31,16 @@ gdf_groundwater.plot(ax = ax, color='steelblue',alpha = 0.6, label='Groundwater 
 gdf_morocco_boundary.plot(ax=ax, edgecolor='black', facecolor="none", linewidth=1)
 cx.add_basemap(ax, crs=gdf_morocco_boundary.crs, source=cx.providers.CartoDB.Positron)
 plt.axis('off')
+cbar_ax = fig.axes[-1]
+cbar_ax.tick_params(labelsize=14)
+cbar_ax.yaxis.label.set_size(20)
 legend_handles = [
     mpatches.Patch(color='steelblue', label='Aquifer productivity \nbetween moderate and very high'),
 ]
 plt.legend(handles=legend_handles, loc='lower right', fontsize=12)
-plt.title('Groundwater Potential of Morocco', fontsize=16)
 plt.tight_layout()
-plt.savefig("Maps/morocco_groundwater_with_title.png", format="png", dpi=300, bbox_inches='tight', pad_inches=0)
+plt.savefig("Maps/morocco_groundwater.png", format="png", dpi=300, bbox_inches='tight', pad_inches=0)
+plt.savefig("Maps/morocco_groundwater.eps", format="eps", dpi=300, bbox_inches='tight', pad_inches=0)
 plt.show()
 
 # Map Surface Water
@@ -52,9 +55,12 @@ gdf_grid.plot(ax = ax, column='Surface Water', cmap = new_cmap, label='Surface W
 gdf_morocco_boundary.plot(ax=ax, edgecolor='black', facecolor="none", linewidth=1)
 cx.add_basemap(ax, crs=gdf_morocco_boundary.crs, source=cx.providers.CartoDB.Positron)
 plt.axis('off')
-plt.title('Surface Water Availability of Morocco', fontsize=16)
+cbar_ax = fig.axes[-1]
+cbar_ax.tick_params(labelsize=14)
+cbar_ax.yaxis.label.set_size(20)
 plt.tight_layout()
-plt.savefig("Maps/morocco_surfacewater_with_title.png", format="png", dpi=300, bbox_inches='tight', pad_inches=0)
+plt.savefig("Maps/morocco_surfacewater.png", format="png", dpi=300, bbox_inches='tight', pad_inches=0)
+plt.savefig("Maps/morocco_surfacewater.eps", format="eps", dpi=300, bbox_inches='tight', pad_inches=0)
 plt.show()
 
 # Map flow direction
@@ -64,11 +70,11 @@ gdf_morocco_boundary.plot(ax=ax, edgecolor='black', facecolor="none", linewidth=
 cx.add_basemap(ax, crs=gdf_morocco_boundary.crs, source=cx.providers.CartoDB.Positron)
 plt.axis('off')
 cbar_ax = fig.axes[-1]
-cbar_ax.tick_params(labelsize=12)
-cbar_ax.yaxis.label.set_size(14)
-plt.title('Flow Direction of Morocco', fontsize=16)
+cbar_ax.tick_params(labelsize=14)
+cbar_ax.yaxis.label.set_size(20)
 plt.tight_layout()
-plt.savefig("Maps/morocco_flow_direction_with_title.png", format="png", dpi=300, bbox_inches='tight', pad_inches=0)
+plt.savefig("Maps/morocco_flow_direction.png", format="png", dpi=300, bbox_inches='tight', pad_inches=0)
+plt.savefig("Maps/morocco_flow_direction.eps", format="eps", dpi=300, bbox_inches='tight', pad_inches=0)
 plt.show()
 
 # Map Watersheds
@@ -77,9 +83,12 @@ gdf_watershead_morocco.plot(ax = ax, column='name',alpha=0.5,edgecolor='black', 
 gdf_morocco_boundary.plot(ax=ax, edgecolor='black', facecolor="none", linewidth=1)
 cx.add_basemap(ax, crs=gdf_morocco_boundary.crs, source=cx.providers.CartoDB.Positron)
 plt.axis('off')
-plt.title('Watersheds of Morocco', fontsize=16)
+cbar_ax = fig.axes[-1]
+cbar_ax.tick_params(labelsize=14)
+cbar_ax.yaxis.label.set_size(20)
 plt.tight_layout()
-plt.savefig("Maps/morocco_watersheds_with_title.png", format="png", dpi=300, bbox_inches='tight', pad_inches=0)
+plt.savefig("Maps/morocco_watersheds.png", format="png", dpi=300, bbox_inches='tight', pad_inches=0)
+plt.savefig("Maps/morocco_watersheds.eps", format="eps", dpi=300, bbox_inches='tight', pad_inches=0)
 plt.show()
 
 # Map CWB
@@ -89,9 +98,9 @@ gdf_morocco_boundary.plot(ax=ax, edgecolor='black', facecolor="none", linewidth=
 cx.add_basemap(ax, crs=gdf_morocco_boundary.crs, source=cx.providers.CartoDB.Positron)
 plt.axis('off')
 cbar_ax = fig.axes[-1]
-cbar_ax.tick_params(labelsize=12)
-cbar_ax.yaxis.label.set_size(14)
-plt.title('Climate Water Balance (CWB) of Morocco for 2050', fontsize=16)
+cbar_ax.tick_params(labelsize=14)
+cbar_ax.yaxis.label.set_size(20)
 plt.tight_layout()
-plt.savefig("Maps/morocco_cwb_with_title.png", format="png", dpi=300, bbox_inches='tight', pad_inches=0)
+plt.savefig("Maps/morocco_cwb.png", format="png", dpi=300, bbox_inches='tight', pad_inches=0)
+plt.savefig("Maps/morocco_cwb.eps", format="eps", dpi=300, bbox_inches='tight', pad_inches=0)
 plt.show()

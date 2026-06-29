@@ -129,6 +129,11 @@ df_mca_morocco_2050.name = 'MCA_Morocco'
 
 gdf_mca_morocco_2050['Hydrogen_potential'] = df_mca_morocco_2050
 
+# Results export (csv)
+df_mca = pd.concat([df_mca_morocco, df_mca_morocco_2050], axis=1)
+df_mca.columns = ['MCA_Morocco_2025', 'MCA_Morocco_2050']
+df_mca.to_csv('Data/results_mca_morocco_2025_2050.csv', index=False)
+
 ### MAPS ###
 
 theme_rating = 'jet_r'
@@ -145,6 +150,7 @@ cbar_ax.tick_params(labelsize=14)
 cbar_ax.yaxis.label.set_size(20)
 plt.tight_layout()
 plt.savefig("Maps/mca_morocco_2025.pdf", format="pdf", dpi=300, bbox_inches='tight', pad_inches=0)
+plt.savefig("Maps/mca_morocco_2025.eps", format="eps", dpi=300, bbox_inches='tight', pad_inches=0)
 plt.show()
 
 # Map MCA 2050
@@ -158,6 +164,7 @@ cbar_ax.tick_params(labelsize=14)
 cbar_ax.yaxis.label.set_size(20)
 plt.tight_layout()
 plt.savefig("Maps/mca_morocco_2050.pdf", format="pdf", dpi=300, bbox_inches='tight', pad_inches=0)
+plt.savefig("Maps/mca_morocco_2050.eps", format="eps", dpi=300, bbox_inches='tight', pad_inches=0)
 plt.show()
 
     #Difference
@@ -178,6 +185,7 @@ cbar_ax.tick_params(labelsize=14)
 cbar_ax.yaxis.label.set_size(20)
 plt.tight_layout()
 plt.savefig("Maps/mca_morocco_diff.pdf", format="pdf", dpi=300, bbox_inches='tight', pad_inches=0)
+plt.savefig("Maps/mca_morocco_diff.eps", format="eps", dpi=300, bbox_inches='tight', pad_inches=0)
 plt.show()
 
 # Pie chart of weights

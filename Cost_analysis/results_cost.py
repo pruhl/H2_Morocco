@@ -28,9 +28,10 @@ gdf_grid_morocco.plot(ax=ax, cmap=theme_rating, column=df_res_2025['H2_Price_202
 cx.add_basemap(ax, crs=gdf_morocco_boundary.crs, source=cx.providers.CartoDB.Positron)
 plt.axis('off')
 cbar_ax = fig.axes[-1]
-cbar_ax.tick_params(labelsize=14)
+cbar_ax.tick_params(labelsize=10)
 cbar_ax.yaxis.label.set_size(20)
 plt.savefig("Maps/cost_map_2025.pdf", format="pdf", bbox_inches='tight', pad_inches=0)
+plt.savefig("Maps/cost_map_2025.eps", format="eps", bbox_inches='tight', pad_inches=0)
 plt.show()
 
 # Costs 2050
@@ -40,9 +41,10 @@ gdf_grid_morocco.plot(ax=ax, cmap=theme_rating, column=df_res_2050['H2_Price_205
 cx.add_basemap(ax, crs=gdf_morocco_boundary.crs, source=cx.providers.CartoDB.Positron)
 plt.axis('off')
 cbar_ax = fig.axes[-1]
-cbar_ax.tick_params(labelsize=14)
+cbar_ax.tick_params(labelsize=10)
 cbar_ax.yaxis.label.set_size(20)
 plt.savefig("Maps/cost_map_2050.pdf", format="pdf", bbox_inches='tight', pad_inches=0)
+plt.savefig("Maps/cost_map_2050.eps", format="eps", bbox_inches='tight', pad_inches=0)
 plt.show()
 
 # Kostenanteile
@@ -63,6 +65,7 @@ ax.bar_label(rects1, padding=3)
 ax.bar_label(rects2, padding=3)
 fig.tight_layout()
 plt.savefig("Maps/bar_cost_components_morocco_seperate.pdf", format="pdf", bbox_inches='tight', pad_inches=0)
+plt.savefig("Maps/bar_cost_components_morocco_seperate.eps", format="eps", bbox_inches='tight', pad_inches=0)
 plt.show()
 
 # Gestapeltes Säulendiagramm
@@ -87,4 +90,9 @@ ax.set_ylabel(r'Cost $\mathrm{[€/MWh_{H_2}]}$')
 ax.legend([b[0] for b in bars], labels, bbox_to_anchor=(1.05, 1), loc='upper left')
 fig.tight_layout()
 plt.savefig("Maps/bar_cost_components_morocco.pdf", format="pdf", bbox_inches='tight', pad_inches=0)
+plt.savefig("Maps/bar_cost_components_morocco.eps", format="eps", bbox_inches='tight', pad_inches=0)
 plt.show()
+
+# Results export (csv)
+df_res = pd.concat([df_res_2025['H2_Price_2025 [EUR/MWh_h2]'], df_res_2050['H2_Price_2050 [EUR/MWh_h2]']], axis=1)
+df_res.to_csv('Data/results_cost_morocco_2025_2050.csv', index=False)
