@@ -1,0 +1,14 @@
+# GIS / generierte Outputs
+MCA/Maps/*.eps
+MCA/Maps/*.pdf
+MCA/Maps/*.png
+
+MCA/Data/*.shp
+MCA/Data/*.dbf
+MCA/Data/*.shx
+MCA/Data/*.prj
+MCA/Data/*.cpg
+
+# große Ergebnisse
+*.tif
+*.geojson
