@@ -5,7 +5,8 @@ from custom import list_index
 
 # Data
     # Current potential, from previous MCA
-gdf_current_potential = gpd.read_file('Maps/mca_h2_morocco_2025.shp')
+gdf_grid = gpd.read_file('Grid_morocco/grid_morocco_clear.shp')
+
     # Accessibility
     # Source: OSM, downloaded via QGIS
 gdf_railways_utm29n = gpd.read_file(r'C:\Users\psclr\Documents\02 Master\Masterprojekt\QGIS\Daten\Landuse\gis_osm_railways_free_1.shp').to_crs("EPSG:32629")
@@ -33,8 +34,8 @@ weights_roads = {'motorway': 0.25,
                   'railway':0.18}
 
 df_accessibility = pd.DataFrame(columns = classes)
-for i in range(len(gdf_current_potential)):
-    cell, list_index_intersection = list_index(gdf_roads_railsways, i, gdf_current_potential)
+for i in range(len(gdf_grid)):
+    cell, list_index_intersection = list_index(gdf_roads_railsways, i, gdf_grid)
     roads_class = gdf_roads_railsways.loc[list_index_intersection]['fclass']
     road_length = gdf_roads_railsways.loc[list_index_intersection].intersection(cell).length
 
@@ -44,4 +45,4 @@ for i in range(len(gdf_current_potential)):
         a = df[df['class'] == y]['length'].sum()
         df_accessibility.loc[i, y] = a
 
-df_accessibility.to_csv('Data/results_accessibility.csv', index=False)
+df_accessibility.to_csv('results/results_accessibility.csv', index=False)
