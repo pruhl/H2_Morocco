@@ -6,7 +6,8 @@ from custom import list_index
 
 # Data
     # Current potential
-gdf_current_potential = gpd.read_file('Maps/mca_h2_morocco_2025.shp')
+gdf_grid = gpd.read_file('Grid_morocco/grid_morocco_clear.shp')
+
     # No-Go Zones
     # Source: OSM, via QGIS
 gdf_landuse_utm29n = gpd.read_file(r'C:\Users\psclr\Documents\02 Master\Masterprojekt\QGIS\Daten\Landuse\gis_osm_landuse_a_free_1.shp').to_crs("EPSG:32629")
@@ -20,9 +21,9 @@ gdf_nogo_zones.index = range(len(gdf_nogo_zones))
     # Source: QGIS, via grid-statistics, origin source for topography: Soufiane fragen
 gdf_topo_utm29n = gpd.read_file('Data/ToPo_1500.shp').to_crs("EPSG:32629")   #Already 1 or 0, done in QGIS with grid-statistics
 
-array_nogo = np.array([])
-for i in range(len(gdf_current_potential)):
-    cell, list_index_intersection = list_index(gdf_nogo_zones, i, gdf_current_potential)
+list_nogo = []
+for i in range(len(gdf_grid)):
+    cell, list_index_intersection = list_index(gdf_nogo_zones, i, gdf_grid)
 
     if len(list_index_intersection) == 0:
         a = 1
@@ -33,10 +34,11 @@ for i in range(len(gdf_current_potential)):
         else:
             a = 1
 
-    array_nogo = np.append(array_nogo, a)
+    list_nogo.append(a)
 
-array_nogo = np.minimum(array_nogo, gdf_topo_utm29n['NoGos'])
+array_nogo = np.array(list_nogo)
+array_nogo = np.minimum(array_nogo, gdf_topo_utm29n['NoGo'])
 
 df_nogo_zones = pd.DataFrame(data = array_nogo)
 
-df_nogo_zones.to_csv('Data/results_nogo_zones.csv', index=False)
+df_nogo_zones.to_csv('results/results_nogo_zones.csv', index=False)
