@@ -6,22 +6,20 @@ from custom import list_index
 
 # Data
     # Current potential
-gdf_current_potential = gpd.read_file('Maps/mca_h2_morocco_2025.shp')
+gdf_grid = gpd.read_file('Grid_morocco/grid_morocco_clear.shp')
     # PV
     # Source: Global solar atlas
 gdf_pv_morocco_utm29n = gpd.read_file(r"C:\Users\psclr\Documents\02 Master\Masterprojekt\QGIS\Daten\Morocco_GISdata_LTAy_YearlyMonthlyTotals_GlobalSolarAtlas-v2_GEOTIFF\PV_yeald_clear_ma_we.shp").to_crs("EPSG:32629")
 
-array_pv_yeald = np.array([])
-for i in range(len(gdf_current_potential)):
-    cell_pv, list_index_intersection_pv = list_index(gdf_pv_morocco_utm29n, i, gdf_current_potential)
+# Spatial join: alle PV-Geometrien auf die Grid-Zellen mappen
+joined = gpd.sjoin(gdf_grid,
+                   gdf_pv_morocco_utm29n[['pv_yeald', 'geometry']],
+                   how='left',
+                   predicate='intersects')
 
-    if len(list_index_intersection_pv) == 0:
-        pv_yeald = 0
-    else:
-        pv_yeald = gdf_pv_morocco_utm29n['pv_yeald'].iloc[list_index_intersection_pv].sum()/len(list_index_intersection_pv)
+# Durchschnitt pro Zelle berechnen
+df_mean = joined.groupby(joined.index)['pv_yeald'].mean()
+df_mean = df_mean.fillna(0)
 
-    array_pv_yeald = np.append(array_pv_yeald, pv_yeald)
-
-df_pv_yeald = pd.DataFrame(data = array_pv_yeald)
-
-df_pv_yeald.to_csv('Data/results_pv_yeald.csv', index=False)
+# CSV
+# df_pv_yeald.to_csv('Data/results_pv_yeald.csv', index=False)

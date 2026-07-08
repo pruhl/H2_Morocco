@@ -40,7 +40,6 @@ legend_handles = [
 plt.legend(handles=legend_handles, loc='lower right', fontsize=12)
 plt.tight_layout()
 plt.savefig("Maps/morocco_groundwater.png", format="png", dpi=300, bbox_inches='tight', pad_inches=0)
-plt.savefig("Maps/morocco_groundwater.eps", format="eps", dpi=300, bbox_inches='tight', pad_inches=0)
 plt.show()
 
 # Map Surface Water
@@ -60,7 +59,6 @@ cbar_ax.tick_params(labelsize=14)
 cbar_ax.yaxis.label.set_size(20)
 plt.tight_layout()
 plt.savefig("Maps/morocco_surfacewater.png", format="png", dpi=300, bbox_inches='tight', pad_inches=0)
-plt.savefig("Maps/morocco_surfacewater.eps", format="eps", dpi=300, bbox_inches='tight', pad_inches=0)
 plt.show()
 
 # Map flow direction
@@ -74,7 +72,6 @@ cbar_ax.tick_params(labelsize=14)
 cbar_ax.yaxis.label.set_size(20)
 plt.tight_layout()
 plt.savefig("Maps/morocco_flow_direction.png", format="png", dpi=300, bbox_inches='tight', pad_inches=0)
-plt.savefig("Maps/morocco_flow_direction.eps", format="eps", dpi=300, bbox_inches='tight', pad_inches=0)
 plt.show()
 
 # Map Watersheds
@@ -88,7 +85,6 @@ cbar_ax.tick_params(labelsize=14)
 cbar_ax.yaxis.label.set_size(20)
 plt.tight_layout()
 plt.savefig("Maps/morocco_watersheds.png", format="png", dpi=300, bbox_inches='tight', pad_inches=0)
-plt.savefig("Maps/morocco_watersheds.eps", format="eps", dpi=300, bbox_inches='tight', pad_inches=0)
 plt.show()
 
 # Map CWB
@@ -102,5 +98,4 @@ cbar_ax.tick_params(labelsize=14)
 cbar_ax.yaxis.label.set_size(20)
 plt.tight_layout()
 plt.savefig("Maps/morocco_cwb.png", format="png", dpi=300, bbox_inches='tight', pad_inches=0)
-plt.savefig("Maps/morocco_cwb.eps", format="eps", dpi=300, bbox_inches='tight', pad_inches=0)
 plt.show()
