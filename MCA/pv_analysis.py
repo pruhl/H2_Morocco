@@ -1,8 +1,4 @@
 import geopandas as gpd
-import numpy as np
-import pandas as pd
-
-from custom import list_index
 
 # Data
     # Current potential
@@ -22,4 +18,4 @@ df_mean = joined.groupby(joined.index)['pv_yeald'].mean()
 df_mean = df_mean.fillna(0)
 
 # CSV
-# df_pv_yeald.to_csv('Data/results_pv_yeald.csv', index=False)
+df_mean.to_csv('results/results_pv_yeald.csv', index=False)
