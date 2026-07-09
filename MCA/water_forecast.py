@@ -12,7 +12,7 @@ gdf_pet             = gpd.read_file(r"C:\Users\psclr\Documents\02 Master\Masterp
 gdf_coast = gpd.read_file(r"C:\Users\psclr\Documents\02 Master\Masterprojekt\QGIS\Daten\morocco_coast_line.shp").to_crs("EPSG:32629")        
 df_water_2025_sw    = pd.read_csv('Data/water_availability_sw.csv')
 df_water_2025_gw    = pd.read_csv('Data/water_availability_gw.csv')
-df_water_consumption_2025 = pd.read_csv('Data/Water_Consumption.csv')
+df_water_consumption_2025 = pd.read_csv('Data/Water_Consumption_2025.csv')
 df_water_consumption_2050 = pd.read_csv('Data/Water_Consumption_2050.csv')
 ds_water_ges_2025        = (+ df_water_2025_gw['water_availability_gw[MCM]']  
                        + df_water_2025_sw['water_availability_sw[MCM]'])
@@ -70,7 +70,7 @@ ds_water_avail.loc[ds_water_avail > 0] = ((ds_water_avail.loc[ds_water_avail > 0
 ds_water_50_50 = ds_water_avail + ds_water_res
 
     # Cost = 100, negativ values = 0, positiv values min-max scale
-array_water = np.array([])
+list_water = []
 for i in range(len(gdf_grid)):
     cell = gdf_grid.geometry[i]
     cell_intersection = cell.intersects(gdf_coast.geometry)
@@ -80,8 +80,8 @@ for i in range(len(gdf_grid)):
     else:
         score = ds_water_50_50[i]
 
-    array_water = np.append(array_water, score)
+    list_water.append(score)
 
-df_water = pd.DataFrame(data = array_water)
+df_water = pd.DataFrame(data = list_water)
 
 df_water.to_csv('results/results_water_res_availabil_2050.csv', index=False)

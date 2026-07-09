@@ -9,7 +9,7 @@ gdf_coast = gpd.read_file(r"C:\Users\psclr\Documents\02 Master\Masterprojekt\QGI
 # Today
 df_gw_availability = pd.read_csv('Data/water_availability_gw.csv')
 df_sw_availability = pd.read_csv('Data/water_availability_sw.csv')
-df_water_consumption = pd.read_csv('Data/Water_Consumption.csv')
+df_water_consumption = pd.read_csv('Data/Water_Consumption_2025.csv')
 
 # 50/50 between Wateravailability and Wateravailability residual
 ds_water_res = (- df_water_consumption['Water_Consumption[BCM]'] * 10**9 
@@ -30,7 +30,7 @@ ds_water_avail = ((ds_water_avail - ds_water_avail.min())/
 ds_water_50_50 = ds_water_avail + ds_water_res
 
      # Check if cell is at coast, if yes give score 100
-array_water = np.array([])
+list_water = []
 for i in range(len(gdf_grid)):
     cell = gdf_grid.geometry[i]
     cell_intersection = cell.intersects(gdf_coast.geometry)
@@ -40,8 +40,8 @@ for i in range(len(gdf_grid)):
     else:
         score = ds_water_50_50[i]
 
-    array_water = np.append(array_water, score)
+    list_water.append(score)
 
-df_water = pd.DataFrame(data = array_water)
+df_water = pd.DataFrame(data = list_water)
 
 df_water.to_csv('results/results_water_res_available.csv', index=False)
