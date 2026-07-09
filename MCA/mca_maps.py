@@ -44,23 +44,23 @@ dict_weights_roads = {'motorway': 0.25,
 
 # Read results
     # 2025
-df_pv_yeald = pd.read_csv('Data/results_pv_yeald.csv')
-df_wind_flh = pd.read_csv('Data/results_wind_flh.csv')
-df_accessibility = pd.read_csv('Data/results_accessibility.csv')
-df_agriculture = pd.read_csv('Data/results_agriculture.csv')
-df_urban = pd.read_csv('Data/results_urban.csv')
-df_industrie = pd.read_csv('Data/results_industrie.csv')
-df_rural = pd.read_csv('Data/results_rural.csv')
-df_water = pd.read_csv('Data/results_water_res_availabil.csv')
-df_non_conflict_areas = pd.read_csv('Data/non_conflict_areas.csv')
+df_pv_yeald = pd.read_csv('results/results_pv_yeald.csv')
+df_wind_flh = pd.read_csv('results/results_wind_flh.csv')
+df_accessibility = pd.read_csv('results/results_accessibility.csv')
+df_agriculture = pd.read_csv('results/results_agriculture.csv')
+df_urban = pd.read_csv('results/results_urban.csv')
+df_industrie = pd.read_csv('results/results_industrie.csv')
+df_rural = pd.read_csv('results/results_rural.csv')
+df_water = pd.read_csv('results/results_water_res_available.csv')
+df_non_conflict_areas = pd.read_csv('results/non_conflict_areas.csv')
 
-df_nogo_zones = pd.read_csv('Data/results_nogo_zones.csv')
+df_nogo_zones = pd.read_csv('results/results_nogo_zones.csv')
 
     # 2050
-df_agriculture_2050 = pd.read_csv('Data/results_agriculture_2050.csv')
-df_urban_2050 = pd.read_csv('Data/results_urban_2050.csv')
-df_rural_2050 = pd.read_csv('Data/results_rural_2050.csv')
-df_water_2050 = pd.read_csv('Data/results_water_res_availabil_2050.csv')
+df_agriculture_2050 = pd.read_csv('results/results_agriculture_2050.csv')
+df_urban_2050 = pd.read_csv('results/results_urban_2050.csv')
+df_rural_2050 = pd.read_csv('results/results_rural_2050.csv')
+df_water_2050 = pd.read_csv('results/results_water_res_availabil_2050.csv')
 
 # Scale results.
 # Water and non conflict already scored
@@ -106,7 +106,7 @@ dict_results = {'avg_pv_yeald': df_pv_yeald.values.flatten(),
 df_results = pd.DataFrame(dict_results)
 
 df_weighted_results = df_results*dict_weights_category
-df_mca_morocco = df_weighted_results.sum(axis = 1) * df_nogo_zones['NoGos']
+df_mca_morocco = df_weighted_results.sum(axis = 1) * df_nogo_zones['NoGo']
 df_mca_morocco.name = 'MCA_Morocco'
 
 gdf_mca_morocco_2025['Hydrogen_potential'] = df_mca_morocco
@@ -124,7 +124,7 @@ dict_results_2050 = {'avg_pv_yeald': df_pv_yeald.values.flatten(),
 df_results_2050 = pd.DataFrame(dict_results_2050)
 
 df_weighted_results_2050 = df_results_2050*dict_weights_category
-df_mca_morocco_2050 = df_weighted_results_2050.sum(axis = 1) * df_nogo_zones['NoGos']
+df_mca_morocco_2050 = df_weighted_results_2050.sum(axis = 1) * df_nogo_zones['NoGo']
 df_mca_morocco_2050.name = 'MCA_Morocco'
 
 gdf_mca_morocco_2050['Hydrogen_potential'] = df_mca_morocco_2050
@@ -132,7 +132,7 @@ gdf_mca_morocco_2050['Hydrogen_potential'] = df_mca_morocco_2050
 # Results export (csv)
 df_mca = pd.concat([df_mca_morocco, df_mca_morocco_2050], axis=1)
 df_mca.columns = ['MCA_Morocco_2025', 'MCA_Morocco_2050']
-df_mca.to_csv('Data/results_mca_morocco_2025_2050.csv', index=False)
+df_mca.to_csv('results/results_mca_morocco_2025_2050.csv', index=False)
 
 ### MAPS ###
 
