@@ -28,6 +28,7 @@ for i in range(len(gdf_precipitation)):
             list_geoms.append(geom)
 
 gdf_cwb = gpd.GeoDataFrame(geometry=list_geoms, data={'CWB':list_values}, crs=gdf_precipitation.crs)
+gdf_cwb.to_file('Data/cwb.shp', driver='ESRI Shapefile')
 
 water_supply_2025   = ds_water_ges_2025.sum()    #MCM
 water_supply_2050   = 8535                  #MCM
@@ -44,7 +45,7 @@ for i in range(len(gdf_grid)):
             list_cwb_cell.append(cwb_cell)
 
 df_cwb_cell = pd.DataFrame(data={'CWP_zell':list_cwb_cell}) #CWB for each cell 
-df_total_loss_water_cell = (df_cwb_cell['CWP_zell']/df_cwb_cell['CWP_zell'].sum()) * water_loss_2050    #Is positiv
+df_total_loss_water_cell = (df_cwb_cell['CWP_zell']/df_cwb_cell['CWP_zell'].sum()) * water_loss_2050    #Is positiv, Anteil_zelle_loss * Gesamtloss = Zellenloss
 df_water_cell_2050 = ds_water_ges_2025 - df_total_loss_water_cell    #Pos or neg water in each cell
 
 # Score for 2050
@@ -83,4 +84,4 @@ for i in range(len(gdf_grid)):
 
 df_water = pd.DataFrame(data = array_water)
 
-df_water.to_csv('Data/results_water_res_availabil_2050.csv', index=False)
+df_water.to_csv('results/results_water_res_availabil_2050.csv', index=False)

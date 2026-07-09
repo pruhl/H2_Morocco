@@ -44,4 +44,4 @@ for i in range(len(gdf_grid)):
 
 df_water = pd.DataFrame(data = array_water)
 
-df_water.to_csv('Data/results_water_res_available.csv', index=False)
+df_water.to_csv('results/results_water_res_available.csv', index=False)

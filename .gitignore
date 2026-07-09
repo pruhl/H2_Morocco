@@ -8,6 +8,7 @@ MCA/Data/*.dbf
 MCA/Data/*.shx
 MCA/Data/*.prj
 MCA/Data/*.cpg
+MCA/Data/*.qmd
 
 # große Ergebnisse
 *.tif
