@@ -19,7 +19,7 @@ gdf_topo_utm29n = gpd.read_file('Data/ToPo_1500.shp').to_crs("EPSG:32629")   #Al
 # Map MCA diff
 fig, ax = plt.subplots(figsize=(15, 10))
 gdf_morocco_boundary.plot(ax=ax, edgecolor='black', facecolor="none", linewidth=1)
-gdf_topo_utm29n[gdf_topo_utm29n['NoGos'] == 0].plot(ax=ax, color='grey',edgecolor='none', alpha=0.8, label='Steep slope area')
+gdf_topo_utm29n[gdf_topo_utm29n['NoGo'] == 0].plot(ax=ax, color='grey',edgecolor='none', alpha=0.8, label='Steep slope area')
 gdf_nogo_zones[gdf_nogo_zones['fclass'] == 'military'].plot(ax=ax, color='red', label='Military area')
 gdf_nogo_zones[gdf_nogo_zones['fclass'] == 'nature_reserve'].plot(ax=ax, color='green', label='Nature reserve')
 gdf_nogo_zones[gdf_nogo_zones['fclass'] == 'recreation_ground'].plot(ax=ax, color='blue', label='Recreation ground')

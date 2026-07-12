@@ -6,8 +6,8 @@ import matplotlib.patches as mpatches
 
 gdf_morocco_boundary    = gpd.read_file(r"C:\Users\psclr\Documents\02 Master\Masterprojekt\QGIS\Daten\morocco_Morocco_Country_Boundary.shp").to_crs("EPSG:32629")
 # Data
-gdf_landuse_mar         = gpd.read_file('Data/geonetwork_landcover_mar_gc_adg/mar_gc_adg.shp').to_crs("EPSG:32629") 
-gdf_landuse_wsa         = gpd.read_file('Data/geonetwork_landcover_wsa_gc_adg/wsa_gc_adg.shp').to_crs("EPSG:32629")
+gdf_landuse_mar         = gpd.read_file(r'C:\Users\psclr\Documents\02 Master\Masterprojekt\QGIS\Daten\mar_gc_adg\mar_gc_adg.shp').to_crs("EPSG:32629") 
+gdf_landuse_wsa         = gpd.read_file(r'C:\Users\psclr\Documents\02 Master\Masterprojekt\QGIS\Daten\wsa_gc_adg\wsa_gc_adg.shp').to_crs("EPSG:32629")
 gdf_landuse_concat      = gpd.GeoDataFrame(pd.concat([gdf_landuse_mar, gdf_landuse_wsa]))
 
 gdf_landuse_agri        = gdf_landuse_concat[gdf_landuse_concat['GRIDCODE'].isin([11, 12, 13, 14, 15, 16, 20, 21, 30, 31, 32])]
@@ -40,6 +40,5 @@ legend_handles = [
     mpatches.Patch(color='red', label='Industrial area')]
 plt.legend(handles=legend_handles, loc='lower right', fontsize=12)
 plt.tight_layout()
-plt.savefig("Maps/morocco_landuse.eps", format="eps", bbox_inches='tight', pad_inches=0)
 plt.savefig("Maps/morocco_landuse.png", format="png", bbox_inches='tight', pad_inches=0)
 plt.show()

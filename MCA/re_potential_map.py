@@ -5,12 +5,12 @@ import pandas as pd
 
 # Data
 gdf_morocco_boundary    = gpd.read_file(r"C:\Users\psclr\Documents\02 Master\Masterprojekt\QGIS\Daten\morocco_Morocco_Country_Boundary.shp").to_crs("EPSG:32629")
-df_pv = pd.read_csv('Data/results_pv_yeald.csv')
+df_pv = pd.read_csv('results/results_pv_yeald.csv')
 gdf_grid = gpd.read_file('Grid_morocco/grid_morocco_clear.shp')
-gdf_grid['PV'] = df_pv['0']
+gdf_grid['PV'] = df_pv['pv_yeald']
 
-df_wind = pd.read_csv('Data/results_wind_flh.csv')
-gdf_grid['Wind'] = df_wind['0']
+df_wind = pd.read_csv('results/results_wind_flh.csv')
+gdf_grid['Wind'] = df_wind['FLH_wind']
 
 # Map PV
 fig, ax = plt.subplots(figsize=(15, 10))

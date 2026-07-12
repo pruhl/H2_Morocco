@@ -23,7 +23,7 @@ gdf_water_direction = gpd.read_file('Data/flow_direction_grid.shp')
 
 gdf_watershead_morocco = gpd.read_file('Data/watershead_morocco.shp')
 
-gdf_cwb = gpd.read_file('Data/cwp_2050.shp')
+gdf_cwb = gpd.read_file('Data/cwb.shp')
 
 # Map Ground Water
 fig, ax = plt.subplots(figsize=(15, 10))
