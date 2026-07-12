@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 import contextily as cx
 
 
-gdf_morocco_boundary    = gpd.read_file(r"C:\Users\psclr\Documents\02 Master\Masterprojekt\QGIS\Daten\morocco_Morocco_Country_Boundary.shp").to_crs("EPSG:32629")
+gdf_morocco_boundary    = gpd.read_file('//Data/morocco_Morocco_Country_Boundary.shp').to_crs("EPSG:32629")
 gdf_grid_morocco        = gpd.read_file('Data/grid_morocco_clear.shp').to_crs("EPSG:32629")
 
 df_res_2025             = pd.read_csv('Data/results_cost_2025.csv')
