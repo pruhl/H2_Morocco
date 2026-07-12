@@ -10,6 +10,17 @@ MCA/Data/*.prj
 MCA/Data/*.cpg
 MCA/Data/*.qmd
 
+Cost_analysis/Maps/*.eps
+Cost_analysis/Maps/*.pdf
+Cost_analysis/Maps/*.png
+
+Cost_analysis/Data/*.shp
+Cost_analysis/Data/*.dbf
+Cost_analysis/Data/*.shx
+Cost_analysis/Data/*.prj
+Cost_analysis/Data/*.cpg
+Cost_analysis/Data/*.qmd
+
 # große Ergebnisse
 *.tif
 *.geojson
