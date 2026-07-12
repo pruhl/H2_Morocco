@@ -5,7 +5,7 @@ import geopandas as gpd
 gdf_grid = gpd.read_file('Grid_morocco/grid_morocco_clear.shp')
     # PV
     # Source: Global solar atlas
-gdf_pv_morocco_utm29n = gpd.read_file(r"C:\Users\psclr\Documents\02 Master\Masterprojekt\QGIS\Daten\Morocco_GISdata_LTAy_YearlyMonthlyTotals_GlobalSolarAtlas-v2_GEOTIFF\PV_yeald_clear_ma_we.shp").to_crs("EPSG:32629")
+gdf_pv_morocco_utm29n = gpd.read_file('Data\Morocco_GISdata_LTAy_YearlyMonthlyTotals_GlobalSolarAtlas-v2_GEOTIFF\PV_yeald_clear_ma_we.shp').to_crs("EPSG:32629")
 
 # Spatial join: alle PV-Geometrien auf die Grid-Zellen mappen
 joined = gpd.sjoin(gdf_grid,

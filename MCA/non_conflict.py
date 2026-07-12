@@ -6,7 +6,7 @@ import numpy as np
 gdf_grid = gpd.read_file('Grid_morocco/grid_morocco_clear.shp')
 gdf_cells_centroid = gdf_grid.centroid
     # non_conflict
-gdf_morocco = gpd.read_file(r'C:\Users\psclr\Documents\02 Master\Masterprojekt\QGIS\Daten\morocco.geojson').to_crs("EPSG:32629")
+gdf_morocco = gpd.read_file('Data\morocco.geojson').to_crs("EPSG:32629")
     # conflict --> Western Sahara
 
 ds_distance_to_morocco = gdf_cells_centroid.distance(gdf_morocco.geometry.iloc[0])

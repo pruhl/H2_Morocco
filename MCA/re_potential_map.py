@@ -4,7 +4,7 @@ import contextily as cx
 import pandas as pd
 
 # Data
-gdf_morocco_boundary    = gpd.read_file(r"C:\Users\psclr\Documents\02 Master\Masterprojekt\QGIS\Daten\morocco_Morocco_Country_Boundary.shp").to_crs("EPSG:32629")
+gdf_morocco_boundary    = gpd.read_file('Data\morocco_Morocco_Country_Boundary.shp').to_crs("EPSG:32629")
 df_pv = pd.read_csv('results/results_pv_yeald.csv')
 gdf_grid = gpd.read_file('Grid_morocco/grid_morocco_clear.shp')
 gdf_grid['PV'] = df_pv['pv_yeald']

@@ -4,7 +4,7 @@ import pandas as pd
 
 gdf_grid = gpd.read_file('Grid_morocco/grid_morocco_clear.shp')
 
-gdf_coast = gpd.read_file(r"C:\Users\psclr\Documents\02 Master\Masterprojekt\QGIS\Daten\morocco_coast_line.shp").to_crs("EPSG:32629")        
+gdf_coast = gpd.read_file('Data\morocco_coast_line.shp').to_crs("EPSG:32629")        
 
 # Today
 df_gw_availability = pd.read_csv('Data/water_availability_gw.csv')

@@ -9,9 +9,7 @@ df_electricity = pd.read_csv('Data/pv_wind_electricity.csv', index_col=0)
 df_electricity.reset_index(drop=True, inplace=True)
 #df_electricity = pd.DataFrame()
 
-token = 'ab3c6a38f8ad704e00fb3e2ee7e7584c36f8c078'     #Pascal
-#token = '1aa2a150a835fa055ee06eb84e96d5302222612d'      #Max
-#token = '7cdfd4e7524e7ffe4490467156f20725f8e3d666'     #Soufiane
+token = 'XXX' # please use your own token from renewables.ninja, see: https://www.renewables.ninja/api/
 api_base = 'https://www.renewables.ninja/api/'
 
 s = requests.session()

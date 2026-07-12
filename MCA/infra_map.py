@@ -5,9 +5,9 @@ import contextily as cx
 import numpy as np
 
 # Data
-gdf_railways_utm29n = gpd.read_file(r'C:\Users\psclr\Documents\02 Master\Masterprojekt\QGIS\Daten\Landuse\gis_osm_railways_free_1.shp').to_crs("EPSG:32629")
+gdf_railways_utm29n = gpd.read_file('Data\Landuse\gis_osm_railways_free_1.shp').to_crs("EPSG:32629")
 gdf_railways_utm29n['fclass'] = 'railway'
-gdf_roads_utm29n = gpd.read_file(r'C:\Users\psclr\Documents\02 Master\Masterprojekt\QGIS\Daten\Landuse\gis_osm_roads_free_1.shp').to_crs("EPSG:32629")
+gdf_roads_utm29n = gpd.read_file('Data\Landuse\gis_osm_roads_free_1.shp').to_crs("EPSG:32629")
 
 gdf_roads_railsways = gpd.GeoDataFrame(pd.concat([gdf_roads_utm29n, gdf_railways_utm29n], ignore_index=True), crs=gdf_roads_utm29n.crs)
 
@@ -17,7 +17,7 @@ classes = ['motorway', 'trunk', 'primary', 'secondary',
 gdf_roads_railsways = gdf_roads_railsways[gdf_roads_railsways['fclass'].isin(classes)]
 
 # Comparison of ports in 2025 and 2050
-gdf_morocco_boundary    = gpd.read_file(r"C:\Users\psclr\Documents\02 Master\Masterprojekt\QGIS\Daten\morocco_Morocco_Country_Boundary.shp").to_crs("EPSG:32629")
+gdf_morocco_boundary    = gpd.read_file('Data\Landuse\morocco_Morocco_Country_Boundary.shp').to_crs("EPSG:32629")
 gdf_ports_2025 = gpd.read_file('Data/industrial_ports_morocco_2025.shp').to_crs("EPSG:32629")
 gdf_ports_2050 = gpd.read_file('Data/industrial_ports_morocco_2050.shp').to_crs("EPSG:32629")
 ports_2025 = set(gdf_ports_2025['name'])

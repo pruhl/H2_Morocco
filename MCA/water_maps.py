@@ -6,10 +6,10 @@ import numpy as np
 import matplotlib.patches as mpatches
 from matplotlib.colors import LinearSegmentedColormap
 
-gdf_morocco_boundary    = gpd.read_file(r"C:\Users\psclr\Documents\02 Master\Masterprojekt\QGIS\Daten\morocco_Morocco_Country_Boundary.shp").to_crs("EPSG:32629")
+gdf_morocco_boundary    = gpd.read_file('Data\morocco_Morocco_Country_Boundary.shp').to_crs("EPSG:32629")
 # Data
-gdf_groundwater_morocco_utm29n = gpd.read_file(r"C:\Users\psclr\Documents\02 Master\Masterprojekt\QGIS\Daten\Morocco\Morocco_HG.shp").to_crs("EPSG:32629")
-gdf_groundwater_western_sahara_utm29n = gpd.read_file(r"C:\Users\psclr\Documents\02 Master\Masterprojekt\QGIS\Daten\Morocco\WSahara\WesternSahara_HG.shp").to_crs("EPSG:32629")
+gdf_groundwater_morocco_utm29n = gpd.read_file('Data\Morocco\Morocco_HG.shp').to_crs("EPSG:32629")
+gdf_groundwater_western_sahara_utm29n = gpd.read_file('Data\Morocco\WSahara\WesternSahara_HG.shp').to_crs("EPSG:32629")
 gdf_groundwater_morocco_concat = pd.concat([gdf_groundwater_morocco_utm29n, gdf_groundwater_western_sahara_utm29n.rename(columns = 
                                                                                      {'WSGLG': 'MorGLG', 'WSHGComb': 'MorHGComb'})], 
                                            ignore_index=True)

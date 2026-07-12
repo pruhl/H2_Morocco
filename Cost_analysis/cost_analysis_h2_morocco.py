@@ -17,7 +17,7 @@ df_re_flh                   = pd.read_csv('Data/flh_re.csv')
 df_re_flh_cell              = pd.read_csv('Data/cell_flh_re.csv')
 
 # Wateravaulability each cell
-gdf_coast       = gpd.read_file(r"C:\Users\psclr\Documents\02 Master\Masterprojekt\QGIS\Daten\morocco_coast_line.shp").to_crs("EPSG:32629")        
+gdf_coast       = gpd.read_file('//Data/morocco_coast_line.shp').to_crs("EPSG:32629")        
 df_sw_2025      = pd.read_csv('Data/water_availability_sw.csv')
 df_gw_2025      = pd.read_csv('Data/water_availability_gw.csv')
 df_sw_2050      = pd.read_csv('Data/water_availability_sw_2050.csv')
