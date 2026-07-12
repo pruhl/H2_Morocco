@@ -21,6 +21,51 @@ Cost_analysis/Data/*.prj
 Cost_analysis/Data/*.cpg
 Cost_analysis/Data/*.qmd
 
+MCA/Maps/Esri Shapefile/*.eps
+MCA/Maps/Esri Shapefile/*.pdf
+MCA/Maps/Esri Shapefile/*.png
+MCA/Data/Esri Shapefile/*.shp
+MCA/Data/Esri Shapefile/*.dbf
+MCA/Data/Esri Shapefile/*.shx
+MCA/Data/Esri Shapefile/*.prj
+MCA/Data/Esri Shapefile/*.cpg
+MCA/Data/Esri Shapefile/*.qmd
+MCA/Data/Esri Shapefile/*.gpkg
+
+
+MCA/Maps/hotosm_mar_waterways_gpkg/*.eps
+MCA/Maps/hotosm_mar_waterways_gpkg/*.pdf
+MCA/Maps/hotosm_mar_waterways_gpkg/*.png
+MCA/Data/hotosm_mar_waterways_gpkg/*.shp
+MCA/Data/hotosm_mar_waterways_gpkg/*.dbf
+MCA/Data/hotosm_mar_waterways_gpkg/*.shx
+MCA/Data/hotosm_mar_waterways_gpkg/*.prj
+MCA/Data/hotosm_mar_waterways_gpkg/*.cpg
+MCA/Data/hotosm_mar_waterways_gpkg/*.qmd
+MCA/Data/hotosm_mar_waterways_gpkg/*.gpkg
+
+
 # große Ergebnisse
 *.tif
 *.geojson
+*.gpkg
+*.eps
+*.pdf
+*.png
+*.shp
+*.shp.xml
+*.dbf
+*.shx
+*.prj
+*.cpg
+*.qmd
+*.tif.aux.xml
+*.tif.avl
+*.tif.lyr
+*.tif.xml
+*.sbn
+*.sbx
+*.txt
+*.lyr
+*.avl
+*.qpj
