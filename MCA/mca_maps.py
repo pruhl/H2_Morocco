@@ -19,15 +19,15 @@ gdf_mca_morocco_2025 = gpd.read_file('Grid_morocco/grid_morocco_clear.shp').to_c
 gdf_mca_morocco_2050 = gdf_mca_morocco_2025.copy()
 
 # weights
-dict_weights_category = {'avg_pv_yeald': 0.0557, 
-                         'avg_windpower': 0.1113, 
-                         'accessibility': 0.0831,
+dict_weights_category = {'avg_pv_yeald': 0.0619, 
+                         'avg_windpower': 0.1237, 
+                         'accessibility': 0.0825,
                          'agricultural_land_share': 0.0194,
                          'urban_zone_share': 0.0148,
-                         'industrial_zone_share': 0.16,
+                         'industrial_zone_share': 0.1446,
                          'rural_zone_share': 0.0496,
-                         'water_avalibility': 0.3399,
-                         'non_conflict_areas': 0.1663}
+                         'water_avalibility': 0.3406,
+                         'non_conflict_areas': 0.1630}
 
 dict_weights_roads = {'motorway': 0.25,
                   'trunk': 0.18,
@@ -52,7 +52,7 @@ df_urban = pd.read_csv('results/results_urban.csv')
 df_industrie = pd.read_csv('results/results_industrie.csv')
 df_rural = pd.read_csv('results/results_rural.csv')
 df_water = pd.read_csv('results/results_water_res_available.csv')
-df_non_conflict_areas = pd.read_csv('results/non_conflict_areas.csv')
+df_non_conflict_areas = pd.read_csv('results/results_non_conflict_areas.csv')
 
 df_nogo_zones = pd.read_csv('results/results_nogo_zones.csv')
 
