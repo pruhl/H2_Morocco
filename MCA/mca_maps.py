@@ -150,6 +150,7 @@ cbar_ax.tick_params(labelsize=14)
 cbar_ax.yaxis.label.set_size(20)
 plt.tight_layout()
 plt.savefig("Maps/mca_morocco_2025.png", format="png", dpi=300, bbox_inches='tight', pad_inches=0)
+plt.savefig("Maps/mca_morocco_2025.pdf", format="pdf", bbox_inches='tight', pad_inches=0)
 plt.show()
 
 # Map MCA 2050
@@ -163,6 +164,7 @@ cbar_ax.tick_params(labelsize=14)
 cbar_ax.yaxis.label.set_size(20)
 plt.tight_layout()
 plt.savefig("Maps/mca_morocco_2050.png", format="png", dpi=300, bbox_inches='tight', pad_inches=0)
+plt.savefig("Maps/mca_morocco_2050.pdf", format="pdf", bbox_inches='tight', pad_inches=0)
 plt.show()
 
     #Difference
@@ -183,6 +185,7 @@ cbar_ax.tick_params(labelsize=14)
 cbar_ax.yaxis.label.set_size(20)
 plt.tight_layout()
 plt.savefig("Maps/mca_morocco_diff.png", format="png", dpi=300, bbox_inches='tight', pad_inches=0)
+plt.savefig("Maps/mca_morocco_diff.pdf", format="pdf", bbox_inches='tight', pad_inches=0)
 plt.show()
 
 # Pie chart of weights
@@ -230,4 +233,5 @@ for autotext in autotexts:
 
 plt.tight_layout()
 plt.savefig("Maps/pie_chart_weights.png", format="png", dpi=300, bbox_inches='tight', pad_inches=0)
+plt.savefig("Maps/pie_chart_weights.pdf", format="pdf", bbox_inches='tight', pad_inches=0)
 plt.show()
